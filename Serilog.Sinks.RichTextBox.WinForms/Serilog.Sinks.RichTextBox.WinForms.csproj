@@ -6,7 +6,29 @@
 		<Nullable>enable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
 		<RootNamespace>Serilog</RootNamespace>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Authors>vonhoff</Authors>
+		<Company>github.com/vonhoff</Company>
+		<Description>A Serilog sink that writes log events to a WinForms RichTextBox control with colors and theme support.</Description>
+		<Copyright>Copyright © 2022 Simon Vonhoff &amp; Contributors - Provided under the Apache License, Version 2.0.</Copyright>
+		<PackageProjectUrl>https://github.com/vonhoff/serilog-sinks-richtextbox-winforms</PackageProjectUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageIcon>serilog-sink-nuget.png</PackageIcon>
+		<RepositoryUrl>https://github.com/vonhoff/serilog-sinks-richtextbox-winforms.git</RepositoryUrl>
+		<PackageTags>serilog;sinks;richtextbox;winforms;windows;sink;colors;theme;themes;serilog-sink;vonhoff;</PackageTags>
+		<PackageLicenseFile>F:\repos\serilog-sinks-richtextbox-winforms-colored\LICENSE</PackageLicenseFile>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Include="..\Assets\serilog-sink-nuget.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	  <None Include="..\README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Serilog" Version="2.11.0" />
