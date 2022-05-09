@@ -2,7 +2,7 @@
   <img src="Assets/serilog-sink-nuget.png" alt="Serilog.Sinks.RichTextBox.WinForms" width="100" />
 </div>
 
-<h1 align="center">Serilog.Sinks.RichTextBox.WinForms</h1>
+<h1 align="center">Serilog.Sinks.RichTextBox.WinForms.Colored</h1>
 <div align="center">
 
 A [Serilog](https://serilog.net) sink that writes log events to any WinForms [RichTextBox](https://docs.microsoft.com/en-us/dotnet/desktop/winforms/controls/richtextbox-control-overview-windows-forms) control with coloring and custom theme support. 
