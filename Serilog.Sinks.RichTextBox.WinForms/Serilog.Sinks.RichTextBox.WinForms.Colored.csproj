@@ -16,6 +16,7 @@
 		<PackageIcon>serilog-sink-nuget.png</PackageIcon>
 		<RepositoryUrl>https://github.com/vonhoff/serilog-sinks-richtextbox-winforms.git</RepositoryUrl>
 		<PackageTags>serilog;sinks;richtextbox;winforms;windows;sink;colors;theme;themes;serilog-sink;vonhoff;</PackageTags>
+		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 	</PropertyGroup>
 
 	<ItemGroup>
