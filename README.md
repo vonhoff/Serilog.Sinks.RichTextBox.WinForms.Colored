@@ -1,21 +1,16 @@
-<div align="center">
-  <img src="Assets/serilog-sink-nuget.png" alt="Serilog.Sinks.RichTextBox.WinForms" width="100" />
-</div>
-
-<h1 align="center">Serilog.Sinks.RichTextBox.WinForms.Colored</h1>
-<div align="center">
+# Serilog.Sinks.RichTextBox.WinForms.Colored
 
 A [Serilog](https://serilog.net) sink that writes log events to any WinForms [RichTextBox](https://docs.microsoft.com/en-us/dotnet/desktop/winforms/controls/richtextbox-control-overview-windows-forms) control with coloring and custom theme support. 
 
-![Screenshot of Serilog.Sinks.RichTextBox.WinForms in action](Assets/screenshot.png)
 This sink is based on the [WPF RichTextBox Sink](https://github.com/serilog-contrib/serilog-sinks-richtextbox) by C. Augusto Proiete.
-</div>
 
-## Give a Star! :star:
+## Getting started
 
-If you like or are using this project please give it a star. Thanks!
+Install the [Serilog.Sinks.RichTextBox.WinForms.Colored](https://www.nuget.org/packages/Serilog.Sinks.RichTextBox.WinForms.Colored) package from NuGet:
 
-## Getting started :rocket:
+```powershell
+Install-Package Serilog.Sinks.RichTextBox.WinForms.Colored
+```
 
 Declare your [RichTextBox](https://docs.microsoft.com/en-us/dotnet/desktop/winforms/controls/richtextbox-control-overview-windows-forms) control and give it a name that you can reference it from the code-behind. e.g.:
 
@@ -52,22 +47,22 @@ Log events will be written to the `RichTextBox` control:
 Themes can be specified when configuring the sink:
 
 ```csharp
-    .WriteTo.RichTextBox(MyRichTextBox, theme: RichTextBoxConsoleTheme.Dark)
+    .WriteTo.RichTextBox(richTextBox1, theme: ThemePresets.Dark)
 ```
 
 The following built-in themes are available at this time:
 
 | Theme                               | Description
 | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `RichTextBoxConsoleTheme.Dark`      | Styled to replicate the default theme of  _Serilog.Sinks.Console_; **This is the default when no theme is specified** |
-| `RichTextBoxConsoleTheme.Light`     | A theme with a light background and contrasting colors.                                                               |
+| `ThemePresets.Dark`                 | Styled to replicate the default theme of  _Serilog.Sinks.Console_; **This is the default when no theme is specified** |
+| `ThemePresets.Light`                | A theme with a light background and contrasting colors.                                                               |
 
 ### Output templates
 
 The format of events to the RichTextBox can be modified using the `outputTemplate` configuration parameter:
 
 ```csharp
-    .WriteTo.RichTextBox(MyRichTextBox,
+    .WriteTo.RichTextBox(richTextBox1,
         outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
 ```
 
