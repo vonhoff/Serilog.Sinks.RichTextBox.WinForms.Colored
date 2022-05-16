@@ -1,23 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<OutputType>Library</OutputType>
-		<TargetFramework>net5.0-windows</TargetFramework>
-		<Nullable>enable</Nullable>
-		<UseWindowsForms>true</UseWindowsForms>
-		<RootNamespace>Serilog</RootNamespace>
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Authors>Vonhoff</Authors>
 		<Company>github.com/vonhoff</Company>
-		<Description>A Serilog sink that writes log events to a WinForms RichTextBox control with colors and theme support.</Description>
 		<Copyright>Copyright © 2022 Simon Vonhoff &amp; Contributors - Provided under the Apache License, Version 2.0.</Copyright>
+		<DebugType>portable</DebugType>
+		<Description>A Serilog sink that writes log events to a WinForms RichTextBox control with colors and theme support.</Description>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<IncludeSymbols>true</IncludeSymbols>
+		<MinClientVersion>3.3</MinClientVersion>
+		<Nullable>enable</Nullable>
+		<OutputType>Library</OutputType>
+		<PackageIcon>serilog-sink-nuget.png</PackageIcon>
+		<PackageId>Serilog.Sinks.RichTextBox.WinForms.Colored</PackageId>
+		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageProjectUrl>https://github.com/vonhoff/serilog-sinks-richtextbox-winforms</PackageProjectUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<PackageIcon>serilog-sink-nuget.png</PackageIcon>
-		<RepositoryUrl>https://github.com/vonhoff/serilog-sinks-richtextbox-winforms.git</RepositoryUrl>
 		<PackageTags>serilog;sinks;richtextbox;winforms;windows;sink;colors;theme;themes;serilog-sink;vonhoff;rich;textbox;</PackageTags>
-		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-		<DebugType>embedded</DebugType>
+		<RepositoryUrl>https://github.com/vonhoff/serilog-sinks-richtextbox-winforms.git</RepositoryUrl>
+		<RootNamespace>Serilog</RootNamespace>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<TargetFramework>net5.0-windows</TargetFramework>
+		<UseWindowsForms>true</UseWindowsForms>
 		<Version>1.0.1</Version>
 	</PropertyGroup>
 
