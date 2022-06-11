@@ -23,7 +23,8 @@
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<TargetFramework>net5.0-windows</TargetFramework>
 		<UseWindowsForms>true</UseWindowsForms>
-		<Version>1.0.1</Version>
+		<Version>1.0.2</Version>
+		<PackageReleaseNotes>Empty lines removed after adding new rich text content. </PackageReleaseNotes>
 	</PropertyGroup>
 
 	<ItemGroup>
