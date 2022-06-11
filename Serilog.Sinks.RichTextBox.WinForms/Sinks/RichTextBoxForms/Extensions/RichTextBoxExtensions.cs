@@ -1,4 +1,5 @@
 ﻿#region Copyright 2022 Simon Vonhoff & Contributors
+
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
+
 #endregion
 
 using System;
@@ -21,6 +23,8 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
 {
     internal static class RichTextBoxExtensions
     {
+        private const string SpaceCharacter = " ";
+
         /// <summary>
         /// Updates the content of a <see cref="RichTextBox"/>
         /// with the specified content in rich text format (RTF).
@@ -36,10 +40,17 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
             }
 
             richTextBox.Suspend();
-            richTextBox.SelectionStart = Math.Max(0, richTextBox.TextLength - 1);
-            richTextBox.SelectionLength = 1;
+            richTextBox.SelectionStart = richTextBox.TextLength;
+
+            if (richTextBox.TextLength > 0)
+            {
+                richTextBox.SelectedText = Environment.NewLine;
+            }
+
             richTextBox.SelectedRtf = rtf;
-            richTextBox.SelectionStart = richTextBox.TextLength - 2;
+            richTextBox.SelectionStart = Math.Max(0, richTextBox.TextLength - 2);
+            richTextBox.SelectionLength = 2;
+            richTextBox.SelectedText = SpaceCharacter;
             richTextBox.ScrollToCaret();
             richTextBox.Resume();
         }
