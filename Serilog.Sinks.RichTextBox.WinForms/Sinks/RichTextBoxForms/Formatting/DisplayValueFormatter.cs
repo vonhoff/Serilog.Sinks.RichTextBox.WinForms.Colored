@@ -1,4 +1,5 @@
 ﻿#region Copyright 2022 Simon Vonhoff & Contributors
+
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
+
 #endregion
 
 using System;
@@ -40,6 +42,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                 case null:
                     Theme.Render(richTextBox, StyleToken.Null, "null");
                     break;
+
                 case string text:
                     Theme.Render(richTextBox, StyleToken.String, text);
                     return;
@@ -50,24 +53,27 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 
             if (value is ValueType)
             {
-                if (value is int || value is uint || value is long || value is ulong ||
-                    value is decimal || value is byte || value is sbyte || value is short ||
-                    value is ushort || value is float || value is double)
+                switch (value)
                 {
-                    Theme.Render(richTextBox, StyleToken.Number, writer.ToString());
-                    return;
-                }
-
-                if (value is bool b)
-                {
-                    Theme.Render(richTextBox, StyleToken.Boolean, b.ToString());
-                    return;
-                }
-
-                if (value is char ch)
-                {
-                    Theme.Render(richTextBox, StyleToken.Scalar, ch.ToString());
-                    return;
+                    case int:
+                    case uint:
+                    case long:
+                    case ulong:
+                    case decimal:
+                    case byte:
+                    case sbyte:
+                    case short:
+                    case ushort:
+                    case float:
+                    case double:
+                        Theme.Render(richTextBox, StyleToken.Number, writer.ToString());
+                        return;
+                    case bool b:
+                        Theme.Render(richTextBox, StyleToken.Boolean, b.ToString());
+                        return;
+                    case char ch:
+                        Theme.Render(richTextBox, StyleToken.Scalar, ch.ToString());
+                        return;
                 }
             }
 

@@ -1,4 +1,5 @@
 ﻿#region Copyright 2022 Simon Vonhoff & Contributors
+
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
+
 #endregion
 
 using System;
@@ -26,14 +28,9 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
     public class MessageTemplateTokenRenderer : ITokenRenderer
     {
         private readonly MessageTemplateRenderer _renderer;
-        private readonly Theme _theme;
-        private readonly PropertyToken _token;
 
         public MessageTemplateTokenRenderer(Theme theme, PropertyToken token, IFormatProvider? formatProvider)
         {
-            _theme = theme;
-            _token = token;
-
             var isLiteral = false;
             var isJson = false;
 
