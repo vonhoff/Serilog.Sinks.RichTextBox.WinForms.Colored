@@ -68,9 +68,11 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                     case double:
                         Theme.Render(richTextBox, StyleToken.Number, writer.ToString());
                         return;
+
                     case bool b:
                         Theme.Render(richTextBox, StyleToken.Boolean, b.ToString());
                         return;
+
                     case char ch:
                         Theme.Render(richTextBox, StyleToken.Scalar, ch.ToString());
                         return;
@@ -87,7 +89,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             var delimiter = string.Empty;
             foreach (var (scalarValue, propertyValue) in dictionary.Elements)
             {
-                if (!delimiter.Equals(string.Empty))
+                if (!string.IsNullOrEmpty(delimiter))
                 {
                     Theme.Render(state.RichTextBox, StyleToken.TertiaryText, delimiter);
                 }
@@ -127,7 +129,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             var delimiter = string.Empty;
             foreach (var propertyValue in sequence.Elements)
             {
-                if (!delimiter.Equals(string.Empty))
+                if (!string.IsNullOrEmpty(delimiter))
                 {
                     Theme.Render(state.RichTextBox, StyleToken.TertiaryText, delimiter);
                 }
@@ -152,7 +154,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             var delimiter = string.Empty;
             foreach (var eventProperty in structure.Properties)
             {
-                if (!delimiter.Equals(string.Empty))
+                if (!string.IsNullOrEmpty(delimiter))
                 {
                     Theme.Render(state.RichTextBox, StyleToken.TertiaryText, delimiter);
                 }

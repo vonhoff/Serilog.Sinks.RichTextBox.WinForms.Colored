@@ -64,7 +64,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             var delimiter = string.Empty;
             foreach (var propertyValue in sequence.Elements)
             {
-                if (!delimiter.Equals(string.Empty))
+                if (!string.IsNullOrEmpty(delimiter))
                 {
                     Theme.Render(state.RichTextBox, StyleToken.TertiaryText, delimiter);
                 }
@@ -84,7 +84,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             var delimiter = string.Empty;
             foreach (var eventProperty in structure.Properties)
             {
-                if (!delimiter.Equals(string.Empty))
+                if (!string.IsNullOrEmpty(delimiter))
                 {
                     Theme.Render(state.RichTextBox, StyleToken.TertiaryText, delimiter);
                 }
@@ -115,7 +115,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             var delimiter = string.Empty;
             foreach (var (scalar, propertyValue) in dictionary.Elements)
             {
-                if (!delimiter.Equals(string.Empty))
+                if (!string.IsNullOrEmpty(delimiter))
                 {
                     Theme.Render(state.RichTextBox, StyleToken.TertiaryText, delimiter);
                 }
