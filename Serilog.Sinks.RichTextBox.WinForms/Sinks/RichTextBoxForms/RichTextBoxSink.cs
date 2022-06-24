@@ -31,20 +31,27 @@ namespace Serilog.Sinks.RichTextBoxForms
 {
     internal class RichTextBoxSink : ILogEventSink
     {
-        private const int MessageBatchSize = 200;
-        private const int MessageDequeueInterval = 25;
-        private const int MessagePendingInterval = 50;
+        private readonly int _messageDequeueInterval;
+        private readonly int _messagePendingInterval;
+        private readonly int _messageBatchSize;
         private readonly ConcurrentQueue<LogEvent> _messageQueue = new();
         private readonly ITokenRenderer _renderer;
         private readonly RichTextBox _richTextBox;
 
-        public RichTextBoxSink(RichTextBox richTextBox, ITokenRenderer renderer)
+        public RichTextBoxSink(RichTextBox richTextBox, ITokenRenderer renderer,
+            int messageBatchSize, int messageDequeueInterval, int messagePendingInterval)
         {
+            _messageBatchSize = messageBatchSize;
+            _messageDequeueInterval = messageDequeueInterval;
+            _messagePendingInterval = messagePendingInterval;
             _richTextBox = richTextBox;
             _renderer = renderer;
 
-            var messageWorker = new BackgroundWorker();
-            messageWorker.WorkerSupportsCancellation = true;
+            var messageWorker = new BackgroundWorker
+            {
+                WorkerSupportsCancellation = true
+            };
+
             messageWorker.DoWork += ProcessMessages;
             messageWorker.RunWorkerAsync();
         }
@@ -86,7 +93,7 @@ namespace Serilog.Sinks.RichTextBoxForms
                     {
                         if (_messageQueue.IsEmpty)
                         {
-                            Thread.Sleep(MessagePendingInterval);
+                            Thread.Sleep(_messagePendingInterval);
                             break;
                         }
 
@@ -96,7 +103,7 @@ namespace Serilog.Sinks.RichTextBoxForms
                     }
                     case ProcessState.Processing:
                     {
-                        if (stopwatch.ElapsedMilliseconds >= MessageDequeueInterval || messageBatch >= MessageBatchSize)
+                        if (stopwatch.ElapsedMilliseconds >= _messageDequeueInterval || messageBatch >= _messageBatchSize)
                         {
                             if (messageBatch > 0)
                             {
