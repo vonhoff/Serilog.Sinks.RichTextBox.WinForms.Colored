@@ -20,15 +20,29 @@ using System.Windows.Forms;
 
 namespace Serilog.Sinks.RichTextBoxForms.Formatting
 {
-    public struct ValueFormatterState
+    public readonly struct ValueFormatterState
     {
-        public RichTextBox RichTextBox;
-        public string Format;
-        public bool IsTopLevel;
+        public ValueFormatterState(RichTextBox richTextBox)
+        {
+            RichTextBox = richTextBox;
+            Format = string.Empty;
+            IsTopLevel = false;
+        }
+
+        public ValueFormatterState(RichTextBox richTextBox, string format, bool isTopLevel)
+        {
+            RichTextBox = richTextBox;
+            Format = format;
+            IsTopLevel = isTopLevel;
+        }
+
+        public string Format { get; }
+        public bool IsTopLevel { get; }
+        public RichTextBox RichTextBox { get; }
 
         public ValueFormatterState Next()
         {
-            return new ValueFormatterState { RichTextBox = RichTextBox };
+            return new ValueFormatterState(RichTextBox);
         }
     }
 }

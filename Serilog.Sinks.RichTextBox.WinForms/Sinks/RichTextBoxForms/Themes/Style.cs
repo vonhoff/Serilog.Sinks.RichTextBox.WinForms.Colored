@@ -25,14 +25,26 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
     /// </summary>
     public struct Style
     {
+        public Style(Color foreground)
+        {
+            Background = default;
+            Foreground = foreground;
+        }
+
+        public Style(Color foreground, Color background)
+        {
+            Background = background;
+            Foreground = foreground;
+        }
+
         /// <summary>
         /// The background color to apply
         /// </summary>
-        public Color Background;
+        public Color Background { get; }
 
         /// <summary>
         /// The foreground color to apply.
         /// </summary>
-        public Color Foreground;
+        public Color Foreground { get; }
     }
 }

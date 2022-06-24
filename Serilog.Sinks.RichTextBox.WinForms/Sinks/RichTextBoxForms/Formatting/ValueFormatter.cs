@@ -34,7 +34,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 
         public bool Format(LogEventPropertyValue value, RichTextBox richTextBox, string format, bool literalTopLevel = false)
         {
-            return Visit(new ValueFormatterState { RichTextBox = richTextBox, Format = format, IsTopLevel = literalTopLevel }, value);
+            return Visit(new ValueFormatterState(richTextBox, format, literalTopLevel), value);
         }
     }
 }
