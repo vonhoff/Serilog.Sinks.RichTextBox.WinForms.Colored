@@ -21,10 +21,12 @@
 		<RepositoryUrl>https://github.com/vonhoff/serilog-sinks-richtextbox-winforms.git</RepositoryUrl>
 		<RootNamespace>Serilog</RootNamespace>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-		<TargetFramework>net5.0-windows</TargetFramework>
+		<TargetFramework>net6.0-windows7.0</TargetFramework>
 		<UseWindowsForms>true</UseWindowsForms>
-		<Version>1.0.2</Version>
+		<Version>1.1.0</Version>
 		<PackageReleaseNotes>Empty lines removed after adding new rich text content. </PackageReleaseNotes>
+		<SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+		<NeutralLanguage>en-US</NeutralLanguage>
 	</PropertyGroup>
 
 	<ItemGroup>
