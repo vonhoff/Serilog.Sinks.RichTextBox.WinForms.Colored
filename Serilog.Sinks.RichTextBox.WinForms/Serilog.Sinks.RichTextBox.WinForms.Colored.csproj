@@ -25,7 +25,6 @@
 		<UseWindowsForms>true</UseWindowsForms>
 		<Version>1.1.1</Version>
 		<PackageReleaseNotes>Optimized sink message processor.
-Updated sample form, moved the most important method upwards.
 Removed redundant code.
 Updated documentation tags.
 </PackageReleaseNotes>
