@@ -35,7 +35,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
         {
             if (richTextBox.InvokeRequired)
             {
-                richTextBox.Invoke(new Action(() => AppendRtf(richTextBox, rtf)));
+                richTextBox.Invoke(() => AppendRtf(richTextBox, rtf));
                 return;
             }
 

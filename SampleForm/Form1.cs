@@ -33,6 +33,32 @@ namespace SampleForm
             InitializeComponent();
         }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            SelfLog.Enable(message => Trace.WriteLine($"INTERNAL ERROR: {message}"));
+
+            const string outputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}";
+
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Verbose()
+                .WriteTo.RichTextBox(richTextBox1, outputTemplate: outputTemplate)
+                .Enrich.WithThreadId()
+                .CreateLogger();
+
+            Log.Debug("Getting started");
+            Log.Information("Hello {Name}", Environment.UserName);
+            Log.Warning("No coins remain at position {@Position}", new { Lat = 25, Long = 134 });
+
+            try
+            {
+                Fail();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Oops... Something went wrong");
+            }
+        }
+
         private void BtnClear_Click(object sender, EventArgs e)
         {
             richTextBox1.Clear();
@@ -106,32 +132,6 @@ namespace SampleForm
         private void BtnWarning_Click(object sender, EventArgs e)
         {
             Log.Warning("Hello! Now => {Now}", DateTime.Now);
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            SelfLog.Enable(message => Trace.WriteLine($"INTERNAL ERROR: {message}"));
-
-            const string outputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}";
-
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .WriteTo.RichTextBox(richTextBox1, outputTemplate: outputTemplate)
-                .Enrich.WithThreadId()
-                .CreateLogger();
-
-            Log.Debug("Getting started");
-            Log.Information("Hello {Name}", Environment.UserName);
-            Log.Warning("No coins remain at position {@Position}", new { Lat = 25, Long = 134 });
-
-            try
-            {
-                Fail();
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "Oops... Something went wrong");
-            }
         }
 
         private static void Fail()

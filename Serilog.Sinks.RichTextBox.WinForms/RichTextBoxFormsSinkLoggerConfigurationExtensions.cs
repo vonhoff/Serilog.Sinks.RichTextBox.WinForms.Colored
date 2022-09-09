@@ -42,10 +42,9 @@ namespace Serilog
         /// The default is <c>"[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}"</c>.</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <param name="levelSwitch">A switch allowing the pass-through minimum level to be changed at runtime.</param>
-        /// <param name="theme">The theme to apply to the styled output. If not specified,
-        /// uses <see cref="ThemePresets.Light"/>.</param>
+        /// <param name="theme">The theme to apply to the styled output. If not specified, uses <see cref="ThemePresets.Dark"/>.</param>
         /// <param name="messageBatchSize">The maximum number of messages for a batch before printing them to the console.</param>
-        /// <param name="messageDequeueInterval">The duration of collecting all messages before printing them to the console.</param>
+        /// <param name="messageDequeueInterval">Deprecated as of v1.1.1, kept for backwards compatibility.</param>
         /// <param name="messagePendingInterval">The duration of pending for incoming messages.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         public static LoggerConfiguration RichTextBox(
@@ -57,8 +56,8 @@ namespace Serilog
             LoggingLevelSwitch? levelSwitch = null,
             Theme? theme = null,
             int messageBatchSize = 200,
-            int messageDequeueInterval = 25,
-            int messagePendingInterval = 50)
+            int messageDequeueInterval = 0,
+            int messagePendingInterval = 5)
         {
             var appliedTheme = theme ?? ThemePresets.Dark;
             richTextBoxControl.Clear();
@@ -67,8 +66,7 @@ namespace Serilog
             richTextBoxControl.BackColor = appliedTheme.DefaultStyle.Background;
 
             var renderer = new TemplateRenderer(appliedTheme, outputTemplate, formatProvider);
-            var sink = new RichTextBoxSink(richTextBoxControl, renderer,
-                messageBatchSize, messageDequeueInterval, messagePendingInterval);
+            var sink = new RichTextBoxSink(richTextBoxControl, renderer, messageBatchSize, messagePendingInterval);
             return sinkConfiguration.Sink(sink, minimumLogEventLevel, levelSwitch);
         }
     }

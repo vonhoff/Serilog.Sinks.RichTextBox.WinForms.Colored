@@ -19,7 +19,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
 using Serilog.Core;
@@ -31,7 +30,6 @@ namespace Serilog.Sinks.RichTextBoxForms
 {
     internal class RichTextBoxSink : ILogEventSink
     {
-        private readonly int _messageDequeueInterval;
         private readonly int _messagePendingInterval;
         private readonly int _messageBatchSize;
         private readonly ConcurrentQueue<LogEvent> _messageQueue = new();
@@ -39,28 +37,16 @@ namespace Serilog.Sinks.RichTextBoxForms
         private readonly RichTextBox _richTextBox;
 
         public RichTextBoxSink(RichTextBox richTextBox, ITokenRenderer renderer,
-            int messageBatchSize, int messageDequeueInterval, int messagePendingInterval)
+            int messageBatchSize, int messagePendingInterval)
         {
-            _messageBatchSize = messageBatchSize;
-            _messageDequeueInterval = messageDequeueInterval;
-            _messagePendingInterval = messagePendingInterval;
+            _messageBatchSize = messageBatchSize > 3 ? messageBatchSize : 3;
+            _messagePendingInterval = messagePendingInterval > 0 ? messagePendingInterval : 1;
             _richTextBox = richTextBox;
             _renderer = renderer;
 
-            var messageWorker = new BackgroundWorker
-            {
-                WorkerSupportsCancellation = true
-            };
-
+            var messageWorker = new BackgroundWorker();
             messageWorker.DoWork += ProcessMessages;
             messageWorker.RunWorkerAsync();
-        }
-
-        private enum ProcessState
-        {
-            Pending,
-            Processing,
-            Flushing
         }
 
         public void Emit(LogEvent logEvent)
@@ -69,7 +55,7 @@ namespace Serilog.Sinks.RichTextBoxForms
         }
 
         /// <summary>
-        /// Processes all incoming log events until disposed or cancelled.
+        /// Processes all incoming log events until disposed.
         /// </summary>
         /// <param name="sender">The object that raised this event.</param>
         /// <param name="e">Data for the event handler.</param>
@@ -81,57 +67,22 @@ namespace Serilog.Sinks.RichTextBoxForms
             }
 
             var messageBatch = 0;
-            var processState = ProcessState.Pending;
-            var stopwatch = new Stopwatch();
             var buffer = new RichTextBox { Font = _richTextBox.Font };
-            var worker = (BackgroundWorker)sender;
-            while (!worker.CancellationPending)
+            while (true)
             {
-                switch (processState)
+                while (_messageQueue.IsEmpty)
                 {
-                    case ProcessState.Pending:
-                    {
-                        if (_messageQueue.IsEmpty)
-                        {
-                            Thread.Sleep(_messagePendingInterval);
-                            break;
-                        }
-
-                        stopwatch.Restart();
-                        processState = ProcessState.Processing;
-                        break;
-                    }
-                    case ProcessState.Processing:
-                    {
-                        if (stopwatch.ElapsedMilliseconds >= _messageDequeueInterval || messageBatch >= _messageBatchSize)
-                        {
-                            if (messageBatch > 0)
-                            {
-                                processState = ProcessState.Flushing;
-                                break;
-                            }
-
-                            processState = ProcessState.Pending;
-                        }
-
-                        if (_messageQueue.TryDequeue(out var logEvent))
-                        {
-                            _renderer.Render(logEvent, buffer);
-                            stopwatch.Restart();
-                            messageBatch++;
-                        }
-                        break;
-                    }
-                    case ProcessState.Flushing:
-                    {
-                        _richTextBox.AppendRtf(buffer.Rtf);
-                        buffer.Clear();
-                        stopwatch.Stop();
-                        messageBatch = 0;
-                        processState = ProcessState.Pending;
-                        break;
-                    }
+                    Thread.Sleep(_messagePendingInterval);
                 }
+
+                while (_messageQueue.TryDequeue(out var logEvent) && messageBatch++ <= _messageBatchSize)
+                {
+                    _renderer.Render(logEvent, buffer);
+                }
+
+                _richTextBox.AppendRtf(buffer.Rtf);
+                buffer.Clear();
+                messageBatch = 0;
             }
         }
     }

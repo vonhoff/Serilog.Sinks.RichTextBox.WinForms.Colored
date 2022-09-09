@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<Authors>Vonhoff</Authors>
+		<Authors>Simon Vonhoff</Authors>
 		<Company>github.com/vonhoff</Company>
-		<Copyright>Copyright © 2022 Simon Vonhoff &amp; Contributors - Provided under the Apache License, Version 2.0.</Copyright>
+		<Copyright>Copyright © 2022 Simon Vonhoff - Provided under the Apache License, Version 2.0.</Copyright>
 		<DebugType>portable</DebugType>
 		<Description>A Serilog sink that writes log events to a WinForms RichTextBox control with colors and theme support.</Description>
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
@@ -23,7 +23,7 @@
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<TargetFramework>net6.0-windows7.0</TargetFramework>
 		<UseWindowsForms>true</UseWindowsForms>
-		<Version>1.1.0</Version>
+		<Version>1.1.1</Version>
 		<PackageReleaseNotes>Empty lines removed after adding new rich text content. </PackageReleaseNotes>
 		<SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
 		<NeutralLanguage>en-US</NeutralLanguage>
