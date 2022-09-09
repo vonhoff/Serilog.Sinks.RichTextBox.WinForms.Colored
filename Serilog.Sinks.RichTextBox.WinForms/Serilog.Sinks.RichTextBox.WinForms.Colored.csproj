@@ -24,7 +24,11 @@
 		<TargetFramework>net6.0-windows7.0</TargetFramework>
 		<UseWindowsForms>true</UseWindowsForms>
 		<Version>1.1.1</Version>
-		<PackageReleaseNotes>Empty lines removed after adding new rich text content. </PackageReleaseNotes>
+		<PackageReleaseNotes>Optimized sink message processor.
+Updated sample form, moved the most important method upwards.
+Removed redundant code.
+Updated documentation tags.
+</PackageReleaseNotes>
 		<SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
 		<NeutralLanguage>en-US</NeutralLanguage>
 	</PropertyGroup>
