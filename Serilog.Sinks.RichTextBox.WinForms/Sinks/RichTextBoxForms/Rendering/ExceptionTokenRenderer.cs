@@ -43,8 +43,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
 
             var lines = new StringReader(logEvent.Exception.ToString());
 
-            string? nextLine;
-            while ((nextLine = lines.ReadLine()) != null)
+            while (lines.ReadLine() is { } nextLine)
             {
                 var style = nextLine.StartsWith(StackFrameLinePrefix) ? StyleToken.SecondaryText : StyleToken.Text;
                 _theme.Render(richTextBox, style, nextLine);

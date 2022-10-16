@@ -40,12 +40,16 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             switch (value)
             {
                 case null:
+                {
                     Theme.Render(richTextBox, StyleToken.Null, "null");
                     break;
+                }
 
                 case string text:
+                {
                     Theme.Render(richTextBox, StyleToken.String, text);
                     return;
+                }
             }
 
             var writer = new StringWriter();
@@ -66,16 +70,22 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                     case ushort:
                     case float:
                     case double:
+                    {
                         Theme.Render(richTextBox, StyleToken.Number, writer.ToString());
                         return;
+                    }
 
                     case bool b:
+                    {
                         Theme.Render(richTextBox, StyleToken.Boolean, b.ToString());
                         return;
+                    }
 
                     case char ch:
+                    {
                         Theme.Render(richTextBox, StyleToken.Scalar, ch.ToString());
                         return;
+                    }
                 }
             }
 

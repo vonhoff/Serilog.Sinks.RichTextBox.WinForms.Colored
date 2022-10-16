@@ -24,9 +24,9 @@
 		<TargetFramework>net6.0-windows7.0</TargetFramework>
 		<UseWindowsForms>true</UseWindowsForms>
 		<Version>1.1.1</Version>
-		<PackageReleaseNotes>Optimized sink message processor.
-Removed redundant code.
-Updated documentation tags.
+		<PackageReleaseNotes>Added cancellation support for message processing thread.
+Added exception handling for dispose exceptions.
+Small refactors applied to value formatters.
 </PackageReleaseNotes>
 		<SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
 		<NeutralLanguage>en-US</NeutralLanguage>

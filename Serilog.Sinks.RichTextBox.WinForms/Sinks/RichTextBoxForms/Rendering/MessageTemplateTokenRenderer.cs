@@ -41,12 +41,16 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
                     switch (format)
                     {
                         case 'l':
+                        {
                             isLiteral = true;
                             break;
+                        }
 
                         case 'j':
+                        {
                             isJson = true;
                             break;
+                        }
                     }
                 }
             }

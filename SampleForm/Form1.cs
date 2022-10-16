@@ -36,16 +36,8 @@ namespace SampleForm
         private void Form1_Load(object sender, EventArgs e)
         {
             SelfLog.Enable(message => Trace.WriteLine($"INTERNAL ERROR: {message}"));
+            Initialize();
 
-            const string outputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}";
-
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .WriteTo.RichTextBox(richTextBox1, outputTemplate: outputTemplate)
-                .Enrich.WithThreadId()
-                .CreateLogger();
-
-            Log.Debug("Getting started");
             Log.Information("Hello {Name}", Environment.UserName);
             Log.Warning("No coins remain at position {@Position}", new { Lat = 25, Long = 134 });
 
@@ -57,6 +49,26 @@ namespace SampleForm
             {
                 Log.Error(ex, "Oops... Something went wrong");
             }
+        }
+
+        private void Initialize()
+        {
+            const string outputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}";
+
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Verbose()
+                .WriteTo.RichTextBox(richTextBox1, outputTemplate: outputTemplate)
+                .Enrich.WithThreadId()
+                .CreateLogger();
+
+            Log.Debug("Started logger.");
+            btnDispose.Enabled = true;
+        }
+
+        private static void CloseAndFlush()
+        {
+            Log.Debug("Dispose requested.");
+            Log.CloseAndFlush();
         }
 
         private void BtnClear_Click(object sender, EventArgs e)
@@ -77,6 +89,7 @@ namespace SampleForm
         private void BtnFatal_Click(object sender, EventArgs e)
         {
             Log.Fatal("Hello! Now => {Now}", DateTime.Now);
+            richTextBox1.Dispose();
         }
 
         private void BtnInformation_Click(object sender, EventArgs e)
@@ -149,6 +162,18 @@ namespace SampleForm
             };
 
             Log.Information("{@forecast}", weatherForecast);
+        }
+
+        private void BtnDispose_Click(object sender, EventArgs e)
+        {
+            CloseAndFlush();
+            btnDispose.Enabled = false;
+        }
+
+        private void BtnReset_Click(object sender, EventArgs e)
+        {
+            CloseAndFlush();
+            Initialize();
         }
     }
 }

@@ -18,7 +18,6 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.ComponentModel;
 using System.Threading;
 using System.Windows.Forms;
 using Serilog.Core;
@@ -28,14 +27,15 @@ using Serilog.Sinks.RichTextBoxForms.Rendering;
 
 namespace Serilog.Sinks.RichTextBoxForms
 {
-    internal class RichTextBoxSink : ILogEventSink
+    internal class RichTextBoxSink : ILogEventSink, IDisposable
     {
         private readonly int _messagePendingInterval;
         private readonly int _messageBatchSize;
         private readonly ConcurrentQueue<LogEvent> _messageQueue = new();
         private readonly ITokenRenderer _renderer;
         private readonly RichTextBox _richTextBox;
-
+        private readonly CancellationTokenSource _tokenSource;
+  
         public RichTextBoxSink(RichTextBox richTextBox, ITokenRenderer renderer,
             int messageBatchSize, int messagePendingInterval)
         {
@@ -43,10 +43,8 @@ namespace Serilog.Sinks.RichTextBoxForms
             _messagePendingInterval = messagePendingInterval > 0 ? messagePendingInterval : 1;
             _richTextBox = richTextBox;
             _renderer = renderer;
-
-            var messageWorker = new BackgroundWorker();
-            messageWorker.DoWork += ProcessMessages;
-            messageWorker.RunWorkerAsync();
+            _tokenSource = new CancellationTokenSource();
+            ThreadPool.QueueUserWorkItem(ProcessMessages, _tokenSource.Token);
         }
 
         public void Emit(LogEvent logEvent)
@@ -57,33 +55,45 @@ namespace Serilog.Sinks.RichTextBoxForms
         /// <summary>
         /// Processes all incoming log events until disposed.
         /// </summary>
-        /// <param name="sender">The object that raised this event.</param>
-        /// <param name="e">Data for the event handler.</param>
-        private void ProcessMessages(object? sender, DoWorkEventArgs e)
+        private void ProcessMessages(object? obj)
         {
-            if (sender == null)
-            {
-                throw new ArgumentNullException(nameof(sender));
-            }
-
+            var token = (CancellationToken)(obj ?? throw new ArgumentNullException(nameof(obj)));
             var messageBatch = 0;
             var buffer = new RichTextBox { Font = _richTextBox.Font };
-            while (true)
+            try
             {
-                while (_messageQueue.IsEmpty)
+                while (true)
                 {
-                    Thread.Sleep(_messagePendingInterval);
-                }
+                    while (_messageQueue.IsEmpty)
+                    {
+                        token.ThrowIfCancellationRequested();
+                        Thread.Sleep(_messagePendingInterval);
+                    }
 
-                while (_messageQueue.TryDequeue(out var logEvent) && messageBatch++ <= _messageBatchSize)
-                {
-                    _renderer.Render(logEvent, buffer);
-                }
+                    while (_messageQueue.TryDequeue(out var logEvent) && messageBatch++ <= _messageBatchSize)
+                    {
+                        _renderer.Render(logEvent, buffer);
+                    }
 
-                _richTextBox.AppendRtf(buffer.Rtf);
-                buffer.Clear();
-                messageBatch = 0;
+                    _richTextBox.AppendRtf(buffer.Rtf);
+                    buffer.Clear();
+                    messageBatch = 0;
+                }
             }
+            catch (ObjectDisposedException)
+            {
+                _messageQueue.Clear();
+            }
+            catch (OperationCanceledException)
+            {
+            }
+        }
+
+        public void Dispose()
+        {
+            _tokenSource.Cancel();
+            _tokenSource.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }

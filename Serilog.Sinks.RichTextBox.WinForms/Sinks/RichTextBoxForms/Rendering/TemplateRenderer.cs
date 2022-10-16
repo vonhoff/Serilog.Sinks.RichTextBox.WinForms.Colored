@@ -52,32 +52,46 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
                 switch (propertyToken.PropertyName)
                 {
                     case OutputProperties.LevelPropertyName:
+                    {
                         _renderers.Add(new LevelTokenRenderer(theme, propertyToken));
                         break;
+                    }
 
                     case OutputProperties.NewLinePropertyName:
+                    {
                         _renderers.Add(new NewLineTokenRenderer());
                         break;
+                    }
 
                     case OutputProperties.ExceptionPropertyName:
+                    {
                         _renderers.Add(new ExceptionTokenRenderer(theme));
                         break;
+                    }
 
                     case OutputProperties.MessagePropertyName:
+                    {
                         _renderers.Add(new MessageTemplateTokenRenderer(theme, propertyToken, formatProvider));
                         break;
+                    }
 
                     case OutputProperties.TimestampPropertyName:
+                    {
                         _renderers.Add(new TimestampTokenRenderer(theme, propertyToken, formatProvider));
                         break;
+                    }
 
                     case OutputProperties.PropertiesPropertyName:
+                    {
                         _renderers.Add(new PropertiesTokenRenderer(theme, propertyToken, template, formatProvider));
                         break;
+                    }
 
                     default:
+                    {
                         _renderers.Add(new EventPropertyTokenRenderer(theme, propertyToken, formatProvider));
                         break;
+                    }
                 }
             }
         }

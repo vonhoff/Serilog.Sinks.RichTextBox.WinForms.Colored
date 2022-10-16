@@ -43,6 +43,10 @@
             this.btnTaskRun = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.btnObject = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnDispose = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnReset = new System.Windows.Forms.ToolStripButton();
             this.panel1 = new System.Windows.Forms.Panel();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.toolStrip1.SuspendLayout();
@@ -65,7 +69,11 @@
             this.toolStripSeparator2,
             this.btnTaskRun,
             this.toolStripSeparator3,
-            this.btnObject});
+            this.btnObject,
+            this.toolStripSeparator4,
+            this.btnDispose,
+            this.toolStripSeparator5,
+            this.btnReset});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1358, 33);
@@ -76,7 +84,6 @@
             // 
             this.btnClear.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.btnClear.Image = ((System.Drawing.Image)(resources.GetObject("btnClear.Image")));
-            this.btnClear.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnClear.Name = "btnClear";
             this.btnClear.Padding = new System.Windows.Forms.Padding(3);
             this.btnClear.Size = new System.Drawing.Size(53, 30);
@@ -87,7 +94,6 @@
             // 
             this.btnVerbose.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.btnVerbose.Image = ((System.Drawing.Image)(resources.GetObject("btnVerbose.Image")));
-            this.btnVerbose.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnVerbose.Name = "btnVerbose";
             this.btnVerbose.Padding = new System.Windows.Forms.Padding(3);
             this.btnVerbose.Size = new System.Drawing.Size(72, 30);
@@ -98,7 +104,6 @@
             // 
             this.btnDebug.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.btnDebug.Image = ((System.Drawing.Image)(resources.GetObject("btnDebug.Image")));
-            this.btnDebug.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnDebug.Name = "btnDebug";
             this.btnDebug.Padding = new System.Windows.Forms.Padding(3);
             this.btnDebug.Size = new System.Drawing.Size(64, 30);
@@ -109,7 +114,6 @@
             // 
             this.btnInformation.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.btnInformation.Image = ((System.Drawing.Image)(resources.GetObject("btnInformation.Image")));
-            this.btnInformation.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnInformation.Name = "btnInformation";
             this.btnInformation.Padding = new System.Windows.Forms.Padding(3);
             this.btnInformation.Size = new System.Drawing.Size(97, 30);
@@ -120,7 +124,6 @@
             // 
             this.btnWarning.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.btnWarning.Image = ((System.Drawing.Image)(resources.GetObject("btnWarning.Image")));
-            this.btnWarning.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnWarning.Name = "btnWarning";
             this.btnWarning.Padding = new System.Windows.Forms.Padding(3);
             this.btnWarning.Size = new System.Drawing.Size(74, 30);
@@ -131,7 +134,6 @@
             // 
             this.btnError.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.btnError.Image = ((System.Drawing.Image)(resources.GetObject("btnError.Image")));
-            this.btnError.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnError.Name = "btnError";
             this.btnError.Padding = new System.Windows.Forms.Padding(3);
             this.btnError.Size = new System.Drawing.Size(51, 30);
@@ -142,7 +144,6 @@
             // 
             this.btnFatal.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.btnFatal.Image = ((System.Drawing.Image)(resources.GetObject("btnFatal.Image")));
-            this.btnFatal.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnFatal.Name = "btnFatal";
             this.btnFatal.Padding = new System.Windows.Forms.Padding(3);
             this.btnFatal.Size = new System.Drawing.Size(50, 30);
@@ -158,7 +159,6 @@
             // 
             this.btnParallelFor.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.btnParallelFor.Image = ((System.Drawing.Image)(resources.GetObject("btnParallelFor.Image")));
-            this.btnParallelFor.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnParallelFor.Name = "btnParallelFor";
             this.btnParallelFor.Size = new System.Drawing.Size(133, 30);
             this.btnParallelFor.Text = "Parallel.For(100*6)";
@@ -173,7 +173,6 @@
             // 
             this.btnTaskRun.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.btnTaskRun.Image = ((System.Drawing.Image)(resources.GetObject("btnTaskRun.Image")));
-            this.btnTaskRun.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnTaskRun.Name = "btnTaskRun";
             this.btnTaskRun.Padding = new System.Windows.Forms.Padding(3);
             this.btnTaskRun.Size = new System.Drawing.Size(122, 30);
@@ -189,12 +188,41 @@
             // 
             this.btnObject.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.btnObject.Image = ((System.Drawing.Image)(resources.GetObject("btnObject.Image")));
-            this.btnObject.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnObject.Name = "btnObject";
             this.btnObject.Padding = new System.Windows.Forms.Padding(3);
             this.btnObject.Size = new System.Drawing.Size(54, 30);
             this.btnObject.Text = "JSON";
             this.btnObject.Click += new System.EventHandler(this.BtnObject_Click);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 33);
+            // 
+            // btnDispose
+            // 
+            this.btnDispose.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnDispose.Image = ((System.Drawing.Image)(resources.GetObject("btnDispose.Image")));
+            this.btnDispose.Name = "btnDispose";
+            this.btnDispose.Padding = new System.Windows.Forms.Padding(3);
+            this.btnDispose.Size = new System.Drawing.Size(72, 30);
+            this.btnDispose.Text = "Dispose";
+            this.btnDispose.Click += new System.EventHandler(this.BtnDispose_Click);
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 33);
+            // 
+            // btnReset
+            // 
+            this.btnReset.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnReset.Image = ((System.Drawing.Image)(resources.GetObject("btnReset.Image")));
+            this.btnReset.Name = "btnReset";
+            this.btnReset.Padding = new System.Windows.Forms.Padding(3);
+            this.btnReset.Size = new System.Drawing.Size(55, 30);
+            this.btnReset.Text = "Reset";
+            this.btnReset.Click += new System.EventHandler(this.BtnReset_Click);
             // 
             // panel1
             // 
@@ -252,5 +280,9 @@
         private System.Windows.Forms.ToolStripButton btnTaskRun;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripButton btnObject;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripButton btnDispose;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripButton btnReset;
     }
 }

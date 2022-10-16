@@ -23,7 +23,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
     /// <summary>
     /// Styling applied for Foreground and Background colors.
     /// </summary>
-    public struct Style
+    public readonly struct Style
     {
         public Style(Color foreground)
         {

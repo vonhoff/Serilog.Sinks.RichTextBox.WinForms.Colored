@@ -95,7 +95,9 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
             switch (width)
             {
                 case < 1:
+                {
                     return string.Empty;
+                }
 
                 case > 4:
                 {
