@@ -28,12 +28,9 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
         [DllImport("user32.dll")]
         private static extern IntPtr SendMessage(IntPtr hWnd, int wMsg, int wParam, ref Point lParam);
 
-        [DllImport("user32.dll")]
-        private static extern IntPtr SendMessage(IntPtr hWnd, int wMsg, int wParam, IntPtr lParam);
-
-        private const int WM_USER = 0x400;
-        private const int EM_GETSCROLLPOS = WM_USER + 221;
-        private const int EM_SETSCROLLPOS = WM_USER + 222;
+        private const int WmUser = 0x400;
+        private const int EmGetScrollPos = WmUser + 221;
+        private const int EmSetScrollPos = WmUser + 222;
         private const string SpaceCharacter = " ";
 
         /// <summary>
@@ -58,7 +55,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
 
             if (autoScroll == false)
             {
-                SendMessage(richTextBox.Handle, EM_GETSCROLLPOS, 0, ref scrollPoint);
+                SendMessage(richTextBox.Handle, EmGetScrollPos, 0, ref scrollPoint);
             }
 
             richTextBox.SelectionStart = richTextBox.TextLength;
@@ -79,7 +76,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
             {
                 richTextBox.SelectionStart = previousSelection;
                 richTextBox.SelectionLength = previousLength;
-                SendMessage(richTextBox.Handle, EM_SETSCROLLPOS, 0, ref scrollPoint);
+                SendMessage(richTextBox.Handle, EmSetScrollPos, 0, ref scrollPoint);
             }
         }
     }
