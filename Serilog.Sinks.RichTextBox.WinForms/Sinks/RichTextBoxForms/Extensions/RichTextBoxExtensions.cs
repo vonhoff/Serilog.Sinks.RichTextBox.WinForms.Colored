@@ -69,13 +69,16 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
             richTextBox.SelectionStart = Math.Max(0, richTextBox.TextLength - 2);
             richTextBox.SelectionLength = 2;
             richTextBox.SelectedText = SpaceCharacter;
-            richTextBox.ScrollToCaret();
 
             if (autoScroll == false)
             {
                 richTextBox.SelectionStart = previousSelection;
                 richTextBox.SelectionLength = previousLength;
                 SendMessage(richTextBox.Handle, EmSetScrollPos, 0, ref scrollPoint);
+            }
+            else
+            {
+                richTextBox.ScrollToCaret();
             }
 
             richTextBox.Resume();
