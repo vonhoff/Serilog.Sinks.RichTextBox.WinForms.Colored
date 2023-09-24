@@ -57,7 +57,7 @@ namespace SampleForm
 
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
-                .WriteTo.RichTextBox(richTextBox1, outputTemplate: outputTemplate)
+                .WriteTo.RichTextBox(richTextBox1, outputTemplate: outputTemplate, autoScroll: false)
                 .Enrich.WithThreadId()
                 .CreateLogger();
 
@@ -89,7 +89,6 @@ namespace SampleForm
         private void BtnFatal_Click(object sender, EventArgs e)
         {
             Log.Fatal("Hello! Now => {Now}", DateTime.Now);
-            richTextBox1.Dispose();
         }
 
         private void BtnInformation_Click(object sender, EventArgs e)

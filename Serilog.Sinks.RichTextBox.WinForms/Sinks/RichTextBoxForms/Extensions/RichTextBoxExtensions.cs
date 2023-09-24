@@ -53,6 +53,8 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
 
             richTextBox.Suspend();
             var scrollPoint = Point.Empty;
+            var previousSelection = richTextBox.SelectionStart;
+            var previousLength = richTextBox.SelectionLength;
 
             if (autoScroll == false)
             {
@@ -70,10 +72,13 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
             richTextBox.SelectionStart = Math.Max(0, richTextBox.TextLength - 2);
             richTextBox.SelectionLength = 2;
             richTextBox.SelectedText = SpaceCharacter;
+            richTextBox.ScrollToCaret();
             richTextBox.Resume();
 
             if (autoScroll == false)
             {
+                richTextBox.SelectionStart = previousSelection;
+                richTextBox.SelectionLength = previousLength;
                 SendMessage(richTextBox.Handle, EM_SETSCROLLPOS, 0, ref scrollPoint);
             }
         }
