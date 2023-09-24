@@ -70,7 +70,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
             richTextBox.SelectionLength = 2;
             richTextBox.SelectedText = SpaceCharacter;
             richTextBox.ScrollToCaret();
-            richTextBox.Resume();
 
             if (autoScroll == false)
             {
@@ -78,6 +77,8 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
                 richTextBox.SelectionLength = previousLength;
                 SendMessage(richTextBox.Handle, EmSetScrollPos, 0, ref scrollPoint);
             }
+
+            richTextBox.Resume();
         }
     }
 }
