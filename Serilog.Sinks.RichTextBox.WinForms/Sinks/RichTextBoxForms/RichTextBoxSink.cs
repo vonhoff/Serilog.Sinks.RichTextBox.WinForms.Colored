@@ -35,14 +35,15 @@ namespace Serilog.Sinks.RichTextBoxForms
         private readonly ITokenRenderer _renderer;
         private readonly RichTextBox _richTextBox;
         private readonly CancellationTokenSource _tokenSource;
-  
-        public RichTextBoxSink(RichTextBox richTextBox, ITokenRenderer renderer,
-            int messageBatchSize, int messagePendingInterval)
+        private readonly bool _autoScroll;
+
+        public RichTextBoxSink(RichTextBox richTextBox, ITokenRenderer renderer, int messageBatchSize, int messagePendingInterval, bool autoScroll)
         {
             _messageBatchSize = messageBatchSize > 3 ? messageBatchSize : 3;
             _messagePendingInterval = messagePendingInterval > 0 ? messagePendingInterval : 1;
             _richTextBox = richTextBox;
             _renderer = renderer;
+            _autoScroll = autoScroll;
             _tokenSource = new CancellationTokenSource();
             ThreadPool.QueueUserWorkItem(ProcessMessages, _tokenSource.Token);
         }
@@ -75,7 +76,7 @@ namespace Serilog.Sinks.RichTextBoxForms
                         _renderer.Render(logEvent, buffer);
                     }
 
-                    _richTextBox.AppendRtf(buffer.Rtf);
+                    _richTextBox.AppendRtf(buffer.Rtf, _autoScroll);
                     buffer.Clear();
                     messageBatch = 0;
                 }

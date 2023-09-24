@@ -17,12 +17,23 @@
 #endregion
 
 using System;
+using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace Serilog.Sinks.RichTextBoxForms.Extensions
 {
     internal static class RichTextBoxExtensions
     {
+        [DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int wMsg, int wParam, ref Point lParam);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int wMsg, int wParam, IntPtr lParam);
+
+        private const int WM_USER = 0x400;
+        private const int EM_GETSCROLLPOS = WM_USER + 221;
+        private const int EM_SETSCROLLPOS = WM_USER + 222;
         private const string SpaceCharacter = " ";
 
         /// <summary>
@@ -31,15 +42,23 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
         /// </summary>
         /// <param name="richTextBox">The <see cref="RichTextBox"/> to update.</param>
         /// <param name="rtf">The content in rich text format (RTF).</param>
-        public static void AppendRtf(this RichTextBox richTextBox, string rtf)
+        /// <param name="autoScroll">Automatically scroll on update.</param>
+        public static void AppendRtf(this RichTextBox richTextBox, string rtf, bool autoScroll)
         {
             if (richTextBox.InvokeRequired)
             {
-                richTextBox.Invoke(() => AppendRtf(richTextBox, rtf));
+                richTextBox.Invoke(() => AppendRtf(richTextBox, rtf, autoScroll));
                 return;
             }
 
             richTextBox.Suspend();
+            var scrollPoint = Point.Empty;
+
+            if (autoScroll == false)
+            {
+                SendMessage(richTextBox.Handle, EM_GETSCROLLPOS, 0, ref scrollPoint);
+            }
+
             richTextBox.SelectionStart = richTextBox.TextLength;
 
             if (richTextBox.TextLength > 0)
@@ -51,8 +70,12 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
             richTextBox.SelectionStart = Math.Max(0, richTextBox.TextLength - 2);
             richTextBox.SelectionLength = 2;
             richTextBox.SelectedText = SpaceCharacter;
-            richTextBox.ScrollToCaret();
             richTextBox.Resume();
+
+            if (autoScroll == false)
+            {
+                SendMessage(richTextBox.Handle, EM_SETSCROLLPOS, 0, ref scrollPoint);
+            }
         }
     }
 }

@@ -46,6 +46,7 @@ namespace Serilog
         /// <param name="messageBatchSize">The maximum number of messages for a batch before printing them to the console.</param>
         /// <param name="messageDequeueInterval">Deprecated as of v1.1.1, kept for backwards compatibility.</param>
         /// <param name="messagePendingInterval">The duration of pending for incoming messages.</param>
+        /// <param name="autoScroll">Determines whether the RichTextBox should automatically scroll to the bottom when new log messages are added.</param>
         /// <returns>Configuration object allowing method chaining.</returns>
         public static LoggerConfiguration RichTextBox(
             this LoggerSinkConfiguration sinkConfiguration,
@@ -57,7 +58,8 @@ namespace Serilog
             Theme? theme = null,
             int messageBatchSize = 200,
             int messageDequeueInterval = 0,
-            int messagePendingInterval = 5)
+            int messagePendingInterval = 5,
+            bool autoScroll = true)
         {
             var appliedTheme = theme ?? ThemePresets.Dark;
             richTextBoxControl.Clear();
@@ -66,7 +68,7 @@ namespace Serilog
             richTextBoxControl.BackColor = appliedTheme.DefaultStyle.Background;
 
             var renderer = new TemplateRenderer(appliedTheme, outputTemplate, formatProvider);
-            var sink = new RichTextBoxSink(richTextBoxControl, renderer, messageBatchSize, messagePendingInterval);
+            var sink = new RichTextBoxSink(richTextBoxControl, renderer, messageBatchSize, messagePendingInterval, autoScroll);
             return sinkConfiguration.Sink(sink, minimumLogEventLevel, levelSwitch);
         }
     }
