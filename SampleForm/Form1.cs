@@ -40,7 +40,6 @@ namespace SampleForm
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
                 .WriteTo.Sink(sink, LogEventLevel.Verbose)
-                .Enrich.WithThreadId()
                 .CreateLogger();
 
             Log.Debug("Started logger.");
