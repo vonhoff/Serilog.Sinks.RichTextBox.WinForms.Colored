@@ -29,30 +29,28 @@ namespace Serilog
 {
     public static class RichTextBoxFormsSinkLoggerConfigurationExtensions
     {
-        private const string DefaultRichTextBoxOutputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
+        private const string OutputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
 
         /// <summary>
-        /// Writes log events to a <see cref="RichTextBox"/> control.
+        /// Writes log events to a RichTextBox control.
         /// </summary>
-        /// <param name="sinkConfiguration">Logger sink configuration.</param>
-        /// <param name="richTextBoxControl">The RichTextBox control to write to.</param>
-        /// <param name="minimumLogEventLevel">The minimum level for
-        /// events passed through the sink. Ignored when <paramref name="levelSwitch"/> is specified.</param>
-        /// <param name="outputTemplate">A message template describing the format used to write to the sink.
-        /// The default is <c>"[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}"</c>.</param>
-        /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
-        /// <param name="levelSwitch">A switch allowing the pass-through minimum level to be changed at runtime.</param>
-        /// <param name="theme">The theme to apply to the styled output. If not specified, uses <see cref="ThemePresets.Dark"/>.</param>
-        /// <param name="messageBatchSize">The maximum number of messages for a batch before printing them to the console.</param>
+        /// <param name="sinkConfiguration">Logger sink config.</param>
+        /// <param name="richTextBoxControl">The RichTextBox to write to.</param>
+        /// <param name="minimumLogEventLevel">Minimum event level (ignored if levelSwitch is set).</param>
+        /// <param name="outputTemplate">Message format (default: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}").</param>
+        /// <param name="formatProvider">Culture-specific formatting (null for default).</param>
+        /// <param name="levelSwitch">Allows runtime level change.</param>
+        /// <param name="theme">Output theme (default: Dark).</param>
+        /// <param name="messageBatchSize">Max messages per batch for printing.</param>
         /// <param name="messageDequeueInterval">Deprecated as of v1.1.1, kept for backwards compatibility.</param>
-        /// <param name="messagePendingInterval">The duration of pending for incoming messages.</param>
-        /// <param name="autoScroll">Determines whether the RichTextBox should automatically scroll to the bottom when new log messages are added.</param>
-        /// <returns>Configuration object allowing method chaining.</returns>
+        /// <param name="messagePendingInterval">Duration to hold incoming messages.</param>
+        /// <param name="autoScroll">Auto-scroll to bottom for new messages.</param>
+        /// <returns>Config object for chaining.</returns>
         public static LoggerConfiguration RichTextBox(
             this LoggerSinkConfiguration sinkConfiguration,
             RichTextBox richTextBoxControl,
             LogEventLevel minimumLogEventLevel = LogEventLevel.Verbose,
-            string outputTemplate = DefaultRichTextBoxOutputTemplate,
+            string outputTemplate = OutputTemplate,
             IFormatProvider? formatProvider = null,
             LoggingLevelSwitch? levelSwitch = null,
             Theme? theme = null,
@@ -62,13 +60,9 @@ namespace Serilog
             bool autoScroll = true)
         {
             var appliedTheme = theme ?? ThemePresets.Dark;
-            richTextBoxControl.Clear();
-            richTextBoxControl.ReadOnly = true;
-            richTextBoxControl.ForeColor = appliedTheme.DefaultStyle.Foreground;
-            richTextBoxControl.BackColor = appliedTheme.DefaultStyle.Background;
-
             var renderer = new TemplateRenderer(appliedTheme, outputTemplate, formatProvider);
-            var sink = new RichTextBoxSink(richTextBoxControl, renderer, messageBatchSize, messagePendingInterval, autoScroll);
+            var options = new RichTextBoxSinkOptions(appliedTheme, messageBatchSize, messagePendingInterval, autoScroll);
+            var sink = new RichTextBoxSink(richTextBoxControl, options, renderer);
             return sinkConfiguration.Sink(sink, minimumLogEventLevel, levelSwitch);
         }
     }

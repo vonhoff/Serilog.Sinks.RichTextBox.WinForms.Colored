@@ -29,237 +29,237 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.btnClear = new System.Windows.Forms.ToolStripButton();
-            this.btnVerbose = new System.Windows.Forms.ToolStripButton();
-            this.btnDebug = new System.Windows.Forms.ToolStripButton();
-            this.btnInformation = new System.Windows.Forms.ToolStripButton();
-            this.btnWarning = new System.Windows.Forms.ToolStripButton();
-            this.btnError = new System.Windows.Forms.ToolStripButton();
-            this.btnFatal = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.btnParallelFor = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.btnTaskRun = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.btnObject = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.btnDispose = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.btnReset = new System.Windows.Forms.ToolStripButton();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.toolStrip1.SuspendLayout();
-            this.panel1.SuspendLayout();
-            this.SuspendLayout();
+            toolStrip1 = new System.Windows.Forms.ToolStrip();
+            btnClear = new System.Windows.Forms.ToolStripButton();
+            btnVerbose = new System.Windows.Forms.ToolStripButton();
+            btnDebug = new System.Windows.Forms.ToolStripButton();
+            btnInformation = new System.Windows.Forms.ToolStripButton();
+            btnWarning = new System.Windows.Forms.ToolStripButton();
+            btnError = new System.Windows.Forms.ToolStripButton();
+            btnFatal = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            btnParallelFor = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            btnTaskRun = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            btnObject = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            btnDispose = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            btnReset = new System.Windows.Forms.ToolStripButton();
+            panel1 = new System.Windows.Forms.Panel();
+            richTextBox1 = new System.Windows.Forms.RichTextBox();
+            toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            btnAutoScroll = new System.Windows.Forms.ToolStripButton();
+            toolStrip1.SuspendLayout();
+            panel1.SuspendLayout();
+            SuspendLayout();
             // 
             // toolStrip1
             // 
-            this.toolStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnClear,
-            this.btnVerbose,
-            this.btnDebug,
-            this.btnInformation,
-            this.btnWarning,
-            this.btnError,
-            this.btnFatal,
-            this.toolStripSeparator1,
-            this.btnParallelFor,
-            this.toolStripSeparator2,
-            this.btnTaskRun,
-            this.toolStripSeparator3,
-            this.btnObject,
-            this.toolStripSeparator4,
-            this.btnDispose,
-            this.toolStripSeparator5,
-            this.btnReset});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1358, 33);
-            this.toolStrip1.TabIndex = 0;
-            this.toolStrip1.Text = "toolStrip1";
+            toolStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { btnClear, btnVerbose, btnDebug, btnInformation, btnWarning, btnError, btnFatal, toolStripSeparator1, btnParallelFor, toolStripSeparator2, btnTaskRun, toolStripSeparator3, btnObject, toolStripSeparator4, btnDispose, toolStripSeparator5, btnReset, toolStripSeparator6, btnAutoScroll });
+            toolStrip1.Location = new System.Drawing.Point(0, 0);
+            toolStrip1.Name = "toolStrip1";
+            toolStrip1.Size = new System.Drawing.Size(1358, 33);
+            toolStrip1.TabIndex = 0;
+            toolStrip1.Text = "toolStrip1";
             // 
             // btnClear
             // 
-            this.btnClear.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.btnClear.Image = ((System.Drawing.Image)(resources.GetObject("btnClear.Image")));
-            this.btnClear.Name = "btnClear";
-            this.btnClear.Padding = new System.Windows.Forms.Padding(3);
-            this.btnClear.Size = new System.Drawing.Size(53, 30);
-            this.btnClear.Text = "Clear";
-            this.btnClear.Click += new System.EventHandler(this.BtnClear_Click);
+            btnClear.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            btnClear.Image = (System.Drawing.Image)resources.GetObject("btnClear.Image");
+            btnClear.Name = "btnClear";
+            btnClear.Padding = new System.Windows.Forms.Padding(3);
+            btnClear.Size = new System.Drawing.Size(53, 30);
+            btnClear.Text = "Clear";
+            btnClear.Click += BtnClear_Click;
             // 
             // btnVerbose
             // 
-            this.btnVerbose.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.btnVerbose.Image = ((System.Drawing.Image)(resources.GetObject("btnVerbose.Image")));
-            this.btnVerbose.Name = "btnVerbose";
-            this.btnVerbose.Padding = new System.Windows.Forms.Padding(3);
-            this.btnVerbose.Size = new System.Drawing.Size(72, 30);
-            this.btnVerbose.Text = "Verbose";
-            this.btnVerbose.Click += new System.EventHandler(this.BtnVerbose_Click);
+            btnVerbose.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            btnVerbose.Image = (System.Drawing.Image)resources.GetObject("btnVerbose.Image");
+            btnVerbose.Name = "btnVerbose";
+            btnVerbose.Padding = new System.Windows.Forms.Padding(3);
+            btnVerbose.Size = new System.Drawing.Size(72, 30);
+            btnVerbose.Text = "Verbose";
+            btnVerbose.Click += BtnVerbose_Click;
             // 
             // btnDebug
             // 
-            this.btnDebug.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.btnDebug.Image = ((System.Drawing.Image)(resources.GetObject("btnDebug.Image")));
-            this.btnDebug.Name = "btnDebug";
-            this.btnDebug.Padding = new System.Windows.Forms.Padding(3);
-            this.btnDebug.Size = new System.Drawing.Size(64, 30);
-            this.btnDebug.Text = "Debug";
-            this.btnDebug.Click += new System.EventHandler(this.BtnDebug_Click);
+            btnDebug.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            btnDebug.Image = (System.Drawing.Image)resources.GetObject("btnDebug.Image");
+            btnDebug.Name = "btnDebug";
+            btnDebug.Padding = new System.Windows.Forms.Padding(3);
+            btnDebug.Size = new System.Drawing.Size(64, 30);
+            btnDebug.Text = "Debug";
+            btnDebug.Click += BtnDebug_Click;
             // 
             // btnInformation
             // 
-            this.btnInformation.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.btnInformation.Image = ((System.Drawing.Image)(resources.GetObject("btnInformation.Image")));
-            this.btnInformation.Name = "btnInformation";
-            this.btnInformation.Padding = new System.Windows.Forms.Padding(3);
-            this.btnInformation.Size = new System.Drawing.Size(97, 30);
-            this.btnInformation.Text = "Information";
-            this.btnInformation.Click += new System.EventHandler(this.BtnInformation_Click);
+            btnInformation.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            btnInformation.Image = (System.Drawing.Image)resources.GetObject("btnInformation.Image");
+            btnInformation.Name = "btnInformation";
+            btnInformation.Padding = new System.Windows.Forms.Padding(3);
+            btnInformation.Size = new System.Drawing.Size(97, 30);
+            btnInformation.Text = "Information";
+            btnInformation.Click += BtnInformation_Click;
             // 
             // btnWarning
             // 
-            this.btnWarning.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.btnWarning.Image = ((System.Drawing.Image)(resources.GetObject("btnWarning.Image")));
-            this.btnWarning.Name = "btnWarning";
-            this.btnWarning.Padding = new System.Windows.Forms.Padding(3);
-            this.btnWarning.Size = new System.Drawing.Size(74, 30);
-            this.btnWarning.Text = "Warning";
-            this.btnWarning.Click += new System.EventHandler(this.BtnWarning_Click);
+            btnWarning.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            btnWarning.Image = (System.Drawing.Image)resources.GetObject("btnWarning.Image");
+            btnWarning.Name = "btnWarning";
+            btnWarning.Padding = new System.Windows.Forms.Padding(3);
+            btnWarning.Size = new System.Drawing.Size(74, 30);
+            btnWarning.Text = "Warning";
+            btnWarning.Click += BtnWarning_Click;
             // 
             // btnError
             // 
-            this.btnError.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.btnError.Image = ((System.Drawing.Image)(resources.GetObject("btnError.Image")));
-            this.btnError.Name = "btnError";
-            this.btnError.Padding = new System.Windows.Forms.Padding(3);
-            this.btnError.Size = new System.Drawing.Size(51, 30);
-            this.btnError.Text = "Error";
-            this.btnError.Click += new System.EventHandler(this.BtnError_Click);
+            btnError.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            btnError.Image = (System.Drawing.Image)resources.GetObject("btnError.Image");
+            btnError.Name = "btnError";
+            btnError.Padding = new System.Windows.Forms.Padding(3);
+            btnError.Size = new System.Drawing.Size(51, 30);
+            btnError.Text = "Error";
+            btnError.Click += BtnError_Click;
             // 
             // btnFatal
             // 
-            this.btnFatal.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.btnFatal.Image = ((System.Drawing.Image)(resources.GetObject("btnFatal.Image")));
-            this.btnFatal.Name = "btnFatal";
-            this.btnFatal.Padding = new System.Windows.Forms.Padding(3);
-            this.btnFatal.Size = new System.Drawing.Size(50, 30);
-            this.btnFatal.Text = "Fatal";
-            this.btnFatal.Click += new System.EventHandler(this.BtnFatal_Click);
+            btnFatal.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            btnFatal.Image = (System.Drawing.Image)resources.GetObject("btnFatal.Image");
+            btnFatal.Name = "btnFatal";
+            btnFatal.Padding = new System.Windows.Forms.Padding(3);
+            btnFatal.Size = new System.Drawing.Size(50, 30);
+            btnFatal.Text = "Fatal";
+            btnFatal.Click += BtnFatal_Click;
             // 
             // toolStripSeparator1
             // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 33);
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new System.Drawing.Size(6, 33);
             // 
             // btnParallelFor
             // 
-            this.btnParallelFor.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.btnParallelFor.Image = ((System.Drawing.Image)(resources.GetObject("btnParallelFor.Image")));
-            this.btnParallelFor.Name = "btnParallelFor";
-            this.btnParallelFor.Size = new System.Drawing.Size(133, 30);
-            this.btnParallelFor.Text = "Parallel.For(100*6)";
-            this.btnParallelFor.Click += new System.EventHandler(this.BtnParallelFor_Click);
+            btnParallelFor.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            btnParallelFor.Image = (System.Drawing.Image)resources.GetObject("btnParallelFor.Image");
+            btnParallelFor.Name = "btnParallelFor";
+            btnParallelFor.Size = new System.Drawing.Size(133, 30);
+            btnParallelFor.Text = "Parallel.For(100*6)";
+            btnParallelFor.Click += BtnParallelFor_Click;
             // 
             // toolStripSeparator2
             // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 33);
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new System.Drawing.Size(6, 33);
             // 
             // btnTaskRun
             // 
-            this.btnTaskRun.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.btnTaskRun.Image = ((System.Drawing.Image)(resources.GetObject("btnTaskRun.Image")));
-            this.btnTaskRun.Name = "btnTaskRun";
-            this.btnTaskRun.Padding = new System.Windows.Forms.Padding(3);
-            this.btnTaskRun.Size = new System.Drawing.Size(122, 30);
-            this.btnTaskRun.Text = "Task.Run(100*6)";
-            this.btnTaskRun.Click += new System.EventHandler(this.BtnTaskRun_Click);
+            btnTaskRun.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            btnTaskRun.Image = (System.Drawing.Image)resources.GetObject("btnTaskRun.Image");
+            btnTaskRun.Name = "btnTaskRun";
+            btnTaskRun.Padding = new System.Windows.Forms.Padding(3);
+            btnTaskRun.Size = new System.Drawing.Size(122, 30);
+            btnTaskRun.Text = "Task.Run(100*6)";
+            btnTaskRun.Click += BtnTaskRun_Click;
             // 
             // toolStripSeparator3
             // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 33);
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new System.Drawing.Size(6, 33);
             // 
             // btnObject
             // 
-            this.btnObject.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.btnObject.Image = ((System.Drawing.Image)(resources.GetObject("btnObject.Image")));
-            this.btnObject.Name = "btnObject";
-            this.btnObject.Padding = new System.Windows.Forms.Padding(3);
-            this.btnObject.Size = new System.Drawing.Size(54, 30);
-            this.btnObject.Text = "JSON";
-            this.btnObject.Click += new System.EventHandler(this.BtnObject_Click);
+            btnObject.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            btnObject.Image = (System.Drawing.Image)resources.GetObject("btnObject.Image");
+            btnObject.Name = "btnObject";
+            btnObject.Padding = new System.Windows.Forms.Padding(3);
+            btnObject.Size = new System.Drawing.Size(54, 30);
+            btnObject.Text = "JSON";
+            btnObject.Click += BtnObject_Click;
             // 
             // toolStripSeparator4
             // 
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 33);
+            toolStripSeparator4.Name = "toolStripSeparator4";
+            toolStripSeparator4.Size = new System.Drawing.Size(6, 33);
             // 
             // btnDispose
             // 
-            this.btnDispose.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.btnDispose.Image = ((System.Drawing.Image)(resources.GetObject("btnDispose.Image")));
-            this.btnDispose.Name = "btnDispose";
-            this.btnDispose.Padding = new System.Windows.Forms.Padding(3);
-            this.btnDispose.Size = new System.Drawing.Size(72, 30);
-            this.btnDispose.Text = "Dispose";
-            this.btnDispose.Click += new System.EventHandler(this.BtnDispose_Click);
+            btnDispose.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            btnDispose.Image = (System.Drawing.Image)resources.GetObject("btnDispose.Image");
+            btnDispose.Name = "btnDispose";
+            btnDispose.Padding = new System.Windows.Forms.Padding(3);
+            btnDispose.Size = new System.Drawing.Size(72, 30);
+            btnDispose.Text = "Dispose";
+            btnDispose.Click += BtnDispose_Click;
             // 
             // toolStripSeparator5
             // 
-            this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 33);
+            toolStripSeparator5.Name = "toolStripSeparator5";
+            toolStripSeparator5.Size = new System.Drawing.Size(6, 33);
             // 
             // btnReset
             // 
-            this.btnReset.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.btnReset.Image = ((System.Drawing.Image)(resources.GetObject("btnReset.Image")));
-            this.btnReset.Name = "btnReset";
-            this.btnReset.Padding = new System.Windows.Forms.Padding(3);
-            this.btnReset.Size = new System.Drawing.Size(55, 30);
-            this.btnReset.Text = "Reset";
-            this.btnReset.Click += new System.EventHandler(this.BtnReset_Click);
+            btnReset.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            btnReset.Image = (System.Drawing.Image)resources.GetObject("btnReset.Image");
+            btnReset.Name = "btnReset";
+            btnReset.Padding = new System.Windows.Forms.Padding(3);
+            btnReset.Size = new System.Drawing.Size(55, 30);
+            btnReset.Text = "Reset";
+            btnReset.Click += BtnReset_Click;
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.richTextBox1);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 33);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1358, 610);
-            this.panel1.TabIndex = 1;
+            panel1.Controls.Add(richTextBox1);
+            panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            panel1.Location = new System.Drawing.Point(0, 33);
+            panel1.Name = "panel1";
+            panel1.Size = new System.Drawing.Size(1358, 610);
+            panel1.TabIndex = 1;
             // 
             // richTextBox1
             // 
-            this.richTextBox1.BackColor = System.Drawing.SystemColors.Window;
-            this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBox1.Font = new System.Drawing.Font("Consolas", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.richTextBox1.Location = new System.Drawing.Point(0, 0);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(1358, 610);
-            this.richTextBox1.TabIndex = 0;
-            this.richTextBox1.Text = "";
+            richTextBox1.BackColor = System.Drawing.SystemColors.Window;
+            richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            richTextBox1.Font = new System.Drawing.Font("Consolas", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            richTextBox1.Location = new System.Drawing.Point(0, 0);
+            richTextBox1.Name = "richTextBox1";
+            richTextBox1.Size = new System.Drawing.Size(1358, 610);
+            richTextBox1.TabIndex = 0;
+            richTextBox1.Text = "";
+            // 
+            // toolStripSeparator6
+            // 
+            toolStripSeparator6.Name = "toolStripSeparator6";
+            toolStripSeparator6.Size = new System.Drawing.Size(6, 33);
+            // 
+            // btnAutoScroll
+            // 
+            btnAutoScroll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            btnAutoScroll.Image = (System.Drawing.Image)resources.GetObject("btnAutoScroll.Image");
+            btnAutoScroll.ImageTransparentColor = System.Drawing.Color.Magenta;
+            btnAutoScroll.Name = "btnAutoScroll";
+            btnAutoScroll.Padding = new System.Windows.Forms.Padding(3);
+            btnAutoScroll.Size = new System.Drawing.Size(146, 30);
+            btnAutoScroll.Text = "Disable Auto Scroll";
+            btnAutoScroll.Click += BtnAutoScroll_Click;
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1358, 643);
-            this.Controls.Add(this.panel1);
-            this.Controls.Add(this.toolStrip1);
-            this.Name = "Form1";
-            this.Text = "Form1";
-            this.Load += new System.EventHandler(this.Form1_Load);
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
-            this.panel1.ResumeLayout(false);
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(1358, 643);
+            Controls.Add(panel1);
+            Controls.Add(toolStrip1);
+            Name = "Form1";
+            Text = "Form1";
+            Load += Form1_Load;
+            toolStrip1.ResumeLayout(false);
+            toolStrip1.PerformLayout();
+            panel1.ResumeLayout(false);
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -284,5 +284,7 @@
         private System.Windows.Forms.ToolStripButton btnDispose;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripButton btnReset;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+        private System.Windows.Forms.ToolStripButton btnAutoScroll;
     }
 }
