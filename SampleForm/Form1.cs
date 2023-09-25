@@ -23,11 +23,29 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Serilog;
 using Serilog.Debugging;
+using Serilog.Events;
+using Serilog.Sinks.RichTextBoxForms;
+using Serilog.Sinks.RichTextBoxForms.Themes;
 
 namespace SampleForm
 {
     public partial class Form1 : Form
     {
+        private RichTextBoxSinkOptions _options = null!;
+
+        private void Initialize()
+        {
+            _options = new RichTextBoxSinkOptions(ThemePresets.Dark, 200, 5, true);
+            var sink = new RichTextBoxSink(richTextBox1, _options);
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Verbose()
+                .WriteTo.Sink(sink, LogEventLevel.Verbose)
+                .CreateLogger();
+
+            Log.Debug("Started logger.");
+            btnDispose.Enabled = true;
+        }
+
         public Form1()
         {
             InitializeComponent();
@@ -49,20 +67,6 @@ namespace SampleForm
             {
                 Log.Error(ex, "Oops... Something went wrong");
             }
-        }
-
-        private void Initialize()
-        {
-            const string outputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}";
-
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .WriteTo.RichTextBox(richTextBox1, outputTemplate: outputTemplate)
-                .Enrich.WithThreadId()
-                .CreateLogger();
-
-            Log.Debug("Started logger.");
-            btnDispose.Enabled = true;
         }
 
         private static void CloseAndFlush()
@@ -89,7 +93,6 @@ namespace SampleForm
         private void BtnFatal_Click(object sender, EventArgs e)
         {
             Log.Fatal("Hello! Now => {Now}", DateTime.Now);
-            richTextBox1.Dispose();
         }
 
         private void BtnInformation_Click(object sender, EventArgs e)
@@ -174,6 +177,12 @@ namespace SampleForm
         {
             CloseAndFlush();
             Initialize();
+        }
+
+        private void BtnAutoScroll_Click(object sender, EventArgs e)
+        {
+            _options.AutoScroll = !_options.AutoScroll;
+            btnAutoScroll.Text = _options.AutoScroll ? "Disable Auto Scroll" : "Enable Auto Scroll";
         }
     }
 }

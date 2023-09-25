@@ -27,24 +27,34 @@ using Serilog.Sinks.RichTextBoxForms.Rendering;
 
 namespace Serilog.Sinks.RichTextBoxForms
 {
-    internal class RichTextBoxSink : ILogEventSink, IDisposable
+    public class RichTextBoxSink : ILogEventSink, IDisposable
     {
-        private readonly int _messagePendingInterval;
-        private readonly int _messageBatchSize;
         private readonly ConcurrentQueue<LogEvent> _messageQueue = new();
+        private readonly RichTextBoxSinkOptions _options;
         private readonly ITokenRenderer _renderer;
         private readonly RichTextBox _richTextBox;
         private readonly CancellationTokenSource _tokenSource;
-  
-        public RichTextBoxSink(RichTextBox richTextBox, ITokenRenderer renderer,
-            int messageBatchSize, int messagePendingInterval)
+
+        public RichTextBoxSink(RichTextBox richTextBox, RichTextBoxSinkOptions options, ITokenRenderer? renderer = null)
         {
-            _messageBatchSize = messageBatchSize > 3 ? messageBatchSize : 3;
-            _messagePendingInterval = messagePendingInterval > 0 ? messagePendingInterval : 1;
+            _options = options;
             _richTextBox = richTextBox;
-            _renderer = renderer;
+            _renderer = renderer ?? new TemplateRenderer(options.AppliedTheme);
             _tokenSource = new CancellationTokenSource();
+
+            richTextBox.Clear();
+            richTextBox.ReadOnly = true;
+            richTextBox.ForeColor = options.AppliedTheme.DefaultStyle.Foreground;
+            richTextBox.BackColor = options.AppliedTheme.DefaultStyle.Background;
+
             ThreadPool.QueueUserWorkItem(ProcessMessages, _tokenSource.Token);
+        }
+
+        public void Dispose()
+        {
+            _tokenSource.Cancel();
+            _tokenSource.Dispose();
+            GC.SuppressFinalize(this);
         }
 
         public void Emit(LogEvent logEvent)
@@ -52,9 +62,6 @@ namespace Serilog.Sinks.RichTextBoxForms
             _messageQueue.Enqueue(logEvent);
         }
 
-        /// <summary>
-        /// Processes all incoming log events until disposed.
-        /// </summary>
         private void ProcessMessages(object? obj)
         {
             var token = (CancellationToken)(obj ?? throw new ArgumentNullException(nameof(obj)));
@@ -67,15 +74,15 @@ namespace Serilog.Sinks.RichTextBoxForms
                     while (_messageQueue.IsEmpty)
                     {
                         token.ThrowIfCancellationRequested();
-                        Thread.Sleep(_messagePendingInterval);
+                        Thread.Sleep(_options.MessagePendingInterval);
                     }
 
-                    while (_messageQueue.TryDequeue(out var logEvent) && messageBatch++ <= _messageBatchSize)
+                    while (_messageQueue.TryDequeue(out var logEvent) && messageBatch++ <= _options.MessageBatchSize)
                     {
                         _renderer.Render(logEvent, buffer);
                     }
 
-                    _richTextBox.AppendRtf(buffer.Rtf);
+                    _richTextBox.AppendRtf(buffer.Rtf, _options.AutoScroll);
                     buffer.Clear();
                     messageBatch = 0;
                 }
@@ -87,13 +94,6 @@ namespace Serilog.Sinks.RichTextBoxForms
             catch (OperationCanceledException)
             {
             }
-        }
-
-        public void Dispose()
-        {
-            _tokenSource.Cancel();
-            _tokenSource.Dispose();
-            GC.SuppressFinalize(this);
         }
     }
 }

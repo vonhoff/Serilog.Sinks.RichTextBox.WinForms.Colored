@@ -28,9 +28,10 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
     public class TemplateRenderer : ITokenRenderer
     {
+        private const string OutputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
         private readonly List<ITokenRenderer> _renderers;
 
-        public TemplateRenderer(Theme theme, string outputTemplate, IFormatProvider? formatProvider = null)
+        public TemplateRenderer(Theme theme, string outputTemplate = OutputTemplate, IFormatProvider? formatProvider = null)
         {
             if (string.IsNullOrEmpty(outputTemplate))
             {

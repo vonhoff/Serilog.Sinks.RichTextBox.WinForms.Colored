@@ -3,12 +3,9 @@
 [![Latest version](https://img.shields.io/nuget/v/Serilog.Sinks.RichTextBox.WinForms.Colored.svg)](https://www.nuget.org/packages/Serilog.Sinks.RichTextBox.WinForms.Colored)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-
 A [Serilog](https://serilog.net) sink that writes log events to any WinForms [RichTextBox](https://docs.microsoft.com/en-us/dotnet/desktop/winforms/controls/richtextbox-control-overview-windows-forms) control with coloring and custom theme support. 
 
-This sink is based on the [WPF RichTextBox Sink](https://github.com/serilog-contrib/serilog-sinks-richtextbox) by C. Augusto Proiete.
-
-![Screenshot of Serilog.Sinks.RichTextBox.WinForms.Colored in action](Assets/screenshot.png)
+![Screenshot of Serilog.Sinks.RichTextBox.WinForms.Colored in action](https://raw.githubusercontent.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored/config_autoscroll/Assets/screenshot.png)
 
 ## Getting started
 
@@ -32,11 +29,15 @@ private void InitializeComponent()
 }
 ```
 
-Then enable the sink using `WriteTo.RichTextBox()`:
+Then enable the sink using the following snippet:
 
 ```csharp
+var options = new RichTextBoxSinkOptions(ThemePresets.Dark, 200, 5, true);
+var sink = new RichTextBoxSink(richTextBox1, _options);
 Log.Logger = new LoggerConfiguration()
-    .WriteTo.RichTextBox(richTextBox1)
+    .MinimumLevel.Verbose()
+    .WriteTo.Sink(sink, LogEventLevel.Verbose)
+    .Enrich.WithThreadId()
     .CreateLogger();
 
 Log.Information("Hello, world!");
@@ -50,30 +51,29 @@ Log events will be written to the `RichTextBox` control:
 
 ### Themes
 
-Themes can be specified when configuring the sink:
-
-```csharp
-    .WriteTo.RichTextBox(richTextBox1, theme: ThemePresets.Dark)
-```
-
 The following built-in themes are available at this time:
 
 | Theme                               | Description
-| ----------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `ThemePresets.Dark`                 | Styled to replicate the default theme of  _Serilog.Sinks.Console_; **This is the default when no theme is specified** |
-| `ThemePresets.Light`                | A theme with a light background and contrasting colors.                                                               |
+| ----------------------------------- | ----------------------------------------------------------------- |
+| `ThemePresets.Dark`                 | Styled to replicate the default theme of  _Serilog.Sinks.Console_ |
+| `ThemePresets.Light`                | A theme with a light background and contrasting colors.           |
 
 ### Output templates
 
-The format of events to the RichTextBox can be modified using the `outputTemplate` configuration parameter:
+The format of events to the RichTextBox can be modified by providing a template renderer to the sink.
 
 ```csharp
-    .WriteTo.RichTextBox(richTextBox1,
-        outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
+var options = new RichTextBoxSinkOptions(ThemePresets.Dark, 200, 5, true);
+var renderer = new TemplateRenderer(ThemePresets.Dark, "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}");
+var sink = new RichTextBoxSink(richTextBox1, _options, renderer);
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Verbose()
+    .WriteTo.Sink(sink, LogEventLevel.Verbose)
+    .Enrich.WithThreadId()
+    .CreateLogger();
+
+Log.Information("Hello, world!");
 ```
-
-The default template, shown in the example above, uses built-in properties like `Timestamp` and `Level`. Properties from events, including those attached using [enrichers](https://github.com/serilog/serilog/wiki/Enrichment), can also appear in the output template.
-
 ---
 
 _Copyright &copy; 2022 Simon Vonhoff & Contributors - Provided under the [Apache License, Version 2.0](LICENSE)._
