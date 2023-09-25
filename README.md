@@ -6,8 +6,6 @@
 
 A [Serilog](https://serilog.net) sink that writes log events to any WinForms [RichTextBox](https://docs.microsoft.com/en-us/dotnet/desktop/winforms/controls/richtextbox-control-overview-windows-forms) control with coloring and custom theme support. 
 
-This sink is based on the [WPF RichTextBox Sink](https://github.com/serilog-contrib/serilog-sinks-richtextbox) by C. Augusto Proiete.
-
 ![Screenshot of Serilog.Sinks.RichTextBox.WinForms.Colored in action](Assets/screenshot.png)
 
 ## Getting started
