@@ -74,6 +74,6 @@ Log.Logger = new LoggerConfiguration()
 
 Log.Information("Hello, world!");
 ```
----
+## License
 
-_Copyright &copy; 2022 Simon Vonhoff & Contributors - Provided under the [Apache License, Version 2.0](LICENSE)._
+This project is licensed under the terms of the [Apache License, Version 2.0](LICENSE).
