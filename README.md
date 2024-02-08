@@ -74,6 +74,15 @@ Log.Logger = new LoggerConfiguration()
 
 Log.Information("Hello, world!");
 ```
+
+## Acknowledgments
+
+If you find this sink useful in your projects, consider leaving a star! ⭐
+
+## Contribution
+
+If you want to contribute to this project, you are welcome to submit pull requests or report issues on GitHub.
+
 ## License
 
 This project is licensed under the terms of the [Apache License, Version 2.0](LICENSE).
