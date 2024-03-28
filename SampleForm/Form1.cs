@@ -35,7 +35,7 @@ namespace SampleForm
 
         private void Initialize()
         {
-            _options = new RichTextBoxSinkOptions(ThemePresets.Dark, 200, 5, true);
+            _options = new RichTextBoxSinkOptions(ThemePresets.Dark, 200, 5, true, 0);
             var sink = new RichTextBoxSink(richTextBox1, _options);
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
@@ -183,6 +183,14 @@ namespace SampleForm
         {
             _options.AutoScroll = !_options.AutoScroll;
             btnAutoScroll.Text = _options.AutoScroll ? "Disable Auto Scroll" : "Enable Auto Scroll";
+        }
+
+        private void BtnLogLimit_Click(object sender, EventArgs e)
+        {
+            bool limitEnabled = _options.MaxLogLines != int.MaxValue;
+            _options.MaxLogLines = limitEnabled ? 0 : 5;
+            btnLogLimit.Text = limitEnabled ? "Enable Line Limit" : "Disable Line Limit";
+            Log.Information("Log line limit set to {lineLimit}", _options.MaxLogLines == int.MaxValue ? "Maximum" : _options.MaxLogLines);
         }
     }
 }

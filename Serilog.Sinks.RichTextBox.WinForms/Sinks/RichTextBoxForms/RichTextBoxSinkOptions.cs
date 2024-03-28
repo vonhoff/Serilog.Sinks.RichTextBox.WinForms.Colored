@@ -16,6 +16,7 @@
 
 #endregion
 
+using System.Numerics;
 using Serilog.Sinks.RichTextBoxForms.Themes;
 
 namespace Serilog.Sinks.RichTextBoxForms
@@ -24,6 +25,7 @@ namespace Serilog.Sinks.RichTextBoxForms
     {
         private int _messageBatchSize;
         private int _messagePendingInterval;
+        private int _maxLogLines;
 
         /// <summary>
         /// Settings for the RichTextBoxSink
@@ -32,13 +34,15 @@ namespace Serilog.Sinks.RichTextBoxForms
         /// <param name="messageBatchSize">Max messages per batch for printing.</param>
         /// <param name="messagePendingInterval">Duration to hold incoming messages.</param>
         /// <param name="autoScroll">Auto-scroll to bottom for new messages.</param>
+        /// <param name="maxLogLines">Maximum number of lines to keep.</param>
         public RichTextBoxSinkOptions(Theme appliedTheme, int messageBatchSize, int messagePendingInterval,
-            bool autoScroll)
+            bool autoScroll, int maxLogLines)
         {
             MessageBatchSize = messageBatchSize;
             MessagePendingInterval = messagePendingInterval;
             AutoScroll = autoScroll;
             AppliedTheme = appliedTheme;
+            MaxLogLines = maxLogLines;
         }
 
         public bool AutoScroll { get; set; }
@@ -55,6 +59,12 @@ namespace Serilog.Sinks.RichTextBoxForms
         {
             get => _messagePendingInterval;
             set => _messagePendingInterval = value > 0 ? value : 1;
+        }
+
+        public int MaxLogLines
+        {
+            get => _maxLogLines;
+            set => _maxLogLines = value > 0 ?  value: int.MaxValue;
         }
     }
 }
