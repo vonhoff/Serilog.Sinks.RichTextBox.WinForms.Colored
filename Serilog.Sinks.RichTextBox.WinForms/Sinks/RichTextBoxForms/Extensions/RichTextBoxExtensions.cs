@@ -33,6 +33,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
         private const int EmGetScrollPos = WmUser + 221;
         private const int EmSetScrollPos = WmUser + 222;
         private const string SpaceCharacter = " ";
+        private const string NullCharacter = "\0";
 
         /// <summary>
         /// Updates the content of a <see cref="RichTextBox"/>
@@ -75,8 +76,8 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
             if (richTextBox.Lines.Length > maxLogLines)
             {
                 richTextBox.SelectionStart = 0;
-                richTextBox.SelectionLength = richTextBox.Lines[..^maxLogLines].Select(x => x.Length + 1).Sum();
-                richTextBox.SelectedText = SpaceCharacter;
+                richTextBox.SelectionLength = richTextBox.Lines[..^maxLogLines].Sum(line => line.Length + 1);
+                richTextBox.SelectedText = NullCharacter;
             }
 
             if (autoScroll == false)
