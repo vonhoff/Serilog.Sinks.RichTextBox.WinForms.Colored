@@ -23,13 +23,11 @@
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<TargetFramework>net6.0-windows7.0</TargetFramework>
 		<UseWindowsForms>true</UseWindowsForms>
-		<Version>1.2.0</Version>
-		<PackageReleaseNotes>
-			Added new logger configuration.
-			Added auto-scroll property.
-			Exposed the RichTextBox sink class.
-			Updated documentation.
-		</PackageReleaseNotes>
+		<Version>1.2.1</Version>
+		<PackageReleaseNotes>- Added maximum log lines
+
+See repository for more information:
+https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored</PackageReleaseNotes>
 		<SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
 		<NeutralLanguage>en-US</NeutralLanguage>
 	</PropertyGroup>
