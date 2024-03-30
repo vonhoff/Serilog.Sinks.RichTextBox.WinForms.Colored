@@ -20,6 +20,7 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace Serilog.Sinks.RichTextBoxForms.Extensions
 {
@@ -32,6 +33,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
         private const int EmGetScrollPos = WmUser + 221;
         private const int EmSetScrollPos = WmUser + 222;
         private const string SpaceCharacter = " ";
+        private const string NullCharacter = "\0";
 
         /// <summary>
         /// Updates the content of a <see cref="RichTextBox"/>
@@ -40,11 +42,12 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
         /// <param name="richTextBox">The <see cref="RichTextBox"/> to update.</param>
         /// <param name="rtf">The content in rich text format (RTF).</param>
         /// <param name="autoScroll">Automatically scroll on update.</param>
-        public static void AppendRtf(this RichTextBox richTextBox, string rtf, bool autoScroll)
+        /// <param name="maxLogLines">Maximum number of lines to keep.</param>
+        public static void AppendRtf(this RichTextBox richTextBox, string rtf, bool autoScroll, int maxLogLines)
         {
             if (richTextBox.InvokeRequired)
             {
-                richTextBox.Invoke(() => AppendRtf(richTextBox, rtf, autoScroll));
+                richTextBox.Invoke(() => AppendRtf(richTextBox, rtf, autoScroll, maxLogLines));
                 return;
             }
 
@@ -69,6 +72,13 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
             richTextBox.SelectionStart = Math.Max(0, richTextBox.TextLength - 2);
             richTextBox.SelectionLength = 2;
             richTextBox.SelectedText = SpaceCharacter;
+
+            if (richTextBox.Lines.Length > maxLogLines)
+            {
+                richTextBox.SelectionStart = 0;
+                richTextBox.SelectionLength = richTextBox.Lines[..^maxLogLines].Sum(line => line.Length + 1);
+                richTextBox.SelectedText = NullCharacter;
+            }
 
             if (autoScroll == false)
             {

@@ -51,6 +51,8 @@
             richTextBox1 = new System.Windows.Forms.RichTextBox();
             toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             btnAutoScroll = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
+            btnLogLimit = new System.Windows.Forms.ToolStripButton();
             toolStrip1.SuspendLayout();
             panel1.SuspendLayout();
             SuspendLayout();
@@ -58,7 +60,7 @@
             // toolStrip1
             // 
             toolStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { btnClear, btnVerbose, btnDebug, btnInformation, btnWarning, btnError, btnFatal, toolStripSeparator1, btnParallelFor, toolStripSeparator2, btnTaskRun, toolStripSeparator3, btnObject, toolStripSeparator4, btnDispose, toolStripSeparator5, btnReset, toolStripSeparator6, btnAutoScroll });
+            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { btnClear, btnVerbose, btnDebug, btnInformation, btnWarning, btnError, btnFatal, toolStripSeparator1, btnParallelFor, toolStripSeparator2, btnTaskRun, toolStripSeparator3, btnObject, toolStripSeparator4, btnDispose, toolStripSeparator5, btnReset, toolStripSeparator6, btnAutoScroll, toolStripSeparator7, btnLogLimit });
             toolStrip1.Location = new System.Drawing.Point(0, 0);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new System.Drawing.Size(1358, 33);
@@ -245,6 +247,22 @@
             btnAutoScroll.Text = "Disable Auto Scroll";
             btnAutoScroll.Click += BtnAutoScroll_Click;
             // 
+            // toolStripSeparator7
+            // 
+            toolStripSeparator7.Name = "toolStripSeparator7";
+            toolStripSeparator7.Size = new System.Drawing.Size(6, 33);
+            //
+            // btnLogLimit
+            //
+            btnLogLimit.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            btnLogLimit.Image = (System.Drawing.Image)resources.GetObject("btnLogLimit.Image");
+            btnLogLimit.ImageTransparentColor = System.Drawing.Color.Magenta;
+            btnLogLimit.Name = "btnLogLimit";
+            btnLogLimit.Padding = new System.Windows.Forms.Padding(3);
+            btnLogLimit.Size = new System.Drawing.Size(146, 30);
+            btnLogLimit.Text = "Enable Line Limit";
+            btnLogLimit.Click += BtnLogLimit_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -286,5 +304,7 @@
         private System.Windows.Forms.ToolStripButton btnReset;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripButton btnAutoScroll;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
+        private System.Windows.Forms.ToolStripButton btnLogLimit;
     }
 }
