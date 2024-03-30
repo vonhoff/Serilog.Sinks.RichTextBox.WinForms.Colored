@@ -18,9 +18,9 @@
 
 using System;
 using System.Drawing;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Linq;
 
 namespace Serilog.Sinks.RichTextBoxForms.Extensions
 {
@@ -68,8 +68,11 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
             }
 
             richTextBox.SelectedRtf = rtf;
-            richTextBox.SelectionStart = Math.Max(0, richTextBox.TextLength - 2);
-            richTextBox.SelectionLength = 2;
+
+            var newLineLength = Environment.NewLine.Length;
+            var selectionStart = richTextBox.TextLength - newLineLength;
+            richTextBox.SelectionStart = selectionStart >= 0 ? selectionStart : 0;
+            richTextBox.SelectionLength = newLineLength;
             richTextBox.SelectedText = NullCharacter;
 
             if (richTextBox.Lines.Length > maxLogLines)
