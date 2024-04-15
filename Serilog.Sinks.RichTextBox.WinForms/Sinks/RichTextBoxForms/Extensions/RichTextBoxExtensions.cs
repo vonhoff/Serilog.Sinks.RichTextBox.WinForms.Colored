@@ -80,9 +80,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
                 richTextBox.SelectionStart = 0;
                 richTextBox.SelectionLength = richTextBox.Lines[..^maxLogLines].Sum(line => line.Length + 1);
                 richTextBox.SelectedText = NullCharacter;
-                scrollPoint = Point.Empty;
-                previousSelection = 0;
-                previousLength = 0;
             }
 
             if (autoScroll == false)
