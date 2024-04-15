@@ -188,7 +188,7 @@ namespace SampleForm
         private void BtnLogLimit_Click(object sender, EventArgs e)
         {
             bool limitEnabled = _options.MaxLogLines != int.MaxValue;
-            _options.MaxLogLines = limitEnabled ? 0 : 5;
+            _options.MaxLogLines = limitEnabled ? 0 : 35;
             btnLogLimit.Text = limitEnabled ? "Enable Line Limit" : "Disable Line Limit";
             Log.Information("Log line limit set to {lineLimit}", _options.MaxLogLines == int.MaxValue ? "Maximum" : _options.MaxLogLines);
         }

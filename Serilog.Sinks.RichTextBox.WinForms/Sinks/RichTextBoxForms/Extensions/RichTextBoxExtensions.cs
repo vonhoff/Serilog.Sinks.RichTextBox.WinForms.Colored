@@ -93,6 +93,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
             }
             else
             {
+                richTextBox.SelectionStart = richTextBox.TextLength;
                 richTextBox.ScrollToCaret();
             }
 
