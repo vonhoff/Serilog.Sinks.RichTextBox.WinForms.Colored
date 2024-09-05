@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<Authors>Simon Vonhoff</Authors>
@@ -21,10 +21,10 @@
 		<RepositoryUrl>https://github.com/vonhoff/serilog-sinks-richtextbox-winforms.git</RepositoryUrl>
 		<RootNamespace>Serilog</RootNamespace>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-		<TargetFramework>net6.0-windows7.0</TargetFramework>
+		<TargetFrameworks>net6.0-windows7.0;net8.0-windows</TargetFrameworks>
 		<UseWindowsForms>true</UseWindowsForms>
-		<Version>1.2.2</Version>
-		<PackageReleaseNotes>- Fixed bug with autoscrolling and line limit.
+		<Version>2.0.0</Version>
+		<PackageReleaseNotes>- Added support for .NET8.
 
 See repository for more information:
 https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored</PackageReleaseNotes>
