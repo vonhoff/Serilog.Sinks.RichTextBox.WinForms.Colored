@@ -20,6 +20,7 @@ using System;
 using System.IO;
 using System.Windows.Forms;
 using Serilog.Events;
+using Serilog.Sinks.RichTextBoxForms.Extensions;
 using Serilog.Sinks.RichTextBoxForms.Themes;
 
 namespace Serilog.Sinks.RichTextBoxForms.Formatting

@@ -27,18 +27,19 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
     public class LevelTokenRenderer : ITokenRenderer
     {
-        private static readonly IReadOnlyDictionary<LogEventLevel, StyleToken> Levels = new Dictionary<LogEventLevel, StyleToken>
-        {
-            { LogEventLevel.Verbose, StyleToken.LevelVerbose },
-            { LogEventLevel.Debug, StyleToken.LevelDebug },
-            { LogEventLevel.Information, StyleToken.LevelInformation },
-            { LogEventLevel.Warning, StyleToken.LevelWarning },
-            { LogEventLevel.Error, StyleToken.LevelError },
-            { LogEventLevel.Fatal, StyleToken.LevelFatal },
-        };
+        private static readonly IReadOnlyDictionary<LogEventLevel, StyleToken> Levels =
+            new Dictionary<LogEventLevel, StyleToken>
+            {
+                { LogEventLevel.Verbose, StyleToken.LevelVerbose },
+                { LogEventLevel.Debug, StyleToken.LevelDebug },
+                { LogEventLevel.Information, StyleToken.LevelInformation },
+                { LogEventLevel.Warning, StyleToken.LevelWarning },
+                { LogEventLevel.Error, StyleToken.LevelError },
+                { LogEventLevel.Fatal, StyleToken.LevelFatal },
+            };
 
         private static readonly string[][] LowercaseLevelMap =
-                {
+        {
             new[] { "v", "vb", "vrb", "verb" },
             new[] { "d", "de", "dbg", "dbug" },
             new[] { "i", "in", "inf", "info" },
@@ -76,9 +77,9 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
             _levelToken = levelToken;
         }
 
-        public static string GetLevelMoniker(LogEventLevel value, string? format = null)
+        public static string GetLevelMoniker(LogEventLevel value, string format = "")
         {
-            if (format is null || (format.Length != 2 && format.Length != 3))
+            if (format.Length != 2 && format.Length != 3)
             {
                 return TextCasing.Format(value.ToString(), format);
             }
@@ -92,38 +93,39 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
                 width += format[2] - '0';
             }
 
-            switch (width)
+            if (width < 1)
             {
-                case < 1:
+                return string.Empty;
+            }
+
+            if (width > 4)
+            {
+                var stringValue = value.ToString();
+                if (stringValue.Length > width)
                 {
-                    return string.Empty;
+                    stringValue = stringValue.Substring(0, width);
                 }
 
-                case > 4:
-                {
-                    var stringValue = value.ToString();
-                    if (stringValue.Length > width)
-                    {
-                        stringValue = stringValue[..width];
-                    }
-
-                    return TextCasing.Format(stringValue);
-                }
+                return TextCasing.Format(stringValue);
             }
 
             var index = (int)value;
-            if (index is < 0 or > (int)LogEventLevel.Fatal)
+            if (index < 0 || index > (int)LogEventLevel.Fatal)
             {
                 return TextCasing.Format(value.ToString(), format);
             }
 
-            return format[0] switch
+            switch (format[0])
             {
-                'w' => LowercaseLevelMap[index][width - 1],
-                'u' => UppercaseLevelMap[index][width - 1],
-                't' => TitleCaseLevelMap[index][width - 1],
-                _ => TextCasing.Format(value.ToString(), format)
-            };
+                case 'w':
+                    return LowercaseLevelMap[index][width - 1];
+                case 'u':
+                    return UppercaseLevelMap[index][width - 1];
+                case 't':
+                    return TitleCaseLevelMap[index][width - 1];
+                default:
+                    return TextCasing.Format(value.ToString(), format);
+            }
         }
 
         public void Render(LogEvent logEvent, RichTextBox richTextBox)

@@ -82,14 +82,13 @@ namespace Serilog.Sinks.RichTextBoxForms
                         _renderer.Render(logEvent, buffer);
                     }
 
-                    _richTextBox.AppendRtf(buffer.Rtf, _options.AutoScroll, _options.MaxLogLines);
+                    _richTextBox.AppendRtf(buffer.Rtf!, _options.AutoScroll, _options.MaxLogLines);
                     buffer.Clear();
                     messageBatch = 0;
                 }
             }
             catch (ObjectDisposedException)
             {
-                _messageQueue.Clear();
             }
             catch (OperationCanceledException)
             {

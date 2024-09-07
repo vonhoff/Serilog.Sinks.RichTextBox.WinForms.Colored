@@ -21,6 +21,7 @@ using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
 using Serilog.Events;
+using Serilog.Sinks.RichTextBoxForms.Extensions;
 using Serilog.Sinks.RichTextBoxForms.Themes;
 
 namespace Serilog.Sinks.RichTextBoxForms.Formatting
@@ -233,7 +234,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                 {
                     anyEscaped = true;
 
-                    output.Write(str[cleanSegmentStart..i]);
+                    output.Write(str.Substring(cleanSegmentStart, i - cleanSegmentStart));
                     cleanSegmentStart = i + 1;
 
                     switch (c)
@@ -282,7 +283,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             {
                 if (cleanSegmentStart != str.Length)
                 {
-                    output.Write(str[cleanSegmentStart..]);
+                    output.Write(str.Substring(cleanSegmentStart));
                 }
             }
             else
