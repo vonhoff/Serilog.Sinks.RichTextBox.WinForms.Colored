@@ -16,6 +16,9 @@
 
 #endregion
 
+using System;
+using Serilog.Core;
+using Serilog.Events;
 using Serilog.Sinks.RichTextBoxForms.Themes;
 
 namespace Serilog.Sinks.RichTextBoxForms
@@ -25,6 +28,7 @@ namespace Serilog.Sinks.RichTextBoxForms
         private int _messageBatchSize;
         private int _messagePendingInterval;
         private int _maxLogLines;
+        private const string DefaultOutputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
 
         /// <summary>
         /// Settings for the RichTextBoxSink
@@ -34,14 +38,24 @@ namespace Serilog.Sinks.RichTextBoxForms
         /// <param name="messagePendingInterval">Duration to hold incoming messages.</param>
         /// <param name="autoScroll">Auto-scroll to bottom for new messages.</param>
         /// <param name="maxLogLines">Maximum number of lines to keep.</param>
-        public RichTextBoxSinkOptions(Theme appliedTheme, int messageBatchSize, int messagePendingInterval,
-            bool autoScroll, int maxLogLines)
+        /// <param name="outputTemplate">Message format (default: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}").</param>
+        /// <param name="formatProvider">Culture-specific formatting (null for default).</param>
+        public RichTextBoxSinkOptions(
+            Theme appliedTheme,
+            int messageBatchSize,
+            int messagePendingInterval,
+            bool autoScroll,
+            int maxLogLines,
+            string outputTemplate = DefaultOutputTemplate,
+            IFormatProvider? formatProvider = null)
         {
             MessageBatchSize = messageBatchSize;
             MessagePendingInterval = messagePendingInterval;
             AutoScroll = autoScroll;
             AppliedTheme = appliedTheme;
             MaxLogLines = maxLogLines;
+            OutputTemplate = outputTemplate;
+            FormatProvider = formatProvider;
         }
 
         public bool AutoScroll { get; set; }
@@ -63,7 +77,11 @@ namespace Serilog.Sinks.RichTextBoxForms
         public int MaxLogLines
         {
             get => _maxLogLines;
-            set => _maxLogLines = value > 0 ?  value: int.MaxValue;
+            set => _maxLogLines = value > 0 ? value : int.MaxValue;
         }
+
+        public string OutputTemplate { get; set; }
+
+        public IFormatProvider? FormatProvider { get; set; }
     }
 }

@@ -26,6 +26,7 @@
 		<Version>2.0.0</Version>
 		<PackageReleaseNotes>- Added support for .NET 8
 - Added support for .NET Framework 4.5.2
+- Added outputTemplate and formatProvider to options
 
 See repository for more information:
 https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored</PackageReleaseNotes>
