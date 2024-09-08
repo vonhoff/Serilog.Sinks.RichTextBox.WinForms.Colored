@@ -39,7 +39,8 @@ namespace Serilog.Sinks.RichTextBoxForms
         {
             _options = options;
             _richTextBox = richTextBox;
-            _renderer = renderer ?? new TemplateRenderer(options.AppliedTheme);
+            _renderer = renderer ??
+                        new TemplateRenderer(options.AppliedTheme, options.OutputTemplate, options.FormatProvider);
             _tokenSource = new CancellationTokenSource();
 
             richTextBox.Clear();
@@ -82,14 +83,13 @@ namespace Serilog.Sinks.RichTextBoxForms
                         _renderer.Render(logEvent, buffer);
                     }
 
-                    _richTextBox.AppendRtf(buffer.Rtf, _options.AutoScroll, _options.MaxLogLines);
+                    _richTextBox.AppendRtf(buffer.Rtf!, _options.AutoScroll, _options.MaxLogLines);
                     buffer.Clear();
                     messageBatch = 0;
                 }
             }
             catch (ObjectDisposedException)
             {
-                _messageQueue.Clear();
             }
             catch (OperationCanceledException)
             {

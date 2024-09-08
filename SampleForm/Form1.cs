@@ -31,7 +31,7 @@ namespace SampleForm
 {
     public partial class Form1 : Form
     {
-        private RichTextBoxSinkOptions _options = null!;
+        private RichTextBoxSinkOptions? _options;
 
         private void Initialize()
         {
@@ -102,17 +102,17 @@ namespace SampleForm
 
         private void BtnParallelFor_Click(object sender, EventArgs e)
         {
-            Parallel.For(1, 101, stepNumber =>
+            for (var stepNumber = 1; stepNumber <= 100; stepNumber++)
             {
-                var stepName = FormattableString.Invariant($"Step {stepNumber:000}");
+                var stepName = $"Step {stepNumber:000}";
 
-                Log.Verbose("Hello from Parallel.For({StepName}) Verbose", stepName);
-                Log.Debug("Hello from Parallel.For({StepName}) Debug", stepName);
-                Log.Information("Hello from Parallel.For({StepName}) Information", stepName);
-                Log.Warning("Hello from Parallel.For({StepName}) Warning", stepName);
-                Log.Error("Hello from Parallel.For({StepName}) Error", stepName);
-                Log.Fatal("Hello from Parallel.For({StepName}) Fatal", stepName);
-            });
+                Log.Verbose("Hello from For({StepName}) Verbose", stepName);
+                Log.Debug("Hello from For({StepName}) Debug", stepName);
+                Log.Information("Hello from For({StepName}) Information", stepName);
+                Log.Warning("Hello from For({StepName}) Warning", stepName);
+                Log.Error("Hello from For({StepName}) Error", stepName);
+                Log.Fatal("Hello from For({StepName}) Fatal", stepName);
+            }
         }
 
         private async void BtnTaskRun_Click(object sender, EventArgs e)
@@ -124,7 +124,7 @@ namespace SampleForm
                 var stepNumber = i;
                 var task = Task.Run(() =>
                 {
-                    var stepName = FormattableString.Invariant($"Step {stepNumber:000}");
+                    var stepName = $"Step {stepNumber:000}";
 
                     Log.Verbose("Hello from Task.Run({StepName}) Verbose", stepName);
                     Log.Debug("Hello from Task.Run({StepName}) Debug", stepName);
@@ -181,16 +181,26 @@ namespace SampleForm
 
         private void BtnAutoScroll_Click(object sender, EventArgs e)
         {
+            if (_options == null)
+            {
+                return;
+            }
+
             _options.AutoScroll = !_options.AutoScroll;
             btnAutoScroll.Text = _options.AutoScroll ? "Disable Auto Scroll" : "Enable Auto Scroll";
         }
 
         private void BtnLogLimit_Click(object sender, EventArgs e)
         {
-            bool limitEnabled = _options.MaxLogLines != int.MaxValue;
+            if (_options == null)
+            {
+                return;
+            }
+
+            var limitEnabled = _options.MaxLogLines != int.MaxValue;
             _options.MaxLogLines = limitEnabled ? 0 : 35;
             btnLogLimit.Text = limitEnabled ? "Enable Line Limit" : "Disable Line Limit";
-            Log.Information("Log line limit set to {lineLimit}", _options.MaxLogLines == int.MaxValue ? "Maximum" : _options.MaxLogLines);
+            Log.Information("Log line limit set to {lineLimit}", _options.MaxLogLines == int.MaxValue ? "Maximum" : _options.MaxLogLines.ToString());
         }
     }
 }

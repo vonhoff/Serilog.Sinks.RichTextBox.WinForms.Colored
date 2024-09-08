@@ -1,24 +1,40 @@
 # Serilog.Sinks.RichTextBox.WinForms.Colored
+
 [![NuGet Downloads](https://img.shields.io/nuget/dt/Serilog.Sinks.RichTextBox.WinForms.Colored.svg)](https://www.nuget.org/packages/Serilog.Sinks.RichTextBox.WinForms.Colored)
 [![Latest version](https://img.shields.io/nuget/v/Serilog.Sinks.RichTextBox.WinForms.Colored.svg)](https://www.nuget.org/packages/Serilog.Sinks.RichTextBox.WinForms.Colored)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-A [Serilog](https://serilog.net) sink that writes log events to any WinForms [RichTextBox](https://docs.microsoft.com/en-us/dotnet/desktop/winforms/controls/richtextbox-control-overview-windows-forms) control with coloring and custom theme support. 
+A [Serilog](https://github.com/serilog/serilog) sink that writes log events to
+a [WinForms RichTextBox](https://docs.microsoft.com/en-us/dotnet/desktop/winforms/controls/richtextbox-control-overview-windows-forms)
+with support for coloring and custom themes.
 
-![Screenshot of Serilog.Sinks.RichTextBox.WinForms.Colored in action](Assets/screenshot.png)
+![Screenshot of Serilog.Sinks.RichTextBox.WinForms.Colored in action](https://raw.githubusercontent.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored/main/Assets/screenshot.png)
 
-## Getting started
+## Features
 
-Install the [Serilog.Sinks.RichTextBox.WinForms.Colored](https://www.nuget.org/packages/Serilog.Sinks.RichTextBox.WinForms.Colored) package from NuGet:
+- Write log events to a WinForms RichTextBox control
+- Customizable themes (Dark and Light presets available)
+- Configurable output templates
+- Auto-scrolling option
+- Line limit control
+
+## Installation
+
+Install the package from NuGet:
 
 ```powershell
 Install-Package Serilog.Sinks.RichTextBox.WinForms.Colored
 ```
 
-Declare your [RichTextBox](https://docs.microsoft.com/en-us/dotnet/desktop/winforms/controls/richtextbox-control-overview-windows-forms) control and give it a name that you can reference it from the code-behind. e.g.:
+## Usage
+
+### Basic Setup
+
+Declare your RichTextBox control:
 
 ```csharp
 private System.Windows.Forms.RichTextBox richTextBox1;
+
 private void InitializeComponent()
 {
     this.richTextBox1.BackColor = System.Drawing.SystemColors.Window;
@@ -29,60 +45,52 @@ private void InitializeComponent()
 }
 ```
 
-Then enable the sink using the following snippet:
+Configure the logger:
 
 ```csharp
-var options = new RichTextBoxSinkOptions(ThemePresets.Dark, 200, 5, true);
-var sink = new RichTextBoxSink(richTextBox1, _options);
 Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Verbose()
-    .WriteTo.Sink(sink, LogEventLevel.Verbose)
-    .Enrich.WithThreadId()
+    .WriteTo.RichTextBox(richTextBox1)
     .CreateLogger();
 
 Log.Information("Hello, world!");
 ```
 
-Log events will be written to the `RichTextBox` control:
+### Advanced Configuration
 
-```
-[11:54:36 INF] Hello, world!
+You can customize the sink using various parameters from the RichTextBox extension method:
+
+```csharp
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.RichTextBox(
+        richTextBoxControl: richTextBox1,
+        minimumLogEventLevel: LogEventLevel.Debug,
+        outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}",
+        theme: ThemePresets.Light,
+        messageBatchSize: 100,
+        messagePendingInterval: 10,
+        autoScroll: true,
+        maxLogLines: 1000)
+    .CreateLogger();
+
 ```
 
 ### Themes
 
-The following built-in themes are available at this time:
+Available built-in themes:
 
-| Theme                               | Description
-| ----------------------------------- | ----------------------------------------------------------------- |
-| `ThemePresets.Dark`                 | Styled to replicate the default theme of  _Serilog.Sinks.Console_ |
-| `ThemePresets.Light`                | A theme with a light background and contrasting colors.           |
+| Theme                | Description                                             |
+|----------------------|---------------------------------------------------------|
+| `ThemePresets.Dark`  | Similar to the default theme of _Serilog.Sinks.Console_ |
+| `ThemePresets.Light` | Light background with contrasting colors                |
 
-### Output templates
+## Support and Contribute
 
-The format of events to the RichTextBox can be modified by providing a template renderer to the sink.
+If you find value in this project, there are several ways you can contribute:
 
-```csharp
-var options = new RichTextBoxSinkOptions(ThemePresets.Dark, 200, 5, true);
-var renderer = new TemplateRenderer(ThemePresets.Dark, "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}");
-var sink = new RichTextBoxSink(richTextBox1, _options, renderer);
-Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Verbose()
-    .WriteTo.Sink(sink, LogEventLevel.Verbose)
-    .Enrich.WithThreadId()
-    .CreateLogger();
-
-Log.Information("Hello, world!");
-```
-
-## Acknowledgments
-
-If you find this sink useful in your projects, consider leaving a star! ⭐
-
-## Contribution
-
-If you want to contribute to this project, you are welcome to submit pull requests or report issues on GitHub.
+- **Become a Sponsor:** Support the project through [GitHub Sponsors](https://github.com/sponsors/vonhoff).
+- **Show Your Appreciation:** Give the [project](https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored) a star on GitHub.
+- **Contribute:** Improve documentation, report bugs, or submit pull requests.
 
 ## License
 
-This project is licensed under the terms of the [Apache License, Version 2.0](LICENSE).
+This project is licensed under the [Apache License, Version 2.0](LICENSE).

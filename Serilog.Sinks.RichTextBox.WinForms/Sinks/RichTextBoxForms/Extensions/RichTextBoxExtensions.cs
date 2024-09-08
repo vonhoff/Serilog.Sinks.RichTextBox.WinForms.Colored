@@ -18,7 +18,6 @@
 
 using System;
 using System.Drawing;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -46,7 +45,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
         {
             if (richTextBox.InvokeRequired)
             {
-                richTextBox.Invoke(() => AppendRtf(richTextBox, rtf, autoScroll, maxLogLines));
+                richTextBox.Invoke(new Action(() => AppendRtf(richTextBox, rtf, autoScroll, maxLogLines)));
                 return;
             }
 
@@ -77,8 +76,16 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
 
             if (richTextBox.Lines.Length > maxLogLines)
             {
+                var linesToRemove = richTextBox.Lines.Length - maxLogLines;
+                var charsToRemove = 0;
+
+                for (var i = 0; i < linesToRemove; i++)
+                {
+                    charsToRemove += richTextBox.Lines[i].Length + 1;
+                }
+
                 richTextBox.SelectionStart = 0;
-                richTextBox.SelectionLength = richTextBox.Lines[..^maxLogLines].Sum(line => line.Length + 1);
+                richTextBox.SelectionLength = charsToRemove;
                 richTextBox.SelectedText = NullCharacter;
                 previousSelection = 0;
                 previousLength = 0;

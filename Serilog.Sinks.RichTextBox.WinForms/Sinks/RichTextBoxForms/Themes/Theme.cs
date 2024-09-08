@@ -31,7 +31,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
             _styles = styles;
         }
 
-        public Style DefaultStyle { get; init; }
+        public Style DefaultStyle { get; set; }
 
         /// <summary>
         /// Appends text to the provided <see cref="RichTextBox"/> with styling applied.

@@ -62,7 +62,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
         private static void InvokeWindowProcedure(in Control control, ref Message message)
         {
             var window = NativeWindow.FromHandle(control.Handle);
-            window.DefWndProc(ref message);
+            window?.DefWndProc(ref message);
         }
     }
 }
