@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFrameworks>net452;net6.0-windows;net8.0-windows</TargetFrameworks>
+		<TargetFrameworks>net452</TargetFrameworks>
 		<Nullable>enable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
 		<LangVersion>9.0</LangVersion>
