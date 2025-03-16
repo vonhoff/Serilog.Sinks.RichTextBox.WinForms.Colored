@@ -23,13 +23,12 @@
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<TargetFrameworks>net452;net6.0-windows;net8.0-windows</TargetFrameworks>
 		<UseWindowsForms>true</UseWindowsForms>
-		<Version>2.0.0</Version>
-		<PackageReleaseNotes>- Added support for .NET 8
-- Added support for .NET Framework 4.5.2
-- Added outputTemplate and formatProvider to options
+		<Version>2.0.1</Version>
+		<PackageReleaseNotes>
+			- Added support for all Serilog 2.x versions.
 
-See repository for more information:
-https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored</PackageReleaseNotes>
+			See repository for more information:
+			https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored</PackageReleaseNotes>
 		<SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<LangVersion>9.0</LangVersion>
@@ -63,7 +62,7 @@ https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored</PackageRe
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Serilog" Version="2.10.0" />
+		<PackageReference Include="Serilog" Version="2.*" />
 	</ItemGroup>
 
 </Project>
