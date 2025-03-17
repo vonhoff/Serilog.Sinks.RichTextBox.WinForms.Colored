@@ -29,14 +29,17 @@ namespace Serilog.Sinks.RichTextBoxForms
         private int _messagePendingInterval;
 
         /// <summary>
-        /// Settings for the RichTextBoxSink
+        ///     Settings for the RichTextBoxSink
         /// </summary>
         /// <param name="appliedTheme">The theme to apply.</param>
         /// <param name="messageBatchSize">Max messages per batch for printing.</param>
         /// <param name="messagePendingInterval">Duration to hold incoming messages.</param>
         /// <param name="autoScroll">Auto-scroll to bottom for new messages.</param>
         /// <param name="maxLogLines">Maximum number of lines to keep.</param>
-        /// <param name="outputTemplate">Message format (default: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}").</param>
+        /// <param name="outputTemplate">
+        ///     Message format (default: "[{Timestamp:HH:mm:ss} {Level:u3}]
+        ///     {Message:lj}{NewLine}{Exception}").
+        /// </param>
         /// <param name="formatProvider">Culture-specific formatting (null for default).</param>
         public RichTextBoxSinkOptions(
             Theme appliedTheme,

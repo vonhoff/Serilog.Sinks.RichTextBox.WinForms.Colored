@@ -34,10 +34,10 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
         private static extern IntPtr SendMessage(IntPtr hWnd, int wMsg, int wParam, ref Point lParam);
 
         /// <summary>
-        /// Updates the content of a <see cref="RichTextBox"/>
-        /// with the specified content in rich text format (RTF).
+        ///     Updates the content of a <see cref="RichTextBox" />
+        ///     with the specified content in rich text format (RTF).
         /// </summary>
-        /// <param name="richTextBox">The <see cref="RichTextBox"/> to update.</param>
+        /// <param name="richTextBox">The <see cref="RichTextBox" /> to update.</param>
         /// <param name="rtf">The content in rich text format (RTF).</param>
         /// <param name="autoScroll">Automatically scroll on update.</param>
         /// <param name="maxLogLines">Maximum number of lines to keep.</param>

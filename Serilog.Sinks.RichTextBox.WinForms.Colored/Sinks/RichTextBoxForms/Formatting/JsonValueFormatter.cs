@@ -216,7 +216,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
         }
 
         /// <summary>
-        /// Write a valid JSON string literal, escaping as necessary.
+        ///     Write a valid JSON string literal, escaping as necessary.
         /// </summary>
         /// <param name="str">The string value to write.</param>
         public static string GetQuotedJsonString(string str)

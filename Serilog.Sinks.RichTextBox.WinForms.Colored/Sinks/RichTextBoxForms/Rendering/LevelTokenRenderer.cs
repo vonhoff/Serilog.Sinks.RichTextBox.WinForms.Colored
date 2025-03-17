@@ -35,7 +35,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
                 { LogEventLevel.Information, StyleToken.LevelInformation },
                 { LogEventLevel.Warning, StyleToken.LevelWarning },
                 { LogEventLevel.Error, StyleToken.LevelError },
-                { LogEventLevel.Fatal, StyleToken.LevelFatal },
+                { LogEventLevel.Fatal, StyleToken.LevelFatal }
             };
 
         private static readonly string[][] LowercaseLevelMap =
@@ -45,7 +45,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
             new[] { "i", "in", "inf", "info" },
             new[] { "w", "wn", "wrn", "warn" },
             new[] { "e", "er", "err", "eror" },
-            new[] { "f", "fa", "ftl", "fatl" },
+            new[] { "f", "fa", "ftl", "fatl" }
         };
 
         private static readonly string[][] TitleCaseLevelMap =
@@ -55,7 +55,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
             new[] { "I", "In", "Inf", "Info" },
             new[] { "W", "Wn", "Wrn", "Warn" },
             new[] { "E", "Er", "Err", "Eror" },
-            new[] { "F", "Fa", "Ftl", "Fatl" },
+            new[] { "F", "Fa", "Ftl", "Fatl" }
         };
 
         private static readonly string[][] UppercaseLevelMap =
@@ -65,7 +65,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
             new[] { "I", "IN", "INF", "INFO" },
             new[] { "W", "WN", "WRN", "WARN" },
             new[] { "E", "ER", "ERR", "EROR" },
-            new[] { "F", "FA", "FTL", "FATL" },
+            new[] { "F", "FA", "FTL", "FATL" }
         };
 
         private readonly PropertyToken _levelToken;

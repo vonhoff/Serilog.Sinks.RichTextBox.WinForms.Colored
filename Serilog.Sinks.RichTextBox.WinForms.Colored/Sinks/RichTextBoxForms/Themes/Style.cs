@@ -21,7 +21,7 @@ using System.Drawing;
 namespace Serilog.Sinks.RichTextBoxForms.Themes
 {
     /// <summary>
-    /// Styling applied for Foreground and Background colors.
+    ///     Styling applied for Foreground and Background colors.
     /// </summary>
     public readonly struct Style
     {
@@ -38,12 +38,12 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
         }
 
         /// <summary>
-        /// The background color to apply
+        ///     The background color to apply
         /// </summary>
         public Color Background { get; }
 
         /// <summary>
-        /// The foreground color to apply.
+        ///     The foreground color to apply.
         /// </summary>
         public Color Foreground { get; }
     }

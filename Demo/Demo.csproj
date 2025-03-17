@@ -1,21 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<OutputType>WinExe</OutputType>
-		<TargetFrameworks>net462;net8.0-windows</TargetFrameworks>
-		<Nullable>enable</Nullable>
-		<UseWindowsForms>true</UseWindowsForms>
-		<LangVersion>9.0</LangVersion>
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFrameworks>net462;net8.0-windows</TargetFrameworks>
+        <Nullable>enable</Nullable>
+        <UseWindowsForms>true</UseWindowsForms>
+        <LangVersion>9.0</LangVersion>
         <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
-	</PropertyGroup>
+    </PropertyGroup>
 
-	<ItemGroup>
-	  <PackageReference Include="Serilog" Version="4.2.0" />
+    <ItemGroup>
+        <PackageReference Include="Serilog" Version="4.2.0"/>
         <PackageReference Include="System.Resources.Extensions" Version="7.0.0"/>
-	</ItemGroup>
+    </ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\Serilog.Sinks.RichTextBox.WinForms.Colored\Serilog.Sinks.RichTextBox.WinForms.Colored.csproj"/>
-	</ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Serilog.Sinks.RichTextBox.WinForms.Colored\Serilog.Sinks.RichTextBox.WinForms.Colored.csproj"/>
+    </ItemGroup>
 
 </Project>

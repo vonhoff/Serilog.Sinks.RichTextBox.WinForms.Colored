@@ -24,7 +24,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
     public static class ThemePresets
     {
         /// <summary>
-        /// A theme with a light background and contrasting colors.
+        ///     A theme with a light background and contrasting colors.
         /// </summary>
         public static Theme Light { get; } = new(
             new Style(Color.Black, Color.White),
@@ -49,7 +49,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
             });
 
         /// <summary>
-        /// Styled to replicate the default theme of Serilog.Sinks.Console; This is the default when no theme is specified.
+        ///     Styled to replicate the default theme of Serilog.Sinks.Console; This is the default when no theme is specified.
         /// </summary>
         public static Theme Dark { get; } = new(
             new Style(Color.White, Color.Black),

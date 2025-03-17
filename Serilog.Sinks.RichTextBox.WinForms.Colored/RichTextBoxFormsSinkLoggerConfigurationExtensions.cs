@@ -32,12 +32,15 @@ namespace Serilog
         private const string OutputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
 
         /// <summary>
-        /// Writes log events to a RichTextBox control.
+        ///     Writes log events to a RichTextBox control.
         /// </summary>
         /// <param name="sinkConfiguration">Logger sink config.</param>
         /// <param name="richTextBoxControl">The RichTextBox to write to.</param>
         /// <param name="minimumLogEventLevel">Minimum event level (ignored if levelSwitch is set).</param>
-        /// <param name="outputTemplate">Message format (default: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}").</param>
+        /// <param name="outputTemplate">
+        ///     Message format (default: "[{Timestamp:HH:mm:ss} {Level:u3}]
+        ///     {Message:lj}{NewLine}{Exception}").
+        /// </param>
         /// <param name="formatProvider">Culture-specific formatting (null for default).</param>
         /// <param name="levelSwitch">Allows runtime level change.</param>
         /// <param name="theme">Output theme (default: Dark).</param>

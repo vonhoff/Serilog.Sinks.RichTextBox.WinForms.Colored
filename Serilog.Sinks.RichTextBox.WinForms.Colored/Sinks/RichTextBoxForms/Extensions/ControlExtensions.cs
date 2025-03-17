@@ -22,15 +22,15 @@ using System.Windows.Forms;
 namespace Serilog.Sinks.RichTextBoxForms.Extensions
 {
     /// <summary>
-    /// Control extensions to suspend or resume painting methods.
-    /// Based on: https://stackoverflow.com/a/6302008
+    ///     Control extensions to suspend or resume painting methods.
+    ///     Based on: https://stackoverflow.com/a/6302008
     /// </summary>
     internal static class ControlExtensions
     {
         private const int WM_SETREDRAW = 0x000B;
 
         /// <summary>
-        /// Resumes painting for a specified control.
+        ///     Resumes painting for a specified control.
         /// </summary>
         /// <param name="control">The control to resume.</param>
         public static void Resume(this Control control)
@@ -43,7 +43,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
         }
 
         /// <summary>
-        /// Suspends painting for a specified control.
+        ///     Suspends painting for a specified control.
         /// </summary>
         /// <param name="control">The control to suspend.</param>
         public static void Suspend(this Control control)
@@ -55,7 +55,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
         }
 
         /// <summary>
-        /// Invokes the default window procedure associated with the provided control.
+        ///     Invokes the default window procedure associated with the provided control.
         /// </summary>
         /// <param name="control">The control.</param>
         /// <param name="message">Reference to a Windows message.</param>
