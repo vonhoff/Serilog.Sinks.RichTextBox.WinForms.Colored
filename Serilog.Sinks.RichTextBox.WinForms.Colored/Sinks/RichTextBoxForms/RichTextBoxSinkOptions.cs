@@ -17,18 +17,16 @@
 #endregion
 
 using System;
-using Serilog.Core;
-using Serilog.Events;
 using Serilog.Sinks.RichTextBoxForms.Themes;
 
 namespace Serilog.Sinks.RichTextBoxForms
 {
     public class RichTextBoxSinkOptions
     {
+        private const string DefaultOutputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
+        private int _maxLogLines;
         private int _messageBatchSize;
         private int _messagePendingInterval;
-        private int _maxLogLines;
-        private const string DefaultOutputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
 
         /// <summary>
         /// Settings for the RichTextBoxSink

@@ -77,6 +77,17 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
             _levelToken = levelToken;
         }
 
+        public void Render(LogEvent logEvent, RichTextBox richTextBox)
+        {
+            var moniker = GetLevelMoniker(logEvent.Level, _levelToken.Format);
+            if (!Levels.TryGetValue(logEvent.Level, out var levelStyle))
+            {
+                levelStyle = StyleToken.Invalid;
+            }
+
+            _theme.Render(richTextBox, levelStyle, moniker);
+        }
+
         public static string GetLevelMoniker(LogEventLevel value, string format = "")
         {
             if (format.Length != 2 && format.Length != 3)
@@ -126,17 +137,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
                 default:
                     return TextCasing.Format(value.ToString(), format);
             }
-        }
-
-        public void Render(LogEvent logEvent, RichTextBox richTextBox)
-        {
-            var moniker = GetLevelMoniker(logEvent.Level, _levelToken.Format);
-            if (!Levels.TryGetValue(logEvent.Level, out var levelStyle))
-            {
-                levelStyle = StyleToken.Invalid;
-            }
-
-            _theme.Render(richTextBox, levelStyle, moniker);
         }
     }
 }

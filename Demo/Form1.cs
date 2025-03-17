@@ -27,11 +27,16 @@ using Serilog.Events;
 using Serilog.Sinks.RichTextBoxForms;
 using Serilog.Sinks.RichTextBoxForms.Themes;
 
-namespace SampleForm
+namespace Demo
 {
     public partial class Form1 : Form
     {
         private RichTextBoxSinkOptions? _options;
+
+        public Form1()
+        {
+            InitializeComponent();
+        }
 
         private void Initialize()
         {
@@ -44,11 +49,6 @@ namespace SampleForm
 
             Log.Debug("Started logger.");
             btnDispose.Enabled = true;
-        }
-
-        public Form1()
-        {
-            InitializeComponent();
         }
 
         private void Form1_Load(object sender, EventArgs e)

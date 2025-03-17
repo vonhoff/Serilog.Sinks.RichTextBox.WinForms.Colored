@@ -28,9 +28,9 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
     public class EventPropertyTokenRenderer : ITokenRenderer
     {
+        private readonly IFormatProvider? _formatProvider;
         private readonly Theme _theme;
         private readonly PropertyToken _token;
-        private readonly IFormatProvider? _formatProvider;
 
         public EventPropertyTokenRenderer(Theme theme, PropertyToken token, IFormatProvider? formatProvider)
         {

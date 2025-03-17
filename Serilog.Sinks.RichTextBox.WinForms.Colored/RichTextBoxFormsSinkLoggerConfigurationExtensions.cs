@@ -42,7 +42,6 @@ namespace Serilog
         /// <param name="levelSwitch">Allows runtime level change.</param>
         /// <param name="theme">Output theme (default: Dark).</param>
         /// <param name="messageBatchSize">Max messages per batch for printing.</param>
-        /// <param name="messageDequeueInterval">Deprecated as of v1.1.1, kept for backwards compatibility.</param>
         /// <param name="messagePendingInterval">Duration to hold incoming messages.</param>
         /// <param name="autoScroll">Auto-scroll to bottom for new messages.</param>
         /// <param name="maxLogLines">Maximum number of lines to keep.</param>
@@ -56,7 +55,6 @@ namespace Serilog
             LoggingLevelSwitch? levelSwitch = null,
             Theme? theme = null,
             int messageBatchSize = 200,
-            int messageDequeueInterval = 0,
             int messagePendingInterval = 5,
             bool autoScroll = true,
             int maxLogLines = 0)

@@ -27,9 +27,9 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
     public class TimestampTokenRenderer : ITokenRenderer
     {
+        private readonly IFormatProvider? _formatProvider;
         private readonly Theme _theme;
         private readonly PropertyToken _token;
-        private readonly IFormatProvider? _formatProvider;
 
         public TimestampTokenRenderer(Theme theme, PropertyToken token, IFormatProvider? formatProvider)
         {

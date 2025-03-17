@@ -25,13 +25,13 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
 {
     internal static class RichTextBoxExtensions
     {
-        [DllImport("user32.dll")]
-        private static extern IntPtr SendMessage(IntPtr hWnd, int wMsg, int wParam, ref Point lParam);
-
         private const int WmUser = 0x400;
         private const int EmGetScrollPos = WmUser + 221;
         private const int EmSetScrollPos = WmUser + 222;
         private const string NullCharacter = "\0";
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int wMsg, int wParam, ref Point lParam);
 
         /// <summary>
         /// Updates the content of a <see cref="RichTextBox"/>

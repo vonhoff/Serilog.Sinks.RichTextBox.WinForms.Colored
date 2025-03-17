@@ -13,7 +13,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Serilog.Sinks.RichTextBox.WinForms\Serilog.Sinks.RichTextBox.WinForms.Colored.csproj" />
+		<ProjectReference Include="..\Serilog.Sinks.RichTextBox.WinForms.Colored\Serilog.Sinks.RichTextBox.WinForms.Colored.csproj"/>
 	</ItemGroup>
 
 </Project>

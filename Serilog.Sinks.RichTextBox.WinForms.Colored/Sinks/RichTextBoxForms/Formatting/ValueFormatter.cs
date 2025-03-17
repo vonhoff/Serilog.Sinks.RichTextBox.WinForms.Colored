@@ -25,12 +25,12 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 {
     public abstract class ValueFormatter : LogEventPropertyValueVisitor<ValueFormatterState, bool>
     {
-        public Theme Theme { get; set; }
-
         protected ValueFormatter(Theme theme)
         {
             Theme = theme;
         }
+
+        public Theme Theme { get; set; }
 
         public bool Format(LogEventPropertyValue value, RichTextBox richTextBox, string format, bool literalTopLevel = false)
         {
