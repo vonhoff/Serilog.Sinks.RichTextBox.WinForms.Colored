@@ -91,13 +91,17 @@ Available built-in themes:
 
 The long name `Serilog.Sinks.RichTextBox.WinForms.Colored` follows the Serilog naming convention while being specific about the functionality. Shorter alternatives were already reserved in the NuGet registry but were not used, so a more descriptive name was needed for this implementation.
 
-### Why create a WinForms version instead of using a WPF solution?
+### Why use a WinForms solution instead of the WPF one?
 
 This sink was designed specifically for WinForms applications to avoid unnecessary dependencies. Including a WPF-based logging component in a WinForms application would require including the entire WPF framework as a dependency, significantly increasing the footprint of the application for what should be a small logging feature.
 
 ## Support and Contribute
 
-You can support development through [GitHub Sponsors](https://github.com/sponsors/vonhoff), give the [project](https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored) a star, or contribute by improving documentation, reporting bugs, or submitting pull requests.
+If you find value in this project, there are several ways you can contribute:
+
+- Give the [project](https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored) a star on GitHub.
+- Support the project through [GitHub Sponsors](https://github.com/sponsors/vonhoff).
+- Improve documentation, report bugs, or submit pull requests.
 
 ## License
 
