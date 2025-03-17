@@ -8,15 +8,15 @@ A [Serilog](https://github.com/serilog/serilog) sink that writes log events to
 a [WinForms RichTextBox](https://docs.microsoft.com/en-us/dotnet/desktop/winforms/controls/richtextbox-control-overview-windows-forms)
 with support for coloring and custom themes.
 
-![Screenshot of Serilog.Sinks.RichTextBox.WinForms.Colored in action](https://raw.githubusercontent.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored/main/Assets/screenshot.png)
+![Screenshot of Serilog.Sinks.RichTextBox.WinForms.Colored in action](https://raw.githubusercontent.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored/main/screenshot.png)
 
 ## Features
 
-- Write log events to a WinForms RichTextBox control
-- Customizable themes (Dark and Light presets available)
+- Colorful, formatted log events in a WinForms RichTextBox control
+- Dark and Light theme presets with customization options
 - Configurable output templates
-- Auto-scrolling option
-- Line limit control
+- Auto-scrolling to latest messages
+- Line limiting to control memory usage
 
 ## Installation
 
@@ -83,13 +83,23 @@ Available built-in themes:
 | `ThemePresets.Dark`  | Similar to the default theme of _Serilog.Sinks.Console_ |
 | `ThemePresets.Light` | Light background with contrasting colors                |
 
+## Frequently Asked Questions
+
+### Why is the package name so long?
+
+The long name `Serilog.Sinks.RichTextBox.WinForms.Colored` follows the Serilog naming convention while being specific about the functionality. Shorter alternatives were already reserved in the NuGet registry but were not used, so a more descriptive name was needed for this implementation.
+
+### Why use a WinForms solution instead of the WPF one?
+
+This sink was designed specifically for WinForms applications to avoid unnecessary dependencies. Including a WPF-based logging component in a WinForms application would require including the entire WPF framework as a dependency, significantly increasing the footprint of the application for what should be a small logging feature.
+
 ## Support and Contribute
 
 If you find value in this project, there are several ways you can contribute:
 
-- **Become a Sponsor:** Support the project through [GitHub Sponsors](https://github.com/sponsors/vonhoff).
-- **Show Your Appreciation:** Give the [project](https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored) a star on GitHub.
-- **Contribute:** Improve documentation, report bugs, or submit pull requests.
+- Give the [project](https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored) a star on GitHub.
+- Support the project through [GitHub Sponsors](https://github.com/sponsors/vonhoff).
+- Improve documentation, report bugs, or submit pull requests.
 
 ## License
 
