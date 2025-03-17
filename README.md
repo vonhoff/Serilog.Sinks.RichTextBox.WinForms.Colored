@@ -18,8 +18,6 @@ with support for coloring and custom themes.
 - Auto-scrolling to latest messages
 - Line limiting to control memory usage
 
-For optimal performance, the sink implements message batching and uses a concurrent queue system, all while maintaining a lightweight footprint with no WPF dependencies.
-
 ## Installation
 
 Install the package from NuGet:
