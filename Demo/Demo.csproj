@@ -6,10 +6,12 @@
 		<Nullable>enable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
 		<LangVersion>9.0</LangVersion>
+        <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
 	</PropertyGroup>
 
 	<ItemGroup>
 	  <PackageReference Include="Serilog" Version="4.2.0" />
+        <PackageReference Include="System.Resources.Extensions" Version="7.0.0"/>
 	</ItemGroup>
 
 	<ItemGroup>

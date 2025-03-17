@@ -79,7 +79,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
 
         public void Render(LogEvent logEvent, RichTextBox richTextBox)
         {
-            var moniker = GetLevelMoniker(logEvent.Level, _levelToken.Format);
+            var moniker = GetLevelMoniker(logEvent.Level, _levelToken.Format ?? "");
             if (!Levels.TryGetValue(logEvent.Level, out var levelStyle))
             {
                 levelStyle = StyleToken.Invalid;

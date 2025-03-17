@@ -65,7 +65,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
                 return;
             }
 
-            RenderValue(_valueFormatter, propertyValue, richTextBox, propertyToken.Format);
+            RenderValue(_valueFormatter, propertyValue, richTextBox, propertyToken.Format ?? "");
         }
 
         private void RenderValue(ValueFormatter valueFormatter,
