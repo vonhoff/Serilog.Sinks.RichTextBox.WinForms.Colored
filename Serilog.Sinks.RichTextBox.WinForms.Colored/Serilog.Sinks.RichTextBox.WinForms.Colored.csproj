@@ -23,12 +23,15 @@
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<TargetFrameworks>net462;net6.0-windows;net8.0-windows</TargetFrameworks>
 		<UseWindowsForms>true</UseWindowsForms>
-		<Version>2.0.1</Version>
+        <Version>2.1.10</Version>
 		<PackageReleaseNotes>
-            - Added support for all Serilog 2.12.x versions and above.
+            - Deprecated configurables from v1 removed.
+            - Removed support for net452, minimum version is now net462.
+            - Added support for all Serilog 2.12.x versions and higher.
 
 			See repository for more information:
-			https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored</PackageReleaseNotes>
+            https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored
+        </PackageReleaseNotes>
 		<SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<LangVersion>9.0</LangVersion>
