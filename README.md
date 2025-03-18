@@ -87,7 +87,7 @@ Available built-in themes:
 
 ### Why is the package name so long?
 
-The long name `Serilog.Sinks.RichTextBox.WinForms.Colored` follows the Serilog naming convention while being specific about the functionality. Shorter alternatives were already reserved in the NuGet registry but were not used, so a more descriptive name was needed for this implementation.
+Shorter alternatives were already reserved in the NuGet registry but were not used, so a more descriptive name was needed for this implementation.
 
 ### Why use a WinForms solution instead of the WPF one?
 
