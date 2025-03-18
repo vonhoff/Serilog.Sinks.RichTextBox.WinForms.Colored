@@ -91,7 +91,7 @@ Shorter alternatives were already reserved in the NuGet registry but were not us
 
 ### Why use a WinForms solution instead of the WPF one?
 
-This sink was designed specifically for WinForms applications to avoid unnecessary dependencies. Including a WPF-based logging component in a WinForms application would require including the entire WPF framework as a dependency, significantly increasing the footprint of the application for what should be a small logging feature.
+This sink was designed specifically for WinForms applications to avoid unnecessary dependencies. Using a WPF-based logging component would require adding the entire WPF framework, greatly increasing the size of the application for a small logging feature.
 
 ## Support and Contribute
 
