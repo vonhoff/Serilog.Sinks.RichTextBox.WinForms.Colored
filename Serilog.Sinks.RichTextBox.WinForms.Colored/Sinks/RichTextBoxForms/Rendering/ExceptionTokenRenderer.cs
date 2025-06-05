@@ -16,11 +16,11 @@
 
 #endregion
 
+using Serilog.Events;
+using Serilog.Sinks.RichTextBoxForms.Themes;
 using System;
 using System.IO;
 using System.Windows.Forms;
-using Serilog.Events;
-using Serilog.Sinks.RichTextBoxForms.Themes;
 
 namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {

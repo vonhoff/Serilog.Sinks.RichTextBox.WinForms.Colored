@@ -16,14 +16,14 @@
 
 #endregion
 
-using System;
-using System.Collections.Concurrent;
-using System.Threading;
-using System.Windows.Forms;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Sinks.RichTextBoxForms.Extensions;
 using Serilog.Sinks.RichTextBoxForms.Rendering;
+using System;
+using System.Collections.Concurrent;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace Serilog.Sinks.RichTextBoxForms
 {

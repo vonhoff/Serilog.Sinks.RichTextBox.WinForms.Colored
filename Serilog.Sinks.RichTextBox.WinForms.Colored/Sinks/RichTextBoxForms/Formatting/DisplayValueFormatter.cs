@@ -16,12 +16,12 @@
 
 #endregion
 
-using System;
-using System.IO;
-using System.Windows.Forms;
 using Serilog.Events;
 using Serilog.Sinks.RichTextBoxForms.Extensions;
 using Serilog.Sinks.RichTextBoxForms.Themes;
+using System;
+using System.IO;
+using System.Windows.Forms;
 
 namespace Serilog.Sinks.RichTextBoxForms.Formatting
 {
@@ -34,67 +34,99 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             _formatProvider = formatProvider;
         }
 
-        public void FormatLiteralValue(ScalarValue scalar, RichTextBox richTextBox, string format)
+        public void FormatLiteralValue(ScalarValue scalar, RichTextBox richTextBox, string format, bool isLiteral)
         {
             var value = scalar.Value;
 
             switch (value)
             {
                 case null:
-                {
                     Theme.Render(richTextBox, StyleToken.Null, "null");
-                    break;
-                }
-
-                case string text:
-                {
-                    Theme.Render(richTextBox, StyleToken.String, text);
                     return;
-                }
+                case string text:
+                    bool effectivelyLiteral = isLiteral || (format != null && format.Contains("l"));
+                    if (effectivelyLiteral)
+                    {
+                        Theme.Render(richTextBox, StyleToken.String, text);
+                    }
+                    else
+                    {
+                        Theme.Render(richTextBox, StyleToken.String, $"\"{text.Replace("\"", "\\\"")}\"");
+                    }
+                    return;
+                case byte[] bytes:
+                    Theme.Render(richTextBox, StyleToken.String, $"\"{Convert.ToBase64String(bytes)}\"");
+                    return;
+                case bool b:
+                    Theme.Render(richTextBox, StyleToken.Boolean, b.ToString());
+                    return;
+                case char ch:
+                    Theme.Render(richTextBox, StyleToken.Scalar, ch.ToString());
+                    return;
+                case int i:
+                    Theme.Render(richTextBox, StyleToken.Number, i.ToString(_formatProvider));
+                    return;
+                case uint ui:
+                    Theme.Render(richTextBox, StyleToken.Number, ui.ToString(_formatProvider));
+                    return;
+                case long l:
+                    Theme.Render(richTextBox, StyleToken.Number, l.ToString(_formatProvider));
+                    return;
+                case ulong ul:
+                    Theme.Render(richTextBox, StyleToken.Number, ul.ToString(_formatProvider));
+                    return;
+                case decimal dec:
+                    Theme.Render(richTextBox, StyleToken.Number, dec.ToString(_formatProvider));
+                    return;
+                case byte bValue:
+                    Theme.Render(richTextBox, StyleToken.Number, bValue.ToString(_formatProvider));
+                    return;
+                case sbyte sb:
+                    Theme.Render(richTextBox, StyleToken.Number, sb.ToString(_formatProvider));
+                    return;
+                case short s:
+                    Theme.Render(richTextBox, StyleToken.Number, s.ToString(_formatProvider));
+                    return;
+                case ushort us:
+                    Theme.Render(richTextBox, StyleToken.Number, us.ToString(_formatProvider));
+                    return;
+                case float f:
+                    Theme.Render(richTextBox, StyleToken.Number, f.ToString(_formatProvider));
+                    return;
+                case double d:
+                    Theme.Render(richTextBox, StyleToken.Number, d.ToString(_formatProvider));
+                    return;
+                case DateTime dt:
+                    Theme.Render(richTextBox, StyleToken.Scalar, dt.ToString("O", _formatProvider));
+                    return;
+                case DateTimeOffset dto:
+                    Theme.Render(richTextBox, StyleToken.Scalar, dto.ToString("O", _formatProvider));
+                    return;
+                case TimeSpan ts:
+                    Theme.Render(richTextBox, StyleToken.Scalar, ts.ToString("c", _formatProvider));
+                    return;
+                case Guid guid:
+                    Theme.Render(richTextBox, StyleToken.Scalar, guid.ToString("D", _formatProvider));
+                    return;
+                case Uri uri:
+                    Theme.Render(richTextBox, StyleToken.Scalar, uri.ToString());
+                    return;
             }
 
             var writer = new StringWriter();
-            scalar.Render(writer, format, _formatProvider);
-
-            if (value is ValueType)
-            {
-                switch (value)
-                {
-                    case int:
-                    case uint:
-                    case long:
-                    case ulong:
-                    case decimal:
-                    case byte:
-                    case sbyte:
-                    case short:
-                    case ushort:
-                    case float:
-                    case double:
-                    {
-                        Theme.Render(richTextBox, StyleToken.Number, writer.ToString());
-                        return;
-                    }
-
-                    case bool b:
-                    {
-                        Theme.Render(richTextBox, StyleToken.Boolean, b.ToString());
-                        return;
-                    }
-
-                    case char ch:
-                    {
-                        Theme.Render(richTextBox, StyleToken.Scalar, ch.ToString());
-                        return;
-                    }
-                }
-            }
-
+            scalar.Render(writer, null, _formatProvider);
             Theme.Render(richTextBox, StyleToken.Scalar, writer.ToString());
         }
 
         protected override bool VisitDictionaryValue(ValueFormatterState state, DictionaryValue dictionary)
         {
+            if (state.Format != null && state.Format.Contains("j"))
+            {
+                var jsonFormatter = new JsonValueFormatter(Theme, _formatProvider);
+                jsonFormatter.Format(dictionary, state.RichTextBox, state.Format, state.IsLiteral);
+                return true;
+            }
+
             Theme.Render(state.RichTextBox, StyleToken.TertiaryText, "{");
 
             var delimiter = string.Empty;
@@ -124,7 +156,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                 throw new ArgumentNullException(nameof(scalar));
             }
 
-            FormatLiteralValue(scalar, state.RichTextBox, state.Format);
+            FormatLiteralValue(scalar, state.RichTextBox, state.Format, state.IsLiteral);
             return true;
         }
 
@@ -133,6 +165,13 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             if (sequence is null)
             {
                 throw new ArgumentNullException(nameof(sequence));
+            }
+
+            if (state.Format != null && state.Format.Contains("j"))
+            {
+                var jsonFormatter = new JsonValueFormatter(Theme, _formatProvider);
+                jsonFormatter.Format(sequence, state.RichTextBox, state.Format, state.IsLiteral);
+                return true;
             }
 
             Theme.Render(state.RichTextBox, StyleToken.TertiaryText, "[");
@@ -146,7 +185,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                 }
 
                 delimiter = ", ";
-                Visit(state, propertyValue);
+                Visit(state.Next(), propertyValue);
             }
 
             Theme.Render(state.RichTextBox, StyleToken.TertiaryText, "]");
@@ -155,6 +194,13 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 
         protected override bool VisitStructureValue(ValueFormatterState state, StructureValue structure)
         {
+            if (state.Format != null && state.Format.Contains("j"))
+            {
+                var jsonFormatter = new JsonValueFormatter(Theme, _formatProvider);
+                jsonFormatter.Format(structure, state.RichTextBox, state.Format, state.IsLiteral);
+                return true;
+            }
+
             if (structure.TypeTag != null)
             {
                 Theme.Render(state.RichTextBox, StyleToken.Name, structure.TypeTag + " ");

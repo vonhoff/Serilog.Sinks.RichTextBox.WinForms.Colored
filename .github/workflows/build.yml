@@ -1,4 +1,4 @@
-name: Build Check
+name: Build and Test
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  build-and-test:
     runs-on: windows-latest
     
     steps:
@@ -24,8 +24,22 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
       
-    - name: Build .NET Framework 4.6.2
-      run: dotnet build --no-restore --configuration Release --framework net462
+    - name: Build
+      run: dotnet build --no-restore --configuration Release --framework net8.0-windows
       
-    - name: Build .NET 8.0 Windows
-      run: dotnet build --no-restore --configuration Release --framework net8.0-windows 
+    - name: Test with Coverage
+      run: dotnet test --no-build --configuration Release --framework net8.0-windows --collect:"XPlat Code Coverage" --results-directory ./coverage
+
+    - name: Generate coverage report
+      uses: danielpalme/ReportGenerator-GitHub-Action@5.1.4
+      with:
+        reports: './coverage/**/coverage.cobertura.xml'
+        targetdir: './coverage/report'
+        reporttypes: 'Html;HtmlSummary'
+        title: 'Code Coverage Report'
+
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: './coverage/report'

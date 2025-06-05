@@ -44,6 +44,11 @@
             toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             btnObject = new System.Windows.Forms.ToolStripButton();
             toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            btnScalar = new System.Windows.Forms.ToolStripButton();
+            btnDictionary = new System.Windows.Forms.ToolStripButton();
+            btnStructure = new System.Windows.Forms.ToolStripButton();
+            btnComplex = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             btnDispose = new System.Windows.Forms.ToolStripButton();
             toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             btnReset = new System.Windows.Forms.ToolStripButton();
@@ -60,7 +65,7 @@
             // toolStrip1
             // 
             toolStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { btnClear, btnVerbose, btnDebug, btnInformation, btnWarning, btnError, btnFatal, toolStripSeparator1, btnParallelFor, toolStripSeparator2, btnTaskRun, toolStripSeparator3, btnObject, toolStripSeparator4, btnDispose, toolStripSeparator5, btnReset, toolStripSeparator6, btnAutoScroll, toolStripSeparator7, btnLogLimit });
+            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { btnClear, btnVerbose, btnDebug, btnInformation, btnWarning, btnError, btnFatal, toolStripSeparator1, btnParallelFor, toolStripSeparator2, btnTaskRun, toolStripSeparator3, btnObject, toolStripSeparator4, btnScalar, btnDictionary, btnStructure, btnComplex, toolStripSeparator8, btnDispose, toolStripSeparator5, btnReset, toolStripSeparator6, btnAutoScroll, toolStripSeparator7, btnLogLimit });
             toolStrip1.Location = new System.Drawing.Point(0, 0);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new System.Drawing.Size(1358, 33);
@@ -186,6 +191,51 @@
             toolStripSeparator4.Name = "toolStripSeparator4";
             toolStripSeparator4.Size = new System.Drawing.Size(6, 33);
             // 
+            // btnScalar
+            // 
+            btnScalar.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            btnScalar.Image = (System.Drawing.Image)resources.GetObject("btnScalar.Image");
+            btnScalar.Name = "btnScalar";
+            btnScalar.Padding = new System.Windows.Forms.Padding(3);
+            btnScalar.Size = new System.Drawing.Size(54, 30);
+            btnScalar.Text = "Scalar";
+            btnScalar.Click += BtnScalar_Click;
+            // 
+            // btnDictionary
+            // 
+            btnDictionary.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            btnDictionary.Image = (System.Drawing.Image)resources.GetObject("btnDictionary.Image");
+            btnDictionary.Name = "btnDictionary";
+            btnDictionary.Padding = new System.Windows.Forms.Padding(3);
+            btnDictionary.Size = new System.Drawing.Size(82, 30);
+            btnDictionary.Text = "Dictionary";
+            btnDictionary.Click += BtnDictionary_Click;
+            // 
+            // btnStructure
+            // 
+            btnStructure.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            btnStructure.Image = (System.Drawing.Image)resources.GetObject("btnStructure.Image");
+            btnStructure.Name = "btnStructure";
+            btnStructure.Padding = new System.Windows.Forms.Padding(3);
+            btnStructure.Size = new System.Drawing.Size(74, 30);
+            btnStructure.Text = "Structure";
+            btnStructure.Click += BtnStructure_Click;
+            // 
+            // btnComplex
+            // 
+            btnComplex.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            btnComplex.Image = (System.Drawing.Image)resources.GetObject("btnComplex.Image");
+            btnComplex.Name = "btnComplex";
+            btnComplex.Padding = new System.Windows.Forms.Padding(3);
+            btnComplex.Size = new System.Drawing.Size(74, 30);
+            btnComplex.Text = "Complex";
+            btnComplex.Click += BtnComplex_Click;
+            // 
+            // toolStripSeparator8
+            // 
+            toolStripSeparator8.Name = "toolStripSeparator8";
+            toolStripSeparator8.Size = new System.Drawing.Size(6, 33);
+            // 
             // btnDispose
             // 
             btnDispose.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
@@ -299,6 +349,11 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripButton btnObject;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripButton btnScalar;
+        private System.Windows.Forms.ToolStripButton btnDictionary;
+        private System.Windows.Forms.ToolStripButton btnStructure;
+        private System.Windows.Forms.ToolStripButton btnComplex;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
         private System.Windows.Forms.ToolStripButton btnDispose;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripButton btnReset;

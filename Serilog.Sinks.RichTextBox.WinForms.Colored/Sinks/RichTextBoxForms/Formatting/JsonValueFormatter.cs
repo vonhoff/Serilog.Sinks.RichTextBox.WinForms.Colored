@@ -16,13 +16,13 @@
 
 #endregion
 
+using Serilog.Events;
+using Serilog.Sinks.RichTextBoxForms.Extensions;
+using Serilog.Sinks.RichTextBoxForms.Themes;
 using System;
 using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
-using Serilog.Events;
-using Serilog.Sinks.RichTextBoxForms.Extensions;
-using Serilog.Sinks.RichTextBoxForms.Themes;
 
 namespace Serilog.Sinks.RichTextBoxForms.Formatting
 {
@@ -40,13 +40,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             if (scalar is null)
             {
                 throw new ArgumentNullException(nameof(scalar));
-            }
-
-            // At the top level, for scalar values, use "display" rendering.
-            if (state.IsTopLevel)
-            {
-                _displayFormatter.FormatLiteralValue(scalar, state.RichTextBox, state.Format);
-                return true;
             }
 
             FormatLiteralValue(scalar, state.RichTextBox);
@@ -147,71 +140,76 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             switch (value)
             {
                 case null:
-                {
-                    Theme.Render(richTextBox, StyleToken.Null, "null");
-                    return;
-                }
+                    {
+                        Theme.Render(richTextBox, StyleToken.Null, "null");
+                        return;
+                    }
                 case string str:
-                {
-                    Theme.Render(richTextBox, StyleToken.String, GetQuotedJsonString(str));
-                    return;
-                }
-                case ValueType and (int or uint or long or ulong or decimal or byte or sbyte or short or ushort):
-                {
-                    Theme.Render(richTextBox, StyleToken.Number,
-                        ((IFormattable)value).ToString(null, CultureInfo.InvariantCulture));
-                    return;
-                }
-                case double d:
-                {
-                    if (double.IsNaN(d) || double.IsInfinity(d))
                     {
-                        Theme.Render(richTextBox, StyleToken.Number,
-                            GetQuotedJsonString(d.ToString(CultureInfo.InvariantCulture)));
+                        Theme.Render(richTextBox, StyleToken.String, GetQuotedJsonString(str));
+                        return;
                     }
-                    else
+                case byte[] bytes:
                     {
-                        Theme.Render(richTextBox, StyleToken.Number, d.ToString("R", CultureInfo.InvariantCulture));
+                        Theme.Render(richTextBox, StyleToken.String, GetQuotedJsonString(Convert.ToBase64String(bytes)));
+                        return;
                     }
-
-                    return;
-                }
-                case float f:
-                {
-                    if (float.IsNaN(f) || float.IsInfinity(f))
-                    {
-                        Theme.Render(richTextBox, StyleToken.Number,
-                            GetQuotedJsonString(f.ToString(CultureInfo.InvariantCulture)));
-                    }
-                    else
-                    {
-                        Theme.Render(richTextBox, StyleToken.Number, f.ToString("R", CultureInfo.InvariantCulture));
-                    }
-
-                    return;
-                }
                 case bool b:
-                {
-                    Theme.Render(richTextBox, StyleToken.Boolean, b ? "true" : "false");
-                    return;
-                }
+                    {
+                        Theme.Render(richTextBox, StyleToken.Boolean, b ? "true" : "false");
+                        return;
+                    }
+                case ValueType and (int or uint or long or ulong or decimal or byte or sbyte or short or ushort):
+                    {
+                        Theme.Render(richTextBox, StyleToken.Number,
+                            ((IFormattable)value).ToString(null, CultureInfo.InvariantCulture));
+                        return;
+                    }
+                case double d:
+                    {
+                        if (double.IsNaN(d) || double.IsInfinity(d))
+                        {
+                            Theme.Render(richTextBox, StyleToken.Number,
+                                GetQuotedJsonString(d.ToString(CultureInfo.InvariantCulture)));
+                        }
+                        else
+                        {
+                            Theme.Render(richTextBox, StyleToken.Number, d.ToString("R", CultureInfo.InvariantCulture));
+                        }
+
+                        return;
+                    }
+                case float f:
+                    {
+                        if (float.IsNaN(f) || float.IsInfinity(f))
+                        {
+                            Theme.Render(richTextBox, StyleToken.Number,
+                                GetQuotedJsonString(f.ToString(CultureInfo.InvariantCulture)));
+                        }
+                        else
+                        {
+                            Theme.Render(richTextBox, StyleToken.Number, f.ToString("R", CultureInfo.InvariantCulture));
+                        }
+
+                        return;
+                    }
                 case char ch:
-                {
-                    Theme.Render(richTextBox, StyleToken.Scalar,
-                        GetQuotedJsonString(ch.ToString()));
-                    return;
-                }
+                    {
+                        Theme.Render(richTextBox, StyleToken.Scalar,
+                            GetQuotedJsonString(ch.ToString()));
+                        return;
+                    }
                 case ValueType and (DateTime or DateTimeOffset):
-                {
-                    Theme.Render(richTextBox, StyleToken.Scalar,
-                        $"\"{((IFormattable)value).ToString("O", CultureInfo.InvariantCulture)}\"");
-                    return;
-                }
+                    {
+                        Theme.Render(richTextBox, StyleToken.Scalar,
+                            $"\"{((IFormattable)value).ToString("O", CultureInfo.InvariantCulture)}\"");
+                        return;
+                    }
                 default:
-                {
-                    Theme.Render(richTextBox, StyleToken.Scalar, GetQuotedJsonString(value.ToString() ?? string.Empty));
-                    break;
-                }
+                    {
+                        Theme.Render(richTextBox, StyleToken.Scalar, GetQuotedJsonString(value.ToString() ?? string.Empty));
+                        break;
+                    }
             }
         }
 
@@ -224,71 +222,37 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             var output = new StringWriter();
             output.Write('\"');
 
-            var cleanSegmentStart = 0;
-            var anyEscaped = false;
-
             for (var i = 0; i < str.Length; ++i)
             {
                 var c = str[i];
-                if (c is < (char)32 or '\\' or '"')
+                switch (c)
                 {
-                    anyEscaped = true;
-
-                    output.Write(str.Substring(cleanSegmentStart, i - cleanSegmentStart));
-                    cleanSegmentStart = i + 1;
-
-                    switch (c)
-                    {
-                        case '"':
-                        {
-                            output.Write("\\\"");
-                            break;
-                        }
-                        case '\\':
-                        {
-                            output.Write("\\\\");
-                            break;
-                        }
-                        case '\n':
-                        {
-                            output.Write("\\n");
-                            break;
-                        }
-                        case '\r':
-                        {
-                            output.Write("\\r");
-                            break;
-                        }
-                        case '\f':
-                        {
-                            output.Write("\\f");
-                            break;
-                        }
-                        case '\t':
-                        {
-                            output.Write("\\t");
-                            break;
-                        }
-                        default:
-                        {
-                            output.Write("\\u");
-                            output.Write(((int)c).ToString("X4"));
-                            break;
-                        }
-                    }
+                    case '"':
+                        output.Write("\\\"");
+                        break;
+                    case '\\':
+                        output.Write("\\\\");
+                        break;
+                    case '\n':
+                        output.Write("\\n");
+                        break;
+                    case '\r':
+                        output.Write("\\r");
+                        break;
+                    case '\f':
+                        output.Write("\\f");
+                        break;
+                    case '\t':
+                        output.Write("\\t");
+                        break;
+                    case < (char)32:
+                        output.Write("\\u");
+                        output.Write(((int)c).ToString("X4"));
+                        break;
+                    default:
+                        output.Write(c);
+                        break;
                 }
-            }
-
-            if (anyEscaped)
-            {
-                if (cleanSegmentStart != str.Length)
-                {
-                    output.Write(str.Substring(cleanSegmentStart));
-                }
-            }
-            else
-            {
-                output.Write(str);
             }
 
             output.Write('\"');

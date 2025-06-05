@@ -13,10 +13,10 @@
 		<PackageIcon>serilog-sink-nuget.png</PackageIcon>
 		<PackageId>Serilog.Sinks.RichTextBox.WinForms.Colored</PackageId>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-		<PackageProjectUrl>https://github.com/vonhoff/serilog-sinks-richtextbox-winforms</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored</PackageProjectUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>serilog;sinks;richtextbox;winforms;windows;sink;colors;theme;themes;serilog-sink;vonhoff;rich;textbox;</PackageTags>
-		<RepositoryUrl>https://github.com/vonhoff/serilog-sinks-richtextbox-winforms.git</RepositoryUrl>
+		<RepositoryUrl>https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored.git</RepositoryUrl>
 		<RootNamespace>Serilog</RootNamespace>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<TargetFrameworks>net462;net6.0-windows;net8.0-windows</TargetFrameworks>

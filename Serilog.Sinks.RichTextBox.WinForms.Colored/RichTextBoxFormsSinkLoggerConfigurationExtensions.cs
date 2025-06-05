@@ -16,14 +16,14 @@
 
 #endregion
 
-using System;
-using System.Windows.Forms;
 using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Events;
 using Serilog.Sinks.RichTextBoxForms;
 using Serilog.Sinks.RichTextBoxForms.Rendering;
 using Serilog.Sinks.RichTextBoxForms.Themes;
+using System;
+using System.Windows.Forms;
 
 namespace Serilog
 {

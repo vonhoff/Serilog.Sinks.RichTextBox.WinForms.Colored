@@ -16,8 +16,8 @@
 
 #endregion
 
-using System.Windows.Forms;
 using Serilog.Events;
+using System.Windows.Forms;
 
 namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {

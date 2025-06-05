@@ -27,22 +27,25 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             RichTextBox = richTextBox;
             Format = string.Empty;
             IsTopLevel = false;
+            IsLiteral = false;
         }
 
-        public ValueFormatterState(RichTextBox richTextBox, string format, bool isTopLevel)
+        public ValueFormatterState(RichTextBox richTextBox, string format, bool isTopLevel, bool isLiteral)
         {
             RichTextBox = richTextBox;
             Format = format;
             IsTopLevel = isTopLevel;
+            IsLiteral = isLiteral;
         }
 
         public string Format { get; }
         public bool IsTopLevel { get; }
+        public bool IsLiteral { get; }
         public RichTextBox RichTextBox { get; }
 
-        public ValueFormatterState Next()
+        public ValueFormatterState Next(string? format = null)
         {
-            return new ValueFormatterState(RichTextBox);
+            return new ValueFormatterState(RichTextBox, format ?? Format, false, IsLiteral);
         }
     }
 }

@@ -16,8 +16,8 @@
 
 #endregion
 
-using System;
 using Serilog.Sinks.RichTextBoxForms.Themes;
+using System;
 
 namespace Serilog.Sinks.RichTextBoxForms
 {

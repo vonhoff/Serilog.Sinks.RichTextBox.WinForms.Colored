@@ -17,7 +17,6 @@
 #endregion
 
 using Serilog;
-using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Sinks.RichTextBoxForms;
@@ -160,12 +159,67 @@ namespace Demo
         {
             var weatherForecast = new WeatherForecast
             {
-                Date = DateTime.Parse("2019-08-01"),
+                Date = DateTime.Now,
                 TemperatureCelsius = 25,
                 Summary = "Hot"
             };
 
-            Log.Information("{@forecast}", weatherForecast);
+            Log.Information("{@forecast:j}", weatherForecast);
+        }
+
+        private void BtnScalar_Click(object sender, EventArgs e)
+        {
+            Log.Information("String value: {String}", "test");
+            Log.Information("Number value: {Number}", 42);
+            Log.Information("Boolean value: {Boolean}", true);
+            Log.Information("DateTime value: {DateTime}", DateTime.Now);
+        }
+
+        private void BtnDictionary_Click(object sender, EventArgs e)
+        {
+            var dict = new Dictionary<string, object>
+            {
+                ["key1"] = "value1",
+                ["key2"] = 42,
+                ["key3"] = true
+            };
+
+            Log.Information("Dictionary: {@Dict:l}", dict);
+        }
+
+        private void BtnStructure_Click(object sender, EventArgs e)
+        {
+            var structure = new
+            {
+                Name = "Test",
+                Value = 42,
+                IsActive = true,
+                CreatedAt = DateTime.Now
+            };
+
+            Log.Information("Object: {@Object:j}", structure);
+        }
+
+        private void BtnComplex_Click(object sender, EventArgs e)
+        {
+            var complex = new
+            {
+                Name = "Test",
+                Numbers = new[] { 1, 2, 3 },
+                Settings = new
+                {
+                    enabled = true,
+                    count = 5,
+                    options = new[] { "opt1", "opt2", "opt3" }
+                },
+                Metadata = new Dictionary<string, object>
+                {
+                    ["version"] = "1.0",
+                    ["tags"] = new[] { "tag1", "tag2" }
+                }
+            };
+
+            Log.Information("Complex: {@Complex:j}", complex);
         }
 
         private void BtnDispose_Click(object sender, EventArgs e)
