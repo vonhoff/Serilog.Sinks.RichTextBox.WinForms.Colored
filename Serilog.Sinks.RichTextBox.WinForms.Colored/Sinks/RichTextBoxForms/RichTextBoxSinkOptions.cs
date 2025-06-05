@@ -43,10 +43,10 @@ namespace Serilog.Sinks.RichTextBoxForms
         /// <param name="formatProvider">Culture-specific formatting (null for default).</param>
         public RichTextBoxSinkOptions(
             Theme appliedTheme,
-            int messageBatchSize,
-            int messagePendingInterval,
-            bool autoScroll,
-            int maxLogLines,
+            int messageBatchSize = 200,
+            int messagePendingInterval = 8,
+            bool autoScroll = true,
+            int maxLogLines = 0,
             string outputTemplate = DefaultOutputTemplate,
             IFormatProvider? formatProvider = null)
         {
@@ -66,7 +66,7 @@ namespace Serilog.Sinks.RichTextBoxForms
         public int MessageBatchSize
         {
             get => _messageBatchSize;
-            set => _messageBatchSize = value > 3 ? value : 3;
+            set => _messageBatchSize = value > 50 ? value : 50;
         }
 
         public int MessagePendingInterval

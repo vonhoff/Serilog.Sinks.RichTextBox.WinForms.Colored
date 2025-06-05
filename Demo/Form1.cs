@@ -16,16 +16,17 @@
 
 #endregion
 
+using Serilog;
+using Serilog.Core;
+using Serilog.Debugging;
+using Serilog.Events;
+using Serilog.Sinks.RichTextBoxForms;
+using Serilog.Sinks.RichTextBoxForms.Themes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Serilog;
-using Serilog.Debugging;
-using Serilog.Events;
-using Serilog.Sinks.RichTextBoxForms;
-using Serilog.Sinks.RichTextBoxForms.Themes;
 
 namespace Demo
 {
@@ -40,7 +41,7 @@ namespace Demo
 
         private void Initialize()
         {
-            _options = new RichTextBoxSinkOptions(ThemePresets.Dark, 200, 5, true, 0);
+            _options = new RichTextBoxSinkOptions(ThemePresets.Dark);
             var sink = new RichTextBoxSink(richTextBox1, _options);
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()

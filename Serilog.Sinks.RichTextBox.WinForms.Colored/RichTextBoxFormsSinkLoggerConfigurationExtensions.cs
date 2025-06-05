@@ -58,7 +58,7 @@ namespace Serilog
             LoggingLevelSwitch? levelSwitch = null,
             Theme? theme = null,
             int messageBatchSize = 200,
-            int messagePendingInterval = 5,
+            int messagePendingInterval = 8,
             bool autoScroll = true,
             int maxLogLines = 0)
         {

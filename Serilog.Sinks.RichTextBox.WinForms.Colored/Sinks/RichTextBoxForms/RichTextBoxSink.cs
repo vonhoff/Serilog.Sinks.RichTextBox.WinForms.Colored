@@ -29,7 +29,7 @@ namespace Serilog.Sinks.RichTextBoxForms
 {
     public class RichTextBoxSink : ILogEventSink, IDisposable
     {
-        private readonly ConcurrentQueue<LogEvent> _messageQueue = new();
+        private readonly BlockingCollection<LogEvent> _messageQueue;
         private readonly RichTextBoxSinkOptions _options;
         private readonly ITokenRenderer _renderer;
         private readonly RichTextBox _richTextBox;
@@ -42,9 +42,11 @@ namespace Serilog.Sinks.RichTextBoxForms
             _renderer = renderer ??
                         new TemplateRenderer(options.AppliedTheme, options.OutputTemplate, options.FormatProvider);
             _tokenSource = new CancellationTokenSource();
+            _messageQueue = new BlockingCollection<LogEvent>();
 
             richTextBox.Clear();
             richTextBox.ReadOnly = true;
+            richTextBox.DetectUrls = false;
             richTextBox.ForeColor = options.AppliedTheme.DefaultStyle.Foreground;
             richTextBox.BackColor = options.AppliedTheme.DefaultStyle.Background;
 
@@ -53,6 +55,7 @@ namespace Serilog.Sinks.RichTextBoxForms
 
         public void Dispose()
         {
+            _messageQueue.Dispose();
             _tokenSource.Cancel();
             _tokenSource.Dispose();
             GC.SuppressFinalize(this);
@@ -60,32 +63,31 @@ namespace Serilog.Sinks.RichTextBoxForms
 
         public void Emit(LogEvent logEvent)
         {
-            _messageQueue.Enqueue(logEvent);
+            _messageQueue.Add(logEvent);
         }
 
         private void ProcessMessages(object? obj)
         {
             var token = (CancellationToken)(obj ?? throw new ArgumentNullException(nameof(obj)));
-            var messageBatch = 0;
+            var messageBatch = 1;
             var buffer = new RichTextBox { Font = _richTextBox.Font };
             try
             {
                 while (true)
                 {
-                    while (_messageQueue.IsEmpty)
-                    {
-                        token.ThrowIfCancellationRequested();
-                        Thread.Sleep(_options.MessagePendingInterval);
-                    }
-
-                    while (_messageQueue.TryDequeue(out var logEvent) && messageBatch++ <= _options.MessageBatchSize)
+                    if (_messageQueue.TryTake(out var logEvent, _options.MessagePendingInterval, token))
                     {
                         _renderer.Render(logEvent, buffer);
-                    }
+                        while (messageBatch < _options.MessageBatchSize && _messageQueue.TryTake(out logEvent, 0, token))
+                        {
+                            _renderer.Render(logEvent, buffer);
+                            messageBatch++;
+                        }
 
-                    _richTextBox.AppendRtf(buffer.Rtf!, _options.AutoScroll, _options.MaxLogLines);
-                    buffer.Clear();
-                    messageBatch = 0;
+                        _richTextBox.AppendRtf(buffer.Rtf!, _options.AutoScroll, _options.MaxLogLines);
+                        buffer.Clear();
+                        messageBatch = 1;
+                    }
                 }
             }
             catch (ObjectDisposedException)
