@@ -23,8 +23,59 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
 {
     public static class ThemePresets
     {
+
         /// <summary>
         ///     A theme with a light background and contrasting colors.
+        /// </summary>
+        public static Theme LightClassic { get; } = new(
+            new Style(Color.Black, Color.White),
+            new Dictionary<StyleToken, Style>
+            {
+                [StyleToken.Text] = new(Color.Black),
+                [StyleToken.SecondaryText] = new(Color.Gray),
+                [StyleToken.TertiaryText] = new(Color.DimGray),
+                [StyleToken.Invalid] = new(Color.Goldenrod),
+                [StyleToken.Null] = new(Color.DarkBlue),
+                [StyleToken.Name] = new(Color.DimGray),
+                [StyleToken.String] = new(Color.DarkCyan),
+                [StyleToken.Number] = new(Color.DarkMagenta),
+                [StyleToken.Boolean] = new(Color.DarkBlue),
+                [StyleToken.Scalar] = new(Color.DarkGreen),
+                [StyleToken.LevelVerbose] = new(Color.DarkGray),
+                [StyleToken.LevelDebug] = new(Color.DimGray),
+                [StyleToken.LevelInformation] = new(Color.Black),
+                [StyleToken.LevelWarning] = new(Color.DarkGoldenrod),
+                [StyleToken.LevelError] = new(Color.White, Color.Red),
+                [StyleToken.LevelFatal] = new(Color.White, Color.Red)
+            });
+
+        /// <summary>
+        ///     Styled to replicate the default theme of Serilog.Sinks.Console;
+        /// </summary>
+        public static Theme DarkClassic { get; } = new(
+            new Style(Color.White, Color.Black),
+            new Dictionary<StyleToken, Style>
+            {
+                [StyleToken.Text] = new(Color.White),
+                [StyleToken.SecondaryText] = new(Color.Gray),
+                [StyleToken.TertiaryText] = new(Color.DarkGray),
+                [StyleToken.Invalid] = new(Color.Yellow),
+                [StyleToken.Null] = new(Color.Blue),
+                [StyleToken.Name] = new(Color.Gray),
+                [StyleToken.String] = new(Color.Cyan),
+                [StyleToken.Number] = new(Color.Magenta),
+                [StyleToken.Boolean] = new(Color.Blue),
+                [StyleToken.Scalar] = new(Color.Lime),
+                [StyleToken.LevelVerbose] = new(Color.Gray),
+                [StyleToken.LevelDebug] = new(Color.Gray),
+                [StyleToken.LevelInformation] = new(Color.White),
+                [StyleToken.LevelWarning] = new(Color.Yellow),
+                [StyleToken.LevelError] = new(Color.White, Color.Red),
+                [StyleToken.LevelFatal] = new(Color.White, Color.Red)
+            });
+
+        /// <summary>
+        ///     A light theme with vibrant colors and high contrast for optimal readability.
         /// </summary>
         public static Theme Light { get; } = new(
             new Style(ThemeColors.ThunderGray, ThemeColors.IronGray),
@@ -33,23 +84,23 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
                 [StyleToken.Text] = new(ThemeColors.ThunderGray),
                 [StyleToken.SecondaryText] = new(ThemeColors.ShipGray),
                 [StyleToken.TertiaryText] = new(ThemeColors.AbbeyGray),
-                [StyleToken.Invalid] = new(ThemeColors.CardinalRed),
-                [StyleToken.Null] = new(ThemeColors.FunBlue),
+                [StyleToken.Invalid] = new(ThemeColors.DarkCardinalRed),
+                [StyleToken.Null] = new(ThemeColors.DarkFunBlue),
                 [StyleToken.Name] = new(ThemeColors.AbbeyGray),
-                [StyleToken.String] = new(ThemeColors.FunBlue),
-                [StyleToken.Number] = new(ThemeColors.EminencePurple),
-                [StyleToken.Boolean] = new(ThemeColors.FunBlue),
-                [StyleToken.Scalar] = new(ThemeColors.ForestGreen),
+                [StyleToken.String] = new(ThemeColors.DarkFunBlue),
+                [StyleToken.Number] = new(ThemeColors.DarkEminencePurple),
+                [StyleToken.Boolean] = new(ThemeColors.DarkFunBlue),
+                [StyleToken.Scalar] = new(ThemeColors.DarkForestGreen),
                 [StyleToken.LevelVerbose] = new(ThemeColors.AbbeyGray),
                 [StyleToken.LevelDebug] = new(ThemeColors.ShipGray),
                 [StyleToken.LevelInformation] = new(ThemeColors.ThunderGray),
-                [StyleToken.LevelWarning] = new(ThemeColors.TuscanyOrange),
-                [StyleToken.LevelError] = new(ThemeColors.IronGray, ThemeColors.CardinalRed),
+                [StyleToken.LevelWarning] = new(ThemeColors.DarkButtercupYellow),
+                [StyleToken.LevelError] = new(ThemeColors.IronGray, ThemeColors.DarkCardinalRed),
                 [StyleToken.LevelFatal] = new(ThemeColors.IronGray, ThemeColors.CrimsonRed)
             });
 
         /// <summary>
-        ///     Styled to replicate the default theme of Serilog.Sinks.Console; This is the default when no theme is specified.
+        ///     A dark theme inspired by modern IDEs and the Serilog Console sink.
         /// </summary>
         public static Theme Dark { get; } = new(
             new Style(ThemeColors.IronGray, ThemeColors.ThunderGray),

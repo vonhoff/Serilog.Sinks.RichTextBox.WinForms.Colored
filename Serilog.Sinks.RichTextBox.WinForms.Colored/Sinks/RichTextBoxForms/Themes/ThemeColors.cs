@@ -25,21 +25,25 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
         // Error and warning colors
         public static readonly Color CrimsonRed = ColorTranslator.FromHtml("#FF1A1A");
         public static readonly Color CardinalRed = ColorTranslator.FromHtml("#FF3333");
+        public static readonly Color DarkCardinalRed = ColorTranslator.FromHtml("#CC0000");
         public static readonly Color ButtercupYellow = ColorTranslator.FromHtml("#FFD700");
-        public static readonly Color TuscanyOrange = ColorTranslator.FromHtml("#FF9800");
+        public static readonly Color DarkButtercupYellow = ColorTranslator.FromHtml("#B8860B");
 
         // Success and info colors
         public static readonly Color ForestGreen = ColorTranslator.FromHtml("#00E676");
+        public static readonly Color DarkForestGreen = ColorTranslator.FromHtml("#006400");
         public static readonly Color AppleGreen = ColorTranslator.FromHtml("#B8E986");
         public static readonly Color FunBlue = ColorTranslator.FromHtml("#2196F3");
+        public static readonly Color DarkFunBlue = ColorTranslator.FromHtml("#1565C0");
         public static readonly Color CeruleanBlue = ColorTranslator.FromHtml("#00B0FF");
 
         // Accent colors
         public static readonly Color EminencePurple = ColorTranslator.FromHtml("#EA88FC");
+        public static readonly Color DarkEminencePurple = ColorTranslator.FromHtml("#9C27B0");
         public static readonly Color HollywoodPink = ColorTranslator.FromHtml("#FF4081");
 
         // Grayscale colors
-        public static readonly Color ThunderGray = ColorTranslator.FromHtml("#212121");
+        public static readonly Color ThunderGray = ColorTranslator.FromHtml("#1A1A1A");
         public static readonly Color ShipGray = ColorTranslator.FromHtml("#424242");
         public static readonly Color AbbeyGray = ColorTranslator.FromHtml("#616161");
         public static readonly Color OsloGray = ColorTranslator.FromHtml("#9E9E9E");
