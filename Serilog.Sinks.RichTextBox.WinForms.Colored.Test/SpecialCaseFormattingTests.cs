@@ -6,89 +6,116 @@ namespace Serilog.Tests
 {
     public class SpecialCaseFormattingTests : RichTextBoxSinkTestBase
     {
-        [Fact]
-        public void ScalarTypes_SpecialCases_DefaultFormatting_RendersCorrectly()
+        [Theory]
+        [InlineData("Bytes", new byte[] { 1, 2, 3, 4 }, "{Bytes}", "{Message}", "\"AQIDBA==\"")]
+        [InlineData("Time", "2023-01-15T10:30:45.0000000Z", "{Time:O}", "{Message}", "2023-01-15T10:30:45.0000000Z")]
+        [InlineData("TimeOffset", "2023-01-15T10:30:45.0000000+02:00", "{TimeOffset:O}", "{Message}", "2023-01-15T10:30:45.0000000+02:00")]
+        [InlineData("Duration", "03:25:45", "{Duration}", "{Message}", "03:25:45")]
+        [InlineData("Id", "00000000-0000-0000-0000-000000000000", "{Id}", "{Message}", "00000000-0000-0000-0000-000000000000")]
+        [InlineData("Link", "http://example.com/path", "{Link}", "{Message}", "http://example.com/path")]
+        public void ScalarTypes_SpecialCases_DefaultFormatting_RendersCorrectly(string propertyName, object value, string template, string outputTemplate, string expected)
         {
-            // byte[] (Base64 encoded string, quoted)
-            var byteProp = new LogEventProperty("Bytes", new ScalarValue(new byte[] { 1, 2, 3, 4 }));
-            var logEventBytes = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{Bytes}"), new[] { byteProp });
-            Assert.Equal($"\"{Convert.ToBase64String(new byte[] { 1, 2, 3, 4 })}\"", RenderAndGetText(logEventBytes, "{Message}", CultureInfo.InvariantCulture));
+            // Arrange
+            var scalarValue = value switch
+            {
+                byte[] bytes => new ScalarValue(bytes),
+                string str when propertyName == "Time" => new ScalarValue(DateTime.Parse(str, CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal)),
+                string str when propertyName == "TimeOffset" => new ScalarValue(DateTimeOffset.Parse(str, CultureInfo.InvariantCulture)),
+                string str when propertyName == "Duration" => new ScalarValue(TimeSpan.Parse(str)),
+                string str when propertyName == "Id" => new ScalarValue(Guid.Parse(str)),
+                string str when propertyName == "Link" => new ScalarValue(new Uri(str)),
+                _ => throw new ArgumentException($"Unsupported value type for {propertyName}")
+            };
 
-            // DateTime (ISO 8601 like, not quoted for display by default)
-            var dt = new DateTime(2023, 1, 15, 10, 30, 45, DateTimeKind.Utc);
-            var dtProp = new LogEventProperty("Time", new ScalarValue(dt));
-            var logEventDt = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{Time:O}"), new[] { dtProp });
-            Assert.Equal(dt.ToString("O"), RenderAndGetText(logEventDt, "{Message}", CultureInfo.InvariantCulture));
+            var prop = new LogEventProperty(propertyName, scalarValue);
+            var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse(template), new[] { prop });
 
-            // DateTimeOffset (ISO 8601 like, not quoted for display by default)
-            var dto = new DateTimeOffset(2023, 1, 15, 10, 30, 45, TimeSpan.FromHours(2));
-            var dtoProp = new LogEventProperty("TimeOffset", new ScalarValue(dto));
-            var logEventDto = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{TimeOffset:O}"), new[] { dtoProp });
-            Assert.Equal(dto.ToString("O"), RenderAndGetText(logEventDto, "{Message}", CultureInfo.InvariantCulture));
-
-            // TimeSpan (c format, not quoted for display by default)
-            var ts = TimeSpan.FromSeconds(12345);
-            var tsProp = new LogEventProperty("Duration", new ScalarValue(ts));
-            var logEventTs = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{Duration}"), new[] { tsProp });
-            Assert.Equal(ts.ToString("c"), RenderAndGetText(logEventTs, "{Message}", CultureInfo.InvariantCulture));
-
-            // Guid (D format, not quoted for display by default)
-            var guid = Guid.NewGuid();
-            var guidProp = new LogEventProperty("Id", new ScalarValue(guid));
-            var logEventGuid = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{Id}"), new[] { guidProp });
-            Assert.Equal(guid.ToString("D"), RenderAndGetText(logEventGuid, "{Message}", CultureInfo.InvariantCulture));
-
-            // Uri (Original string, not quoted for display by default)
-            var uri = new Uri("http://example.com/path");
-            var uriProp = new LogEventProperty("Link", new ScalarValue(uri));
-            var logEventUri = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{Link}"), new[] { uriProp });
-            Assert.Equal(uri.ToString(), RenderAndGetText(logEventUri, "{Message}", CultureInfo.InvariantCulture));
+            // Act & Assert
+            Assert.Equal(expected, RenderAndGetText(logEvent, outputTemplate, CultureInfo.InvariantCulture));
         }
 
         [Fact]
-        public void ScalarTypes_SpecialCases_JsonFormatting_RendersCorrectly()
+        public void JsonFormatting_ByteArray_RendersCorrectly()
         {
-            // byte[] (Base64 encoded string, JSON quoted)
+            // Arrange
             var bytes = new byte[] { 1, 2, 3, 4 };
             var byteProp = new LogEventProperty("Bytes", new ScalarValue(bytes));
-            var logEventBytes = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{Bytes}"), new[] { byteProp });
-            Assert.Equal($"\"{Convert.ToBase64String(bytes)}\"", RenderAndGetText(logEventBytes, "{Message:j}", CultureInfo.InvariantCulture));
+            var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{Bytes}"), new[] { byteProp });
 
-            // DateTime (ISO 8601 "O" format, JSON quoted)
+            // Act & Assert
+            Assert.Equal($"\"{Convert.ToBase64String(bytes)}\"", RenderAndGetText(logEvent, "{Message:j}", CultureInfo.InvariantCulture));
+        }
+
+        [Fact]
+        public void JsonFormatting_DateTime_RendersCorrectly()
+        {
+            // Arrange
             var dt = new DateTime(2023, 1, 15, 10, 30, 45, DateTimeKind.Utc);
             var dtProp = new LogEventProperty("Time", new ScalarValue(dt));
-            var logEventDt = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{Time}"), new[] { dtProp });
-            Assert.Equal($"\"{dt.ToString("O")}\"", RenderAndGetText(logEventDt, "{Message:j}", CultureInfo.InvariantCulture));
+            var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{Time}"), new[] { dtProp });
 
-            // DateTimeOffset (ISO 8601 "O" format, JSON quoted)
+            // Act & Assert
+            Assert.Equal($"\"{dt.ToString("O")}\"", RenderAndGetText(logEvent, "{Message:j}", CultureInfo.InvariantCulture));
+        }
+
+        [Fact]
+        public void JsonFormatting_DateTimeOffset_RendersCorrectly()
+        {
+            // Arrange
             var dto = new DateTimeOffset(2023, 1, 15, 10, 30, 45, TimeSpan.FromHours(2));
             var dtoProp = new LogEventProperty("TimeOffset", new ScalarValue(dto));
-            var logEventDto = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{TimeOffset}"), new[] { dtoProp });
-            Assert.Equal($"\"{dto.ToString("O")}\"", RenderAndGetText(logEventDto, "{Message:j}", CultureInfo.InvariantCulture));
+            var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{TimeOffset}"), new[] { dtoProp });
 
-            // TimeSpan (ToString() format, JSON quoted)
+            // Act & Assert
+            Assert.Equal($"\"{dto.ToString("O")}\"", RenderAndGetText(logEvent, "{Message:j}", CultureInfo.InvariantCulture));
+        }
+
+        [Fact]
+        public void JsonFormatting_TimeSpan_RendersCorrectly()
+        {
+            // Arrange
             var ts = TimeSpan.FromSeconds(12345);
             var tsProp = new LogEventProperty("Duration", new ScalarValue(ts));
-            var logEventTs = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{Duration}"), new[] { tsProp });
-            Assert.Equal($"\"{ts.ToString()}\"", RenderAndGetText(logEventTs, "{Message:j}", CultureInfo.InvariantCulture));
+            var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{Duration}"), new[] { tsProp });
 
-            // Guid (D format, JSON quoted)
+            // Act & Assert
+            Assert.Equal($"\"{ts.ToString()}\"", RenderAndGetText(logEvent, "{Message:j}", CultureInfo.InvariantCulture));
+        }
+
+        [Fact]
+        public void JsonFormatting_Guid_RendersCorrectly()
+        {
+            // Arrange
             var guid = Guid.NewGuid();
             var guidProp = new LogEventProperty("Id", new ScalarValue(guid));
-            var logEventGuid = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{Id}"), new[] { guidProp });
-            Assert.Equal($"\"{guid.ToString("D")}\"", RenderAndGetText(logEventGuid, "{Message:j}", CultureInfo.InvariantCulture));
+            var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{Id}"), new[] { guidProp });
 
-            // Uri (ToString(), JSON quoted)
+            // Act & Assert
+            Assert.Equal($"\"{guid.ToString("D")}\"", RenderAndGetText(logEvent, "{Message:j}", CultureInfo.InvariantCulture));
+        }
+
+        [Fact]
+        public void JsonFormatting_Uri_RendersCorrectly()
+        {
+            // Arrange
             var uri = new Uri("http://test.com/path");
             var uriProp = new LogEventProperty("Link", new ScalarValue(uri));
-            var logEventUri = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{Link}"), new[] { uriProp });
-            Assert.Equal($"\"{uri.ToString()}\"", RenderAndGetText(logEventUri, "{Message:j}", CultureInfo.InvariantCulture));
+            var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{Link}"), new[] { uriProp });
 
-            // Decimal for JSON (rendered as number)
+            // Act & Assert
+            Assert.Equal($"\"{uri.ToString()}\"", RenderAndGetText(logEvent, "{Message:j}", CultureInfo.InvariantCulture));
+        }
+
+        [Fact]
+        public void JsonFormatting_Decimal_RendersCorrectly()
+        {
+            // Arrange
             var decVal = 10.33m;
             var decProp = new LogEventProperty("Scalar", new ScalarValue(decVal));
-            var logEventDec = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{Scalar}"), new[] { decProp });
-            Assert.Equal(decVal.ToString(CultureInfo.InvariantCulture), RenderAndGetText(logEventDec, "{Message:j}", CultureInfo.InvariantCulture));
+            var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{Scalar}"), new[] { decProp });
+
+            // Act & Assert
+            Assert.Equal(decVal.ToString(CultureInfo.InvariantCulture), RenderAndGetText(logEvent, "{Message:j}", CultureInfo.InvariantCulture));
         }
     }
 }

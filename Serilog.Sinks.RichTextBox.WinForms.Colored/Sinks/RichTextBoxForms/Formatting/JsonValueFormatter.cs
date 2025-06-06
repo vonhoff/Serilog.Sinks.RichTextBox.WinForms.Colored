@@ -29,10 +29,12 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
     internal class JsonValueFormatter : ValueFormatter
     {
         private readonly DisplayValueFormatter _displayFormatter;
+        private readonly IFormatProvider? _formatProvider;
 
         public JsonValueFormatter(Theme theme, IFormatProvider? formatProvider) : base(theme)
         {
             _displayFormatter = new DisplayValueFormatter(theme, formatProvider);
+            _formatProvider = formatProvider;
         }
 
         protected override bool VisitScalarValue(ValueFormatterState state, ScalarValue scalar)
@@ -140,32 +142,64 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             switch (value)
             {
                 case null:
-                    {
-                        Theme.Render(richTextBox, StyleToken.Null, "null");
-                        return;
-                    }
+                    Theme.Render(richTextBox, StyleToken.Null, "null");
+                    return;
                 case string str:
-                    {
-                        Theme.Render(richTextBox, StyleToken.String, GetQuotedJsonString(str));
-                        return;
-                    }
+                    Theme.Render(richTextBox, StyleToken.String, GetQuotedJsonString(str));
+                    return;
                 case byte[] bytes:
-                    {
-                        Theme.Render(richTextBox, StyleToken.String, GetQuotedJsonString(Convert.ToBase64String(bytes)));
-                        return;
-                    }
+                    Theme.Render(richTextBox, StyleToken.String, GetQuotedJsonString(Convert.ToBase64String(bytes)));
+                    return;
                 case bool b:
+                    Theme.Render(richTextBox, StyleToken.Boolean, b ? "true" : "false");
+                    return;
+                case double d:
+                    if (double.IsNaN(d) || double.IsInfinity(d))
                     {
-                        Theme.Render(richTextBox, StyleToken.Boolean, b ? "true" : "false");
-                        return;
+                        Theme.Render(richTextBox, StyleToken.Number, GetQuotedJsonString(d.ToString(CultureInfo.InvariantCulture)));
                     }
-                case ValueType and (DateTime or DateTimeOffset):
+                    else
                     {
-                        _displayFormatter.FormatLiteralValue(scalar, richTextBox, "O", false);
+                        Theme.Render(richTextBox, StyleToken.Number, d.ToString("R", CultureInfo.InvariantCulture));
+                    }
+                    return;
+                case float f:
+                    if (float.IsNaN(f) || float.IsInfinity(f))
+                    {
+                        Theme.Render(richTextBox, StyleToken.Number, GetQuotedJsonString(f.ToString(CultureInfo.InvariantCulture)));
+                    }
+                    else
+                    {
+                        Theme.Render(richTextBox, StyleToken.Number, f.ToString("R", CultureInfo.InvariantCulture));
+                    }
+                    return;
+                case char ch:
+                case DateTime:
+                case DateTimeOffset:
+                case TimeSpan:
+                case Guid:
+                case Uri:
+                    {
+                        // For dates in JSON, always use ISO 8601 format (O)
+                        var writer = new StringWriter();
+                        if (value is DateTime dt)
+                        {
+                            writer.Write(dt.ToString("O", CultureInfo.InvariantCulture));
+                        }
+                        else if (value is DateTimeOffset dto)
+                        {
+                            writer.Write(dto.ToString("O", CultureInfo.InvariantCulture));
+                        }
+                        else
+                        {
+                            scalar.Render(writer, null, _formatProvider);
+                        }
+                        Theme.Render(richTextBox, StyleToken.Scalar, GetQuotedJsonString(writer.ToString()));
                         return;
                     }
                 default:
                     {
+                        // Use DisplayValueFormatter for all other scalar values (numbers, etc.)
                         _displayFormatter.FormatLiteralValue(scalar, richTextBox, null, false);
                         return;
                     }
