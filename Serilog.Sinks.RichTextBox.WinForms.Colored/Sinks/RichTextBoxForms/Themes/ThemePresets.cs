@@ -27,50 +27,50 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
         ///     A theme with a light background and contrasting colors.
         /// </summary>
         public static Theme Light { get; } = new(
-            new Style(Color.Black, Color.White),
+            new Style(ThemeColors.ThunderGray, ThemeColors.IronGray),
             new Dictionary<StyleToken, Style>
             {
-                [StyleToken.Text] = new(Color.Black),
-                [StyleToken.SecondaryText] = new(Color.Gray),
-                [StyleToken.TertiaryText] = new(Color.DimGray),
-                [StyleToken.Invalid] = new(Color.Goldenrod),
-                [StyleToken.Null] = new(Color.DarkBlue),
-                [StyleToken.Name] = new(Color.DimGray),
-                [StyleToken.String] = new(Color.DarkCyan),
-                [StyleToken.Number] = new(Color.DarkMagenta),
-                [StyleToken.Boolean] = new(Color.DarkBlue),
-                [StyleToken.Scalar] = new(Color.DarkGreen),
-                [StyleToken.LevelVerbose] = new(Color.DarkGray),
-                [StyleToken.LevelDebug] = new(Color.DimGray),
-                [StyleToken.LevelInformation] = new(Color.Black),
-                [StyleToken.LevelWarning] = new(Color.DarkGoldenrod),
-                [StyleToken.LevelError] = new(Color.White, Color.Red),
-                [StyleToken.LevelFatal] = new(Color.White, Color.Red)
+                [StyleToken.Text] = new(ThemeColors.ThunderGray),
+                [StyleToken.SecondaryText] = new(ThemeColors.ShipGray),
+                [StyleToken.TertiaryText] = new(ThemeColors.AbbeyGray),
+                [StyleToken.Invalid] = new(ThemeColors.CardinalRed),
+                [StyleToken.Null] = new(ThemeColors.FunBlue),
+                [StyleToken.Name] = new(ThemeColors.AbbeyGray),
+                [StyleToken.String] = new(ThemeColors.FunBlue),
+                [StyleToken.Number] = new(ThemeColors.EminencePurple),
+                [StyleToken.Boolean] = new(ThemeColors.FunBlue),
+                [StyleToken.Scalar] = new(ThemeColors.ForestGreen),
+                [StyleToken.LevelVerbose] = new(ThemeColors.AbbeyGray),
+                [StyleToken.LevelDebug] = new(ThemeColors.ShipGray),
+                [StyleToken.LevelInformation] = new(ThemeColors.ThunderGray),
+                [StyleToken.LevelWarning] = new(ThemeColors.TuscanyOrange),
+                [StyleToken.LevelError] = new(ThemeColors.IronGray, ThemeColors.CardinalRed),
+                [StyleToken.LevelFatal] = new(ThemeColors.IronGray, ThemeColors.CrimsonRed)
             });
 
         /// <summary>
         ///     Styled to replicate the default theme of Serilog.Sinks.Console; This is the default when no theme is specified.
         /// </summary>
         public static Theme Dark { get; } = new(
-            new Style(Color.White, Color.Black),
+            new Style(ThemeColors.IronGray, ThemeColors.ThunderGray),
             new Dictionary<StyleToken, Style>
             {
-                [StyleToken.Text] = new(Color.White),
-                [StyleToken.SecondaryText] = new(Color.Gray),
-                [StyleToken.TertiaryText] = new(Color.DarkGray),
-                [StyleToken.Invalid] = new(Color.Yellow),
-                [StyleToken.Null] = new(Color.Blue),
-                [StyleToken.Name] = new(Color.Gray),
-                [StyleToken.String] = new(Color.Cyan),
-                [StyleToken.Number] = new(Color.Magenta),
-                [StyleToken.Boolean] = new(Color.Blue),
-                [StyleToken.Scalar] = new(Color.Lime),
-                [StyleToken.LevelVerbose] = new(Color.Gray),
-                [StyleToken.LevelDebug] = new(Color.Gray),
-                [StyleToken.LevelInformation] = new(Color.White),
-                [StyleToken.LevelWarning] = new(Color.Yellow),
-                [StyleToken.LevelError] = new(Color.White, Color.Red),
-                [StyleToken.LevelFatal] = new(Color.White, Color.Red)
+                [StyleToken.Text] = new(ThemeColors.IronGray),
+                [StyleToken.SecondaryText] = new(ThemeColors.SilverSand),
+                [StyleToken.TertiaryText] = new(ThemeColors.OsloGray),
+                [StyleToken.Invalid] = new(ThemeColors.HollywoodPink),
+                [StyleToken.Null] = new(ThemeColors.ForestGreen),
+                [StyleToken.Name] = new(ThemeColors.SilverSand),
+                [StyleToken.String] = new(ThemeColors.AppleGreen),
+                [StyleToken.Number] = new(ThemeColors.ForestGreen),
+                [StyleToken.Boolean] = new(ThemeColors.EminencePurple),
+                [StyleToken.Scalar] = new(ThemeColors.CeruleanBlue),
+                [StyleToken.LevelVerbose] = new(ThemeColors.SilverSand),
+                [StyleToken.LevelDebug] = new(ThemeColors.SilverSand),
+                [StyleToken.LevelInformation] = new(ThemeColors.IronGray),
+                [StyleToken.LevelWarning] = new(ThemeColors.ButtercupYellow),
+                [StyleToken.LevelError] = new(ThemeColors.IronGray, ThemeColors.CardinalRed),
+                [StyleToken.LevelFatal] = new(ThemeColors.IronGray, ThemeColors.CrimsonRed)
             });
     }
 }
