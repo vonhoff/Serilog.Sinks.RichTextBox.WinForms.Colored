@@ -43,6 +43,7 @@ namespace Serilog.Tests
 
         public virtual void Dispose()
         {
+            GC.SuppressFinalize(this);
             if (!_disposed)
             {
                 _sink?.Dispose();

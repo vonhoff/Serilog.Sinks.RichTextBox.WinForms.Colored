@@ -34,7 +34,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             _formatProvider = formatProvider;
         }
 
-        public void FormatLiteralValue(ScalarValue scalar, RichTextBox richTextBox, string format, bool isLiteral)
+        public void FormatLiteralValue(ScalarValue scalar, RichTextBox richTextBox, string? format, bool isLiteral)
         {
             var value = scalar.Value;
 

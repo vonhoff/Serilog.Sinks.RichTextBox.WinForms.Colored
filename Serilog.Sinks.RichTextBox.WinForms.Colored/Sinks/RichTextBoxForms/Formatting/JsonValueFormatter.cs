@@ -173,7 +173,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                         Theme.Render(richTextBox, StyleToken.Number, f.ToString("R", CultureInfo.InvariantCulture));
                     }
                     return;
-                case char ch:
+                case char:
                 case DateTime:
                 case DateTimeOffset:
                 case TimeSpan:

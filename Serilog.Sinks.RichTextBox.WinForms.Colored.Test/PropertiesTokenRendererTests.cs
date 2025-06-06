@@ -1,9 +1,6 @@
 using Serilog.Events;
 using Serilog.Parsing;
 using Serilog.Sinks.RichTextBoxForms.Rendering;
-using Serilog.Sinks.RichTextBoxForms.Themes;
-using System.Linq;
-using System.Windows.Forms;
 using Xunit;
 
 namespace Serilog.Tests

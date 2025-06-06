@@ -126,17 +126,13 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
                 return TextCasing.Format(value.ToString(), format);
             }
 
-            switch (format[0])
+            return format[0] switch
             {
-                case 'w':
-                    return LowercaseLevelMap[index][width - 1];
-                case 'u':
-                    return UppercaseLevelMap[index][width - 1];
-                case 't':
-                    return TitleCaseLevelMap[index][width - 1];
-                default:
-                    return TextCasing.Format(value.ToString(), format);
-            }
+                'w' => LowercaseLevelMap[index][width - 1],
+                'u' => UppercaseLevelMap[index][width - 1],
+                't' => TitleCaseLevelMap[index][width - 1],
+                _ => TextCasing.Format(value.ToString(), format),
+            };
         }
     }
 }

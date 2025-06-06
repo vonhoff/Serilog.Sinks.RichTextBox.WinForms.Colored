@@ -31,8 +31,8 @@ namespace Serilog.Tests
             if (scalarValue is float || scalarValue is double || scalarValue is decimal)
             {
                 var expectedFormatted = Convert.ToDecimal(scalarValue).ToString(CultureInfo.InvariantCulture);
-                if (scalarValue is float) expectedFormatted = ((float)scalarValue).ToString(CultureInfo.InvariantCulture);
-                if (scalarValue is double) expectedFormatted = ((double)scalarValue).ToString(CultureInfo.InvariantCulture);
+                if (scalarValue is float v) expectedFormatted = v.ToString(CultureInfo.InvariantCulture);
+                if (scalarValue is double v1) expectedFormatted = v1.ToString(CultureInfo.InvariantCulture);
                 Assert.Equal(expectedFormatted, actual);
             }
             else

@@ -29,7 +29,6 @@ namespace Serilog.Tests
         public void StringificationOperator_BehavesAsExpected()
         {
             var array = new[] { 1, 2, 3 };
-            var arrayProp = new LogEventProperty("Data", new SequenceValue(new LogEventPropertyValue[] { new ScalarValue(1), new ScalarValue(2), new ScalarValue(3) }));
             var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("Received {$Data}"), new[] { new LogEventProperty("Data", new ScalarValue(array.ToString())) });
 
             // Default: {$Data} should be quoted string of type name

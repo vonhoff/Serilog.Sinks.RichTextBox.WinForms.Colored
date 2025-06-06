@@ -15,11 +15,12 @@
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageProjectUrl>https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored</PackageProjectUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<PackageTags>serilog;sinks;richtextbox;winforms;windows;sink;colors;theme;themes;serilog-sink;vonhoff;rich;textbox;</PackageTags>
+		<PackageTags>serilog;sinks;richtextbox;winforms;windows;sink;colors;theme;themes;serilog-sink;vonhoff;rich;textbox;logging;</PackageTags>
 		<RepositoryUrl>https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored.git</RepositoryUrl>
 		<RootNamespace>Serilog</RootNamespace>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-		<TargetFrameworks>net462;net6.0-windows;net8.0-windows</TargetFrameworks>
+    	<TargetFrameworks Condition=" '$(OS)' == 'Windows_NT'">net471;net462</TargetFrameworks>
+    	<TargetFrameworks>$(TargetFrameworks);net9.0-windows;net8.0-windows;net6.0-windows;netcoreapp3.1-windows;netcoreapp3.0-windows</TargetFrameworks>
 		<UseWindowsForms>true</UseWindowsForms>
 		<Version>2.1.1</Version>
 		<PackageReleaseNotes>
@@ -28,7 +29,8 @@
 			- Moved old themes to "DarkClassic" and "LightClassic".
 			- Fixed bugs with the formatters (JSON and Literal).
 			- Changed the default configuration for optimal performance.
-			- Removed link detection altogether, as it causes issues with the formatting.
+			- Removed link detection, as it causes issues with the formatting.
+			- Updated TargetFrameworks to include net9.0-windows, netcoreapp3.1-windows, and netcoreapp3.0-windows.
 
 			Internal Changes:
 			- Removed useless code and cleaned up the project.
@@ -54,8 +56,21 @@
 		</None>
 	</ItemGroup>
 
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'net462' ">
+		<DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+	</PropertyGroup>
+
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'net471' ">
+		<DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<PackageReference Include="Serilog" Version="[2.12.0,)" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net462' OR '$(TargetFramework)' == 'net471' ">
+		<Reference Include="System.Drawing" />
+		<Reference Include="System.Windows.Forms" />
 	</ItemGroup>
 
 </Project>

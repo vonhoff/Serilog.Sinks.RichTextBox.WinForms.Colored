@@ -1,7 +1,5 @@
 using Serilog.Events;
 using Xunit;
-using System.Collections.Generic;
-using System;
 
 namespace Serilog.Tests
 {
