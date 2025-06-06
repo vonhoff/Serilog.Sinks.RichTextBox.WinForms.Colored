@@ -40,6 +40,7 @@
 			https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored
 		</PackageReleaseNotes>
 		<SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatform>windows</SupportedOSPlatform>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<LangVersion>9.0</LangVersion>
 		<WarningLevel>6</WarningLevel>
