@@ -23,10 +23,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
 {
     public static class ThemePresets
     {
-        /// <summary>
-        ///     A theme with a light background and contrasting colors.
-        /// </summary>
-        public static Theme Light { get; } = new(
+        public static Theme LightClassic { get; } = new(
             new Style(Color.Black, Color.White),
             new Dictionary<StyleToken, Style>
             {
@@ -48,10 +45,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
                 [StyleToken.LevelFatal] = new(Color.White, Color.Red)
             });
 
-        /// <summary>
-        ///     Styled to replicate the default theme of Serilog.Sinks.Console; This is the default when no theme is specified.
-        /// </summary>
-        public static Theme Dark { get; } = new(
+        public static Theme DarkClassic { get; } = new(
             new Style(Color.White, Color.Black),
             new Dictionary<StyleToken, Style>
             {
@@ -71,6 +65,50 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
                 [StyleToken.LevelWarning] = new(Color.Yellow),
                 [StyleToken.LevelError] = new(Color.White, Color.Red),
                 [StyleToken.LevelFatal] = new(Color.White, Color.Red)
+            });
+
+        public static Theme Light { get; } = new(
+            new Style(ThemeColors.ThunderGray, ThemeColors.IronGray),
+            new Dictionary<StyleToken, Style>
+            {
+                [StyleToken.Text] = new(ThemeColors.ThunderGray),
+                [StyleToken.SecondaryText] = new(ThemeColors.ShipGray),
+                [StyleToken.TertiaryText] = new(ThemeColors.AbbeyGray),
+                [StyleToken.Invalid] = new(ThemeColors.DarkCardinalRed),
+                [StyleToken.Null] = new(ThemeColors.DarkFunBlue),
+                [StyleToken.Name] = new(ThemeColors.AbbeyGray),
+                [StyleToken.String] = new(ThemeColors.DarkFunBlue),
+                [StyleToken.Number] = new(ThemeColors.DarkEminencePurple),
+                [StyleToken.Boolean] = new(ThemeColors.DarkFunBlue),
+                [StyleToken.Scalar] = new(ThemeColors.DarkForestGreen),
+                [StyleToken.LevelVerbose] = new(ThemeColors.AbbeyGray),
+                [StyleToken.LevelDebug] = new(ThemeColors.ShipGray),
+                [StyleToken.LevelInformation] = new(ThemeColors.ThunderGray),
+                [StyleToken.LevelWarning] = new(ThemeColors.DarkButtercupYellow),
+                [StyleToken.LevelError] = new(ThemeColors.IronGray, ThemeColors.DarkCardinalRed),
+                [StyleToken.LevelFatal] = new(ThemeColors.IronGray, ThemeColors.CrimsonRed)
+            });
+
+        public static Theme Dark { get; } = new(
+            new Style(ThemeColors.IronGray, ThemeColors.ThunderGray),
+            new Dictionary<StyleToken, Style>
+            {
+                [StyleToken.Text] = new(ThemeColors.IronGray),
+                [StyleToken.SecondaryText] = new(ThemeColors.SilverSand),
+                [StyleToken.TertiaryText] = new(ThemeColors.OsloGray),
+                [StyleToken.Invalid] = new(ThemeColors.HollywoodPink),
+                [StyleToken.Null] = new(ThemeColors.ForestGreen),
+                [StyleToken.Name] = new(ThemeColors.SilverSand),
+                [StyleToken.String] = new(ThemeColors.AppleGreen),
+                [StyleToken.Number] = new(ThemeColors.ForestGreen),
+                [StyleToken.Boolean] = new(ThemeColors.EminencePurple),
+                [StyleToken.Scalar] = new(ThemeColors.CeruleanBlue),
+                [StyleToken.LevelVerbose] = new(ThemeColors.SilverSand),
+                [StyleToken.LevelDebug] = new(ThemeColors.SilverSand),
+                [StyleToken.LevelInformation] = new(ThemeColors.IronGray),
+                [StyleToken.LevelWarning] = new(ThemeColors.ButtercupYellow),
+                [StyleToken.LevelError] = new(ThemeColors.IronGray, ThemeColors.CardinalRed),
+                [StyleToken.LevelFatal] = new(ThemeColors.IronGray, ThemeColors.CrimsonRed)
             });
     }
 }

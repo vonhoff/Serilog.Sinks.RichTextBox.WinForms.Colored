@@ -21,7 +21,7 @@ using System.Windows.Forms;
 
 namespace Demo
 {
-    internal static class Program
+    public static class Program
     {
         [STAThread]
         private static void Main()

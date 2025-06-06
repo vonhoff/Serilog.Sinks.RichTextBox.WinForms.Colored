@@ -33,15 +33,8 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
 
         public Style DefaultStyle { get; set; }
 
-        /// <summary>
-        ///     Appends text to the provided <see cref="RichTextBox" /> with styling applied.
-        /// </summary>
-        /// <param name="richTextBox">The RichTextBox control to write to.</param>
-        /// <param name="styleToken">The styling to apply.</param>
-        /// <param name="value">The value to write.</param>
         public void Render(RichTextBox richTextBox, StyleToken styleToken, string value)
         {
-            // Return if the token is not defined in the current theme.
             if (!_styles.TryGetValue(styleToken, out var themeStyle))
             {
                 return;
@@ -51,11 +44,8 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
             richTextBox.SelectionLength = 0;
             richTextBox.SelectionColor = themeStyle.Foreground;
             richTextBox.SelectionBackColor = themeStyle.Background;
-
-            // Append the provided value.
             richTextBox.AppendText(value);
 
-            // Reset to default colors.
             richTextBox.SelectionColor = DefaultStyle.Foreground;
             richTextBox.SelectionBackColor = DefaultStyle.Background;
         }

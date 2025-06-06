@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.RichTextBox.W
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo", "Demo\Demo.csproj", "{53953B2A-3751-4F90-A041-2B58D34DC6A5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.RichTextBox.WinForms.Colored.Test", "Serilog.Sinks.RichTextBox.WinForms.Colored.Test\Serilog.Sinks.RichTextBox.WinForms.Colored.Test.csproj", "{DDD4E1FA-3D2A-4A9F-AFAD-E195975D066A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{53953B2A-3751-4F90-A041-2B58D34DC6A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{53953B2A-3751-4F90-A041-2B58D34DC6A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{53953B2A-3751-4F90-A041-2B58D34DC6A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDD4E1FA-3D2A-4A9F-AFAD-E195975D066A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDD4E1FA-3D2A-4A9F-AFAD-E195975D066A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDD4E1FA-3D2A-4A9F-AFAD-E195975D066A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDD4E1FA-3D2A-4A9F-AFAD-E195975D066A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

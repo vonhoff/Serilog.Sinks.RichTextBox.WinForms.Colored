@@ -16,22 +16,24 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using Serilog;
 using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Sinks.RichTextBoxForms;
 using Serilog.Sinks.RichTextBoxForms.Themes;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Demo
 {
     public partial class Form1 : Form
     {
         private RichTextBoxSinkOptions? _options;
+        private bool _toolbarsVisible = true;
 
         public Form1()
         {
@@ -40,7 +42,11 @@ namespace Demo
 
         private void Initialize()
         {
-            _options = new RichTextBoxSinkOptions(ThemePresets.Dark, 200, 5, true, 0);
+            _options = new RichTextBoxSinkOptions(
+                appliedTheme: ThemePresets.Dark,
+                outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:l}{NewLine}{Exception}",
+                formatProvider: new CultureInfo("en-US"));
+
             var sink = new RichTextBoxSink(richTextBox1, _options);
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
@@ -53,19 +59,32 @@ namespace Demo
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            SelfLog.Enable(message => Trace.WriteLine($"INTERNAL ERROR: {message}"));
+            SelfLog.Enable(message => 
+            {
+                Trace.WriteLine($"INTERNAL ERROR: {message}");
+            });
             Initialize();
 
-            Log.Information("Hello {Name}", Environment.UserName);
-            Log.Warning("No coins remain at position {@Position}", new { Lat = 25, Long = 134 });
+            Log.Information("Application started. Environment: {Environment}, Version: {Version}", 
+                Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development",
+                typeof(Form1).Assembly.GetName().Version);
+
+            var apiRequest = new
+            {
+                Method = "POST",
+                Endpoint = "/api/users",
+                RequestId = Guid.NewGuid()
+            };
+            Log.Information("API Request: {@Request}", apiRequest);
 
             try
             {
-                Fail();
+                SimulateDatabaseOperation();
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Oops... Something went wrong");
+                Log.Error(ex, "Database operation failed. Connection string: {ConnectionString}", 
+                    "Server=localhost;Trusted_Connection=True;");
             }
         }
 
@@ -75,47 +94,77 @@ namespace Demo
             Log.CloseAndFlush();
         }
 
-        private void BtnClear_Click(object sender, EventArgs e)
+        private void btnClear_Click(object sender, EventArgs e)
         {
             richTextBox1.Clear();
         }
 
-        private void BtnDebug_Click(object sender, EventArgs e)
+        private void btnDebug_Click(object sender, EventArgs e)
         {
-            Log.Debug("Hello! Now => {Now}", DateTime.Now);
+            var query = new
+            {
+                Sql = "SELECT * FROM Users WHERE Status = @status",
+                Parameters = new { status = "Active" },
+                ExecutionTime = 150 // ms
+            };
+            Log.Debug("Database query executed: {@Query}", query);
         }
 
-        private void BtnError_Click(object sender, EventArgs e)
+        private void btnError_Click(object sender, EventArgs e)
         {
-            Log.Error("Hello! Now => {Now}", DateTime.Now);
+            try
+            {
+                throw new InvalidOperationException("Failed to process payment", 
+                    new Exception("Gateway timeout"));
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Payment processing failed for OrderId: {OrderId}", Guid.NewGuid());
+            }
         }
 
-        private void BtnFatal_Click(object sender, EventArgs e)
+        private void btnFatal_Click(object sender, EventArgs e)
         {
-            Log.Fatal("Hello! Now => {Now}", DateTime.Now);
+            try
+            {
+                throw new OutOfMemoryException("Application memory limit exceeded");
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Critical system failure. Memory usage: {MemoryUsage}MB", 
+                    Process.GetCurrentProcess().WorkingSet64 / 1024 / 1024);
+            }
         }
 
-        private void BtnInformation_Click(object sender, EventArgs e)
+        private void btnInformation_Click(object sender, EventArgs e)
         {
-            Log.Information("Hello! Now => {Now}", DateTime.Now);
+            var userAction = new
+            {
+                UserId = "user123",
+                Action = "Login",
+                IP = "192.168.1.1",
+                UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+                Timestamp = DateTime.UtcNow
+            };
+            Log.Information("User activity: {@UserAction}", userAction);
         }
 
-        private void BtnParallelFor_Click(object sender, EventArgs e)
+        private void btnParallelFor_Click(object sender, EventArgs e)
         {
             for (var stepNumber = 1; stepNumber <= 100; stepNumber++)
             {
                 var stepName = $"Step {stepNumber:000}";
 
-                Log.Verbose("Hello from For({StepName}) Verbose", stepName);
-                Log.Debug("Hello from For({StepName}) Debug", stepName);
-                Log.Information("Hello from For({StepName}) Information", stepName);
-                Log.Warning("Hello from For({StepName}) Warning", stepName);
-                Log.Error("Hello from For({StepName}) Error", stepName);
-                Log.Fatal("Hello from For({StepName}) Fatal", stepName);
+                Log.Verbose("Processing batch item {StepName} - Status: {Status}", stepName, "InProgress");
+                Log.Debug("Batch processing metrics for {StepName} - Duration: {Duration}ms", stepName, 150);
+                Log.Information("Completed processing {StepName} - Items processed: {Count}", stepName, 1000);
+                Log.Warning("Performance warning for {StepName} - Response time: {ResponseTime}ms", stepName, 500);
+                Log.Error("Failed to process {StepName} - Error code: {ErrorCode}", stepName, "E1001");
+                Log.Fatal("Critical failure in {StepName} - System state: {State}", stepName, "Unrecoverable");
             }
         }
 
-        private async void BtnTaskRun_Click(object sender, EventArgs e)
+        private async void btnTaskRun_Click(object sender, EventArgs e)
         {
             var tasks = new List<Task>();
 
@@ -126,12 +175,12 @@ namespace Demo
                 {
                     var stepName = $"Step {stepNumber:000}";
 
-                    Log.Verbose("Hello from Task.Run({StepName}) Verbose", stepName);
-                    Log.Debug("Hello from Task.Run({StepName}) Debug", stepName);
-                    Log.Information("Hello from Task.Run({StepName}) Information", stepName);
-                    Log.Warning("Hello from Task.Run({StepName}) Warning", stepName);
-                    Log.Error("Hello from Task.Run({StepName}) Error", stepName);
-                    Log.Fatal("Hello from Task.Run({StepName}) Fatal", stepName);
+                    Log.Verbose("Background task {StepName} - Status: {Status}", stepName, "Started");
+                    Log.Debug("Background task {StepName} - Thread ID: {ThreadId}", stepName, Environment.CurrentManagedThreadId);
+                    Log.Information("Background task {StepName} - Progress: {Progress}%", stepName, 75);
+                    Log.Warning("Background task {StepName} - Resource usage: {CpuUsage}%", stepName, 85);
+                    Log.Error("Background task {StepName} - Failed with code: {ErrorCode}", stepName, "E2001");
+                    Log.Fatal("Background task {StepName} - System impact: {Impact}", stepName, "Critical");
                 });
 
                 tasks.Add(task);
@@ -140,46 +189,144 @@ namespace Demo
             await Task.WhenAll(tasks);
         }
 
-        private void BtnVerbose_Click(object sender, EventArgs e)
+        private void btnVerbose_Click(object sender, EventArgs e)
         {
-            Log.Verbose("Hello! Now => {Now}", DateTime.Now);
+            Log.Verbose("Processing batch item {ItemId} of {TotalItems}", 42, 100);
         }
 
-        private void BtnWarning_Click(object sender, EventArgs e)
+        private void btnWarning_Click(object sender, EventArgs e)
         {
-            Log.Warning("Hello! Now => {Now}", DateTime.Now);
+            Log.Warning("High memory usage detected: {MemoryUsage}MB (Threshold: {Threshold}MB)", 
+                Process.GetCurrentProcess().WorkingSet64 / 1024 / 1024, 16);
         }
 
-        private static void Fail()
+        private static void SimulateDatabaseOperation()
         {
-            throw new DivideByZeroException();
+            throw new Exception("Database connection timeout", new TimeoutException("Network connection lost"));
         }
 
-        private void BtnObject_Click(object sender, EventArgs e)
+        private void btnObject_Click(object sender, EventArgs e)
         {
-            var weatherForecast = new WeatherForecast
+            var systemMetrics = new
             {
-                Date = DateTime.Parse("2019-08-01"),
-                TemperatureCelsius = 25,
-                Summary = "Hot"
+                MemoryUsage = 1024.5,
+                LastGcCollection = DateTime.UtcNow.AddMinutes(-5)
             };
 
-            Log.Information("{@forecast}", weatherForecast);
+            Log.Information("System metrics: {@Metrics:j}", systemMetrics);
         }
 
-        private void BtnDispose_Click(object sender, EventArgs e)
+        private void btnScalar_Click(object sender, EventArgs e)
+        {
+            Log.Information("Cache hit ratio: {HitRatio:P2}", 0.856);
+            Log.Information("Response received: {ResponseTime}", DateTime.Now);
+            Log.Information("Valid batch size: {IsValid}", true);
+            Log.Information("API version: {ApiVersion}", "2.1.0");
+        }
+
+        private void btnDictionary_Click(object sender, EventArgs e)
+        {
+            var config = new Dictionary<string, object>
+            {
+                ["ConnectionTimeout"] = 30,
+                ["MaxRetries"] = 3,
+                ["EnableCompression"] = true,
+                ["AllowedOrigins"] = new[] { "https://api.example.com", "https://admin.example.com", "\\\\int\\server\\region\\share\\project\\client\\folder with space\\1_All ABC changes\\Local~output.csv" },
+                ["FeatureFlags"] = new Dictionary<string, bool>
+                {
+                    ["NewUI"] = true,
+                    ["BetaFeatures"] = false
+                }
+            };
+
+            Log.Information("Configuration loaded: {@Config:l}", config);
+        }
+
+        private void btnStructure_Click(object sender, EventArgs e)
+        {
+            var auditLog = new
+            {
+                EventId = Guid.NewGuid(),
+                Timestamp = DateTime.UtcNow,
+                User = new
+                {
+                    Id = "user456",
+                    Role = "Administrator",
+                    Department = "IT"
+                },
+                Action = "ConfigurationUpdate",
+                Changes = new[]
+                {
+                    new { Property = "MaxConnections", OldValue = 100, NewValue = 200 },
+                    new { Property = "Timeout", OldValue = 30, NewValue = 60 }
+                } as object[]
+            };
+
+            Log.Information("Audit log entry: {@AuditLog:j}", auditLog);
+        }
+
+        private void btnComplex_Click(object sender, EventArgs e)
+        {
+            var deploymentInfo = new
+            {
+                DeploymentId = Guid.NewGuid(),
+                Environment = "Production",
+                Version = "2.1.0",
+                Timestamp = DateTime.UtcNow,
+                Services = new object[]
+                {
+                    new
+                    {
+                        Name = "API",
+                        Status = "Healthy",
+                        Metrics = new
+                        {
+                            ResponseTime = 45,
+                            ErrorRate = 0.01,
+                            RequestsPerSecond = 150
+                        }
+                    },
+                    new
+                    {
+                        Name = "Database",
+                        Status = "Degraded",
+                        Metrics = new
+                        {
+                            ConnectionCount = 85,
+                            QueryTime = 120,
+                            ReplicationLag = 5
+                        }
+                    }
+                },
+                Infrastructure = new
+                {
+                    Region = "us-east-1",
+                    InstanceType = "t3.large",
+                    Scaling = new
+                    {
+                        MinInstances = 2,
+                        MaxInstances = 5,
+                        CurrentInstances = 3
+                    }
+                }
+            };
+
+            Log.Information("Deployment status: {@DeploymentInfo:j}", deploymentInfo);
+        }
+
+        private void btnDispose_Click(object sender, EventArgs e)
         {
             CloseAndFlush();
             btnDispose.Enabled = false;
         }
 
-        private void BtnReset_Click(object sender, EventArgs e)
+        private void btnReset_Click(object sender, EventArgs e)
         {
             CloseAndFlush();
             Initialize();
         }
 
-        private void BtnAutoScroll_Click(object sender, EventArgs e)
+        private void btnAutoScroll_Click(object sender, EventArgs e)
         {
             if (_options == null)
             {
@@ -190,7 +337,7 @@ namespace Demo
             btnAutoScroll.Text = _options.AutoScroll ? "Disable Auto Scroll" : "Enable Auto Scroll";
         }
 
-        private void BtnLogLimit_Click(object sender, EventArgs e)
+        private void btnLogLimit_Click(object sender, EventArgs e)
         {
             if (_options == null)
             {
@@ -201,6 +348,16 @@ namespace Demo
             _options.MaxLogLines = limitEnabled ? 0 : 35;
             btnLogLimit.Text = limitEnabled ? "Enable Line Limit" : "Disable Line Limit";
             Log.Information("Log line limit set to {lineLimit}", _options.MaxLogLines == int.MaxValue ? "Maximum" : _options.MaxLogLines.ToString());
+        }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.T)
+            {
+                _toolbarsVisible = !_toolbarsVisible;
+                toolStrip1.Visible = _toolbarsVisible;
+                toolStrip2.Visible = _toolbarsVisible;
+            }
         }
     }
 }

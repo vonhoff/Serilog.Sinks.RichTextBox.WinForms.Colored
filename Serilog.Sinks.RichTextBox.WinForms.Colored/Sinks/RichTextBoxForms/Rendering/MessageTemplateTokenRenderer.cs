@@ -16,12 +16,12 @@
 
 #endregion
 
-using System;
-using System.Windows.Forms;
 using Serilog.Events;
 using Serilog.Parsing;
 using Serilog.Sinks.RichTextBoxForms.Formatting;
 using Serilog.Sinks.RichTextBoxForms.Themes;
+using System;
+using System.Windows.Forms;
 
 namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
@@ -41,16 +41,16 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
                     switch (format)
                     {
                         case 'l':
-                        {
-                            isLiteral = true;
-                            break;
-                        }
+                            {
+                                isLiteral = true;
+                                break;
+                            }
 
                         case 'j':
-                        {
-                            isJson = true;
-                            break;
-                        }
+                            {
+                                isJson = true;
+                                break;
+                            }
                     }
                 }
             }

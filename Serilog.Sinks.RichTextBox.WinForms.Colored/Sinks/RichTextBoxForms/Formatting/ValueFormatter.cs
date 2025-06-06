@@ -16,10 +16,10 @@
 
 #endregion
 
-using System.Windows.Forms;
 using Serilog.Data;
 using Serilog.Events;
 using Serilog.Sinks.RichTextBoxForms.Themes;
+using System.Windows.Forms;
 
 namespace Serilog.Sinks.RichTextBoxForms.Formatting
 {
@@ -32,9 +32,9 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 
         public Theme Theme { get; set; }
 
-        public bool Format(LogEventPropertyValue value, RichTextBox richTextBox, string format, bool literalTopLevel = false)
+        public void Format(LogEventPropertyValue value, RichTextBox richTextBox, string format, bool isLiteral)
         {
-            return Visit(new ValueFormatterState(richTextBox, format, literalTopLevel), value);
+            Visit(new ValueFormatterState(richTextBox, format, true, isLiteral), value);
         }
     }
 }

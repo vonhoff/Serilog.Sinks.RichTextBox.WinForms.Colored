@@ -1,6 +1,7 @@
 # Serilog.Sinks.RichTextBox.WinForms.Colored
 
 [![NuGet Downloads](https://img.shields.io/nuget/dt/Serilog.Sinks.RichTextBox.WinForms.Colored.svg)](https://www.nuget.org/packages/Serilog.Sinks.RichTextBox.WinForms.Colored)
+![workflow](https://img.shields.io/github/actions/workflow/status/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored/build.yml)
 [![Latest version](https://img.shields.io/nuget/v/Serilog.Sinks.RichTextBox.WinForms.Colored.svg)](https://www.nuget.org/packages/Serilog.Sinks.RichTextBox.WinForms.Colored)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
@@ -12,9 +13,8 @@ with support for coloring and custom themes.
 
 ## Features
 
-- Colorful, formatted log events in a WinForms RichTextBox control
+- Colored log events in a WinForms RichTextBox control
 - Dark and Light theme presets with customization options
-- Configurable output templates
 - Auto-scrolling to latest messages
 - Line limiting to control memory usage
 
@@ -66,10 +66,10 @@ Log.Logger = new LoggerConfiguration()
         minimumLogEventLevel: LogEventLevel.Debug,
         outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}",
         theme: ThemePresets.Light,
-        messageBatchSize: 100,
-        messagePendingInterval: 10,
+        messageBatchSize: 200,
+        messagePendingInterval: 16,
         autoScroll: true,
-        maxLogLines: 1000)
+        maxLogLines: 512)
     .CreateLogger();
 
 ```
@@ -78,18 +78,26 @@ Log.Logger = new LoggerConfiguration()
 
 Available built-in themes:
 
-| Theme                | Description                                             |
-|----------------------|---------------------------------------------------------|
-| `ThemePresets.Dark`  | Similar to the default theme of _Serilog.Sinks.Console_ |
-| `ThemePresets.Light` | Light background with contrasting colors                |
+| Theme                       | Description                                                                  |
+|-----------------------------|------------------------------------------------------------------------------|
+| `ThemePresets.Dark`         | A dark theme inspired by modern IDEs and the Serilog Console sink.           |
+| `ThemePresets.Light`        | A light theme with vibrant colors and high contrast for optimal readability. |
+| `ThemePresets.DarkClassic`  | A theme replicating the Serilog Console sink.                                |
+| `ThemePresets.LightClassic` | A theme with a light background and contrasting colors.                      |
+
+You can customize the themes by creating your own theme instance or modifying the existing ones. The themes support various style tokens for different parts of the log message, including:
+- Text colors for different log levels
+- Syntax highlighting for strings, numbers, and booleans
+- Background colors for error and fatal messages
+- Custom styling for null values and invalid content
 
 ## Frequently Asked Questions
 
 ### Why is the package name so long?
 
-Shorter alternatives were already reserved in the NuGet registry but were not used, so a more descriptive name was needed for this implementation.
+Shorter alternatives were already reserved in the NuGet registry, so a more descriptive name was needed for this implementation.
 
-### Why use a WinForms solution instead of the WPF one?
+### Why use a WinForms RichTextBox instead of a WPF RichTextBox?
 
 This sink is designed for WinForms applications to avoid unnecessary dependencies. Using a WPF-based logging component would require adding the entire WPF framework, greatly increasing the size of the application for a small logging feature.
 

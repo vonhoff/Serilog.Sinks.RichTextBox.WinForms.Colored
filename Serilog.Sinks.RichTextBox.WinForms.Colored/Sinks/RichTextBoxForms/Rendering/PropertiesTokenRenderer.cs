@@ -16,13 +16,13 @@
 
 #endregion
 
-using System;
-using System.Linq;
-using System.Windows.Forms;
 using Serilog.Events;
 using Serilog.Parsing;
 using Serilog.Sinks.RichTextBoxForms.Formatting;
 using Serilog.Sinks.RichTextBoxForms.Themes;
+using System;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
@@ -35,7 +35,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
         {
             _outputTemplate = outputTemplate;
 
-            _valueFormatter = token.Format?.Contains('j') != null
+            _valueFormatter = token.Format?.Contains("j") == true
                 ? new JsonValueFormatter(theme, formatProvider)
                 : new DisplayValueFormatter(theme, formatProvider);
         }
@@ -49,7 +49,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
                 .Select(p => new LogEventProperty(p.Key, p.Value));
 
             var value = new StructureValue(included);
-            _valueFormatter.Format(value, richTextBox, string.Empty);
+            _valueFormatter.Format(value, richTextBox, string.Empty, false);
         }
 
         private static bool TemplateContainsPropertyName(MessageTemplate template, string propertyName)
