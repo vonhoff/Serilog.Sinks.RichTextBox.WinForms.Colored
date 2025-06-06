@@ -97,16 +97,16 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                     Theme.Render(richTextBox, StyleToken.Number, d.ToString(_formatProvider));
                     return;
                 case DateTime dt:
-                    Theme.Render(richTextBox, StyleToken.Scalar, dt.ToString("O", _formatProvider));
+                    Theme.Render(richTextBox, StyleToken.Scalar, dt.ToString(format, _formatProvider));
                     return;
                 case DateTimeOffset dto:
-                    Theme.Render(richTextBox, StyleToken.Scalar, dto.ToString("O", _formatProvider));
+                    Theme.Render(richTextBox, StyleToken.Scalar, dto.ToString(format, _formatProvider));
                     return;
                 case TimeSpan ts:
-                    Theme.Render(richTextBox, StyleToken.Scalar, ts.ToString("c", _formatProvider));
+                    Theme.Render(richTextBox, StyleToken.Scalar, ts.ToString(string.IsNullOrEmpty(format) ? "c" : format, _formatProvider));
                     return;
                 case Guid guid:
-                    Theme.Render(richTextBox, StyleToken.Scalar, guid.ToString("D", _formatProvider));
+                    Theme.Render(richTextBox, StyleToken.Scalar, guid.ToString(string.IsNullOrEmpty(format) ? "D" : format, _formatProvider));
                     return;
                 case Uri uri:
                     Theme.Render(richTextBox, StyleToken.Scalar, uri.ToString());

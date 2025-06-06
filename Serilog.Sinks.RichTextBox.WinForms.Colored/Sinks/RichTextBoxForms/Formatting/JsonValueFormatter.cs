@@ -159,56 +159,15 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                         Theme.Render(richTextBox, StyleToken.Boolean, b ? "true" : "false");
                         return;
                     }
-                case ValueType and (int or uint or long or ulong or decimal or byte or sbyte or short or ushort):
-                    {
-                        Theme.Render(richTextBox, StyleToken.Number,
-                            ((IFormattable)value).ToString(null, CultureInfo.InvariantCulture));
-                        return;
-                    }
-                case double d:
-                    {
-                        if (double.IsNaN(d) || double.IsInfinity(d))
-                        {
-                            Theme.Render(richTextBox, StyleToken.Number,
-                                GetQuotedJsonString(d.ToString(CultureInfo.InvariantCulture)));
-                        }
-                        else
-                        {
-                            Theme.Render(richTextBox, StyleToken.Number, d.ToString("R", CultureInfo.InvariantCulture));
-                        }
-
-                        return;
-                    }
-                case float f:
-                    {
-                        if (float.IsNaN(f) || float.IsInfinity(f))
-                        {
-                            Theme.Render(richTextBox, StyleToken.Number,
-                                GetQuotedJsonString(f.ToString(CultureInfo.InvariantCulture)));
-                        }
-                        else
-                        {
-                            Theme.Render(richTextBox, StyleToken.Number, f.ToString("R", CultureInfo.InvariantCulture));
-                        }
-
-                        return;
-                    }
-                case char ch:
-                    {
-                        Theme.Render(richTextBox, StyleToken.Scalar,
-                            GetQuotedJsonString(ch.ToString()));
-                        return;
-                    }
                 case ValueType and (DateTime or DateTimeOffset):
                     {
-                        Theme.Render(richTextBox, StyleToken.Scalar,
-                            $"\"{((IFormattable)value).ToString("O", CultureInfo.InvariantCulture)}\"");
+                        _displayFormatter.FormatLiteralValue(scalar, richTextBox, "O", false);
                         return;
                     }
                 default:
                     {
-                        Theme.Render(richTextBox, StyleToken.Scalar, GetQuotedJsonString(value.ToString() ?? string.Empty));
-                        break;
+                        _displayFormatter.FormatLiteralValue(scalar, richTextBox, null, false);
+                        return;
                     }
             }
         }

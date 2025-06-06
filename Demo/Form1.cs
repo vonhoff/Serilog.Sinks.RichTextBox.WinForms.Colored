@@ -24,6 +24,7 @@ using Serilog.Sinks.RichTextBoxForms.Themes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -40,7 +41,10 @@ namespace Demo
 
         private void Initialize()
         {
-            _options = new RichTextBoxSinkOptions(ThemePresets.Dark);
+            _options = new RichTextBoxSinkOptions(
+                appliedTheme: ThemePresets.Dark,
+                outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:l}{NewLine}{Exception}",
+                formatProvider: new CultureInfo("en-US"));
             var sink = new RichTextBoxSink(richTextBox1, _options);
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()

@@ -93,5 +93,49 @@ namespace Serilog.Tests
             // {Message:l} with {Prop} should render string unquoted
             Assert.Equal("quoted string", RenderAndGetText(logEventMsgLiteral, "{Message:l}"));
         }
+
+        [Fact]
+        public void DateTime_WithUSCulture_RendersCorrectly()
+        {
+            var dateTime = new DateTime(2025, 6, 6, 12, 9, 55, 421);
+            var prop = new LogEventProperty("DateTime", new ScalarValue(dateTime));
+            var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{DateTime}"), new[] { prop });
+
+            string actual = RenderAndGetText(logEvent, "{Message}", new CultureInfo("en-US"));
+            Assert.Equal("6/6/2025 12:09:55 PM", actual);
+        }
+
+        [Fact]
+        public void DateTime_WithGermanCulture_RendersCorrectly()
+        {
+            var dateTime = new DateTime(2025, 6, 6, 12, 9, 55, 421);
+            var prop = new LogEventProperty("DateTime", new ScalarValue(dateTime));
+            var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{DateTime}"), new[] { prop });
+
+            string actual = RenderAndGetText(logEvent, "{Message}", new CultureInfo("de-DE"));
+            Assert.Equal("06.06.2025 12:09:55", actual);
+        }
+
+        [Fact]
+        public void DateTimeOffset_WithUSCulture_RendersCorrectly()
+        {
+            var dateTimeOffset = new DateTimeOffset(2025, 6, 6, 12, 9, 55, 421, TimeSpan.FromHours(2));
+            var prop = new LogEventProperty("DateTimeOffset", new ScalarValue(dateTimeOffset));
+            var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{DateTimeOffset}"), new[] { prop });
+
+            string actual = RenderAndGetText(logEvent, "{Message}", new CultureInfo("en-US"));
+            Assert.Equal("6/6/2025 12:09:55 PM +02:00", actual);
+        }
+
+        [Fact]
+        public void DateTimeOffset_WithGermanCulture_RendersCorrectly()
+        {
+            var dateTimeOffset = new DateTimeOffset(2025, 6, 6, 12, 9, 55, 421, TimeSpan.FromHours(2));
+            var prop = new LogEventProperty("DateTimeOffset", new ScalarValue(dateTimeOffset));
+            var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{DateTimeOffset}"), new[] { prop });
+
+            string actual = RenderAndGetText(logEvent, "{Message}", new CultureInfo("de-DE"));
+            Assert.Equal("06.06.2025 12:09:55 +02:00", actual);
+        }
     }
 }

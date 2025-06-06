@@ -17,13 +17,13 @@ namespace Serilog.Tests
             // DateTime (ISO 8601 like, not quoted for display by default)
             var dt = new DateTime(2023, 1, 15, 10, 30, 45, DateTimeKind.Utc);
             var dtProp = new LogEventProperty("Time", new ScalarValue(dt));
-            var logEventDt = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{Time}"), new[] { dtProp });
+            var logEventDt = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{Time:O}"), new[] { dtProp });
             Assert.Equal(dt.ToString("O"), RenderAndGetText(logEventDt, "{Message}", CultureInfo.InvariantCulture));
 
             // DateTimeOffset (ISO 8601 like, not quoted for display by default)
             var dto = new DateTimeOffset(2023, 1, 15, 10, 30, 45, TimeSpan.FromHours(2));
             var dtoProp = new LogEventProperty("TimeOffset", new ScalarValue(dto));
-            var logEventDto = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{TimeOffset}"), new[] { dtoProp });
+            var logEventDto = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{TimeOffset:O}"), new[] { dtoProp });
             Assert.Equal(dto.ToString("O"), RenderAndGetText(logEventDto, "{Message}", CultureInfo.InvariantCulture));
 
             // TimeSpan (c format, not quoted for display by default)
