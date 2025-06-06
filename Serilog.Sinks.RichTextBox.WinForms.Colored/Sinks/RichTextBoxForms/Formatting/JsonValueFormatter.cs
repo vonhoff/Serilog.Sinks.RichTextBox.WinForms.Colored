@@ -26,7 +26,7 @@ using System.Windows.Forms;
 
 namespace Serilog.Sinks.RichTextBoxForms.Formatting
 {
-    internal class JsonValueFormatter : ValueFormatter
+    public class JsonValueFormatter : ValueFormatter
     {
         private readonly DisplayValueFormatter _displayFormatter;
         private readonly IFormatProvider? _formatProvider;

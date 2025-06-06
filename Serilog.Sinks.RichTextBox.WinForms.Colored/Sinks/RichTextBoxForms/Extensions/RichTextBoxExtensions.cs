@@ -23,7 +23,7 @@ using System.Windows.Forms;
 
 namespace Serilog.Sinks.RichTextBoxForms.Extensions
 {
-    internal static class RichTextBoxExtensions
+    public static class RichTextBoxExtensions
     {
         private const int WmUser = 0x400;
         private const int EmGetScrollPos = WmUser + 221;

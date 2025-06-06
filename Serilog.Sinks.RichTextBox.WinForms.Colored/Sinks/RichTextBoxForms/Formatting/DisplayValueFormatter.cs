@@ -25,7 +25,7 @@ using System.Windows.Forms;
 
 namespace Serilog.Sinks.RichTextBoxForms.Formatting
 {
-    internal class DisplayValueFormatter : ValueFormatter
+    public class DisplayValueFormatter : ValueFormatter
     {
         private readonly IFormatProvider? _formatProvider;
 

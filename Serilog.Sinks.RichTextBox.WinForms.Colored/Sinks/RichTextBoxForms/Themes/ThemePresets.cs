@@ -23,10 +23,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
 {
     public static class ThemePresets
     {
-
-        /// <summary>
-        ///     A theme with a light background and contrasting colors.
-        /// </summary>
         public static Theme LightClassic { get; } = new(
             new Style(Color.Black, Color.White),
             new Dictionary<StyleToken, Style>
@@ -49,9 +45,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
                 [StyleToken.LevelFatal] = new(Color.White, Color.Red)
             });
 
-        /// <summary>
-        ///     Styled to replicate the default theme of Serilog.Sinks.Console;
-        /// </summary>
         public static Theme DarkClassic { get; } = new(
             new Style(Color.White, Color.Black),
             new Dictionary<StyleToken, Style>
@@ -74,9 +67,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
                 [StyleToken.LevelFatal] = new(Color.White, Color.Red)
             });
 
-        /// <summary>
-        ///     A light theme with vibrant colors and high contrast for optimal readability.
-        /// </summary>
         public static Theme Light { get; } = new(
             new Style(ThemeColors.ThunderGray, ThemeColors.IronGray),
             new Dictionary<StyleToken, Style>
@@ -99,9 +89,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
                 [StyleToken.LevelFatal] = new(ThemeColors.IronGray, ThemeColors.CrimsonRed)
             });
 
-        /// <summary>
-        ///     A dark theme inspired by modern IDEs and the Serilog Console sink.
-        /// </summary>
         public static Theme Dark { get; } = new(
             new Style(ThemeColors.IronGray, ThemeColors.ThunderGray),
             new Dictionary<StyleToken, Style>

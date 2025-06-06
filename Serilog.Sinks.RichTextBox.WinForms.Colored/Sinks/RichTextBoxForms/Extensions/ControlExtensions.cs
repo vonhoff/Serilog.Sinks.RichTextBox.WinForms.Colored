@@ -25,7 +25,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
     ///     Control extensions to suspend or resume painting methods.
     ///     Based on: https://stackoverflow.com/a/6302008
     /// </summary>
-    internal static class ControlExtensions
+    public static class ControlExtensions
     {
         private const int WM_SETREDRAW = 0x000B;
 

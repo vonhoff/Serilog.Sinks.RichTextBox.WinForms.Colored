@@ -70,8 +70,8 @@ namespace Serilog.Sinks.RichTextBoxForms
         {
             var token = (CancellationToken)(obj ?? throw new ArgumentNullException(nameof(obj)));
             var messageBatch = 1;
-            var buffer = new RichTextBox 
-            { 
+            var buffer = new RichTextBox
+            {
                 Font = _richTextBox.Font,
                 DetectUrls = false,
                 ForeColor = _richTextBox.ForeColor,

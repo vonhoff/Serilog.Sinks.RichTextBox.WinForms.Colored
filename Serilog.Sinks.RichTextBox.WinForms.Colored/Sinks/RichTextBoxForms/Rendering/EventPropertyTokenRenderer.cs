@@ -18,7 +18,7 @@
 
 using Serilog.Events;
 using Serilog.Parsing;
-using Serilog.Sinks.RichTextBoxForms.Formatting;
+using Serilog.Sinks.RichTextBoxForms.Common;
 using Serilog.Sinks.RichTextBoxForms.Themes;
 using System;
 using System.IO;
