@@ -33,11 +33,11 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
         public static readonly Color DarkGray = ColorTranslator.FromHtml("#333333");
         public static readonly Color Blue = ColorTranslator.FromHtml("#0000ff");
         public static readonly Color LightBlue = ColorTranslator.FromHtml("#8A8AFF");
-        public static readonly Color Green = ColorTranslator.FromHtml("#00ff00");
-        public static readonly Color Cyan = ColorTranslator.FromHtml("#00ffff");
+        public static readonly Color Green = ColorTranslator.FromHtml("#00E600");
+        public static readonly Color Cyan = ColorTranslator.FromHtml("#00F5F5");
         public static readonly Color Red = ColorTranslator.FromHtml("#B30000");
-        public static readonly Color Magenta = ColorTranslator.FromHtml("#FF29FF");
-        public static readonly Color Yellow = ColorTranslator.FromHtml("#ffff00");
+        public static readonly Color Magenta = ColorTranslator.FromHtml("#FF75FF");
+        public static readonly Color Yellow = ColorTranslator.FromHtml("#F5F500");
         public static readonly Color White = ColorTranslator.FromHtml("#ffffff");
     }
 }
