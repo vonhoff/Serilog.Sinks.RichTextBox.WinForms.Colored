@@ -4,7 +4,7 @@ using Serilog.Sinks.RichTextBoxForms;
 using Serilog.Sinks.RichTextBoxForms.Themes;
 using Xunit;
 
-namespace Serilog.Tests
+namespace Serilog.Tests.Integration
 {
     public class SinkLifecycleTests : RichTextBoxSinkTestBase
     {
@@ -13,7 +13,7 @@ namespace Serilog.Tests
         {
             var testRichTextBox = new RichTextBox();
             var testOptions = new RichTextBoxSinkOptions(
-                appliedTheme: ThemePresets.Light,
+                appliedTheme: ThemePresets.Literate,
                 messageBatchSize: 2,
                 messagePendingInterval: 1,
                 autoScroll: true,

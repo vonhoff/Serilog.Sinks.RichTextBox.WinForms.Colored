@@ -3,7 +3,7 @@ using Serilog.Parsing;
 using Serilog.Sinks.RichTextBoxForms.Rendering;
 using Xunit;
 
-namespace Serilog.Tests
+namespace Serilog.Tests.Integration
 {
     public class PropertiesTokenRendererTests : RichTextBoxSinkTestBase
     {

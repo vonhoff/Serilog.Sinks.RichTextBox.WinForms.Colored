@@ -24,6 +24,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Windows.Forms;
+using Serilog.Sinks.RichTextBoxForms.Common;
 
 namespace Serilog.Sinks.RichTextBoxForms
 {
@@ -34,6 +35,7 @@ namespace Serilog.Sinks.RichTextBoxForms
         private readonly ITokenRenderer _renderer;
         private readonly RichTextBox _richTextBox;
         private readonly CancellationTokenSource _tokenSource;
+        private readonly int _uiThreadId;
 
         public RichTextBoxSink(RichTextBox richTextBox, RichTextBoxSinkOptions options, ITokenRenderer? renderer = null)
         {
@@ -43,6 +45,7 @@ namespace Serilog.Sinks.RichTextBoxForms
                         new TemplateRenderer(options.AppliedTheme, options.OutputTemplate, options.FormatProvider);
             _tokenSource = new CancellationTokenSource();
             _messageQueue = new BlockingCollection<LogEvent>();
+            _uiThreadId = Thread.CurrentThread.ManagedThreadId;
 
             richTextBox.Clear();
             richTextBox.ReadOnly = true;
@@ -83,6 +86,8 @@ namespace Serilog.Sinks.RichTextBoxForms
                 {
                     if (_messageQueue.TryTake(out var logEvent, _options.MessagePendingInterval, token))
                     {
+                        SystemEventsThreadSanitizer.EnsureApplied(_uiThreadId);
+
                         _renderer.Render(logEvent, buffer);
                         while (messageBatch < _options.MessageBatchSize && _messageQueue.TryTake(out logEvent, 0, token))
                         {

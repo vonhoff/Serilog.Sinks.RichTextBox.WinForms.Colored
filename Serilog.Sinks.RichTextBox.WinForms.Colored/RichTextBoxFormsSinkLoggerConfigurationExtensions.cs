@@ -62,7 +62,7 @@ namespace Serilog
             bool autoScroll = true,
             int maxLogLines = 0)
         {
-            var appliedTheme = theme ?? ThemePresets.Dark;
+            var appliedTheme = theme ?? ThemePresets.Literate;
             var renderer = new TemplateRenderer(appliedTheme, outputTemplate, formatProvider);
             var options = new RichTextBoxSinkOptions(appliedTheme, messageBatchSize, messagePendingInterval, autoScroll, maxLogLines);
             var sink = new RichTextBoxSink(richTextBoxControl, options, renderer);

@@ -4,7 +4,7 @@ using Serilog.Sinks.RichTextBoxForms;
 using Serilog.Sinks.RichTextBoxForms.Rendering;
 using Serilog.Sinks.RichTextBoxForms.Themes;
 
-namespace Serilog.Tests
+namespace Serilog.Tests.Integration
 {
     public abstract class RichTextBoxSinkTestBase : IDisposable
     {
@@ -18,7 +18,7 @@ namespace Serilog.Tests
         protected RichTextBoxSinkTestBase()
         {
             _richTextBox = new RichTextBox();
-            _defaultTheme = ThemePresets.Light;
+            _defaultTheme = ThemePresets.Literate;
             _renderer = new TemplateRenderer(_defaultTheme, "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:l}{NewLine}{Exception}", null);
             _parser = new MessageTemplateParser();
 
