@@ -54,7 +54,8 @@
             toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             btnAutoScroll = new System.Windows.Forms.ToolStripButton();
             toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
-            btnLogLimit = new System.Windows.Forms.ToolStripButton();
+            lblMaxLines = new System.Windows.Forms.ToolStripLabel();
+            txtMaxLines = new System.Windows.Forms.ToolStripTextBox();
             panel1 = new System.Windows.Forms.Panel();
             richTextBox1 = new System.Windows.Forms.RichTextBox();
             toolStrip1.SuspendLayout();
@@ -167,7 +168,7 @@
             // toolStrip2
             // 
             toolStrip2.ImageScalingSize = new System.Drawing.Size(20, 20);
-            toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { btnObject, toolStripSeparator4, btnScalar, btnDictionary, btnStructure, btnComplex, toolStripSeparator8, btnDispose, toolStripSeparator5, btnReset, toolStripSeparator6, btnAutoScroll, toolStripSeparator7, btnLogLimit });
+            toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { btnObject, toolStripSeparator4, btnScalar, btnDictionary, btnStructure, btnComplex, toolStripSeparator8, btnDispose, toolStripSeparator5, btnReset, toolStripSeparator6, btnAutoScroll, toolStripSeparator7, lblMaxLines, txtMaxLines });
             toolStrip2.Location = new System.Drawing.Point(0, 25);
             toolStrip2.Name = "toolStrip2";
             toolStrip2.Padding = new System.Windows.Forms.Padding(4, 0, 4, 0);
@@ -272,14 +273,20 @@
             toolStripSeparator7.Name = "toolStripSeparator7";
             toolStripSeparator7.Size = new System.Drawing.Size(6, 25);
             // 
-            // btnLogLimit
+            // lblMaxLines
             // 
-            btnLogLimit.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            btnLogLimit.Name = "btnLogLimit";
-            btnLogLimit.Size = new System.Drawing.Size(101, 22);
-            btnLogLimit.Text = "Enable Line Limit";
-            btnLogLimit.ToolTipText = "Toggle log line limit";
-            btnLogLimit.Click += btnLogLimit_Click;
+            lblMaxLines.Name = "lblMaxLines";
+            lblMaxLines.Size = new System.Drawing.Size(67, 22);
+            lblMaxLines.Text = "Max Lines:";
+            // 
+            // txtMaxLines
+            // 
+            txtMaxLines.AutoSize = false;
+            txtMaxLines.Name = "txtMaxLines";
+            txtMaxLines.Size = new System.Drawing.Size(50, 25);
+            txtMaxLines.Text = "250";
+            txtMaxLines.ToolTipText = "Set maximum number of log lines (1-1000)";
+            txtMaxLines.KeyDown += txtMaxLines_KeyDown;
             // 
             // panel1
             // 
@@ -357,7 +364,8 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripButton btnAutoScroll;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
-        private System.Windows.Forms.ToolStripButton btnLogLimit;
+        private System.Windows.Forms.ToolStripLabel lblMaxLines;
+        private System.Windows.Forms.ToolStripTextBox txtMaxLines;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
     }
 }

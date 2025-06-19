@@ -1,4 +1,4 @@
-﻿#region Copyright 2022 Simon Vonhoff & Contributors
+﻿#region Copyright 2025 Simon Vonhoff & Contributors
 
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -55,6 +55,7 @@ namespace Demo
 
             Log.Debug("Started logger.");
             btnDispose.Enabled = true;
+            txtMaxLines.Text = _options.MaxLogLines.ToString();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -337,17 +338,29 @@ namespace Demo
             btnAutoScroll.Text = _options.AutoScroll ? "Disable Auto Scroll" : "Enable Auto Scroll";
         }
 
-        private void btnLogLimit_Click(object sender, EventArgs e)
+        private void txtMaxLines_KeyDown(object sender, KeyEventArgs e)
         {
-            if (_options == null)
+            if (e.KeyCode != Keys.Enter)
             {
                 return;
             }
 
-            var limitEnabled = _options.MaxLogLines != int.MaxValue;
-            _options.MaxLogLines = limitEnabled ? 0 : 35;
-            btnLogLimit.Text = limitEnabled ? "Enable Line Limit" : "Disable Line Limit";
-            Log.Information("Log line limit set to {lineLimit}", _options.MaxLogLines == int.MaxValue ? "Maximum" : _options.MaxLogLines.ToString());
+            if (!int.TryParse(txtMaxLines.Text, out var newLimit))
+            {
+                return;
+            }
+
+            newLimit = Math.Max(1, Math.Min(1000, newLimit));
+
+            if (_options != null)
+            {
+                _options.MaxLogLines = newLimit;
+                Log.Information("Log line limit set to {lineLimit}", newLimit);
+            }
+
+            txtMaxLines.Text = newLimit.ToString();
+
+            e.SuppressKeyPress = true; // prevent ding sound
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)

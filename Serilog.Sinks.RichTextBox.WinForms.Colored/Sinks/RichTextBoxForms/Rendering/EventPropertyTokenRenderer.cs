@@ -1,4 +1,4 @@
-﻿#region Copyright 2022 Simon Vonhoff & Contributors
+﻿#region Copyright 2025 Simon Vonhoff & Contributors
 
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,7 @@
 
 using Serilog.Events;
 using Serilog.Parsing;
-using Serilog.Sinks.RichTextBoxForms.Common;
+using Serilog.Sinks.RichTextBoxForms.Formatting;
 using Serilog.Sinks.RichTextBoxForms.Rtf;
 using Serilog.Sinks.RichTextBoxForms.Themes;
 using System;
@@ -50,7 +50,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
 
             if (propertyValue is ScalarValue { Value: string literalString })
             {
-                var cased = TextCasing.Format(literalString, _token.Format);
+                var cased = TextFormatter.Format(literalString, _token.Format);
                 writer.Write(cased);
             }
             else

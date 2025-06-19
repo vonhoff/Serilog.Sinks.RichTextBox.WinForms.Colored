@@ -1,4 +1,4 @@
-using Serilog.Sinks.RichTextBoxForms.Common;
+using Serilog.Sinks.RichTextBoxForms.Formatting;
 using Xunit;
 
 namespace Serilog.Tests.Integration
@@ -11,7 +11,7 @@ namespace Serilog.Tests.Integration
         [InlineData("AbC", null, "AbC")]
         public void Format_ReturnsExpected(string input, string? format, string expected)
         {
-            var actual = TextCasing.Format(input, format);
+            var actual = TextFormatter.Format(input, format);
             Assert.Equal(expected, actual);
         }
     }

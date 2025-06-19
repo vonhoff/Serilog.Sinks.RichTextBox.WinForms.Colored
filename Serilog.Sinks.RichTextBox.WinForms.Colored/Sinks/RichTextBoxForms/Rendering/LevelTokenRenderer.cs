@@ -1,4 +1,4 @@
-﻿#region Copyright 2022 Simon Vonhoff & Contributors
+﻿#region Copyright 2025 Simon Vonhoff & Contributors
 
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,7 @@
 
 using Serilog.Events;
 using Serilog.Parsing;
-using Serilog.Sinks.RichTextBoxForms.Common;
+using Serilog.Sinks.RichTextBoxForms.Formatting;
 using Serilog.Sinks.RichTextBoxForms.Rtf;
 using Serilog.Sinks.RichTextBoxForms.Themes;
 using System.Collections.Generic;
@@ -27,7 +27,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
     public class LevelTokenRenderer : ITokenRenderer
     {
-        private static readonly IReadOnlyDictionary<LogEventLevel, StyleToken> Levels =
+        private static readonly Dictionary<LogEventLevel, StyleToken> Levels =
             new Dictionary<LogEventLevel, StyleToken>
             {
                 { LogEventLevel.Verbose, StyleToken.LevelVerbose },
@@ -92,7 +92,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
         {
             if (format.Length != 2 && format.Length != 3)
             {
-                return TextCasing.Format(value.ToString(), format);
+                return TextFormatter.Format(value.ToString(), format);
             }
 
             // Using int.Parse() here requires allocating a string to exclude the first character prefix.
@@ -117,13 +117,13 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
                     stringValue = stringValue.Substring(0, width);
                 }
 
-                return TextCasing.Format(stringValue, format);
+                return TextFormatter.Format(stringValue, format);
             }
 
             var index = (int)value;
             if (index < 0 || index > (int)LogEventLevel.Fatal)
             {
-                return TextCasing.Format(value.ToString(), format);
+                return TextFormatter.Format(value.ToString(), format);
             }
 
             return format[0] switch
@@ -131,7 +131,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
                 'w' => LowercaseLevelMap[index][width - 1],
                 'u' => UppercaseLevelMap[index][width - 1],
                 't' => TitleCaseLevelMap[index][width - 1],
-                _ => TextCasing.Format(value.ToString(), format),
+                _ => TextFormatter.Format(value.ToString(), format),
             };
         }
     }

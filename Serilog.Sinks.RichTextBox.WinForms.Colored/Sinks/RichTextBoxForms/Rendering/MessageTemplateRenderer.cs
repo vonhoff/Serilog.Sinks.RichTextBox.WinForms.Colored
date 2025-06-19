@@ -1,4 +1,4 @@
-#region Copyright 2022 Simon Vonhoff & Contributors
+#region Copyright 2025 Simon Vonhoff & Contributors
 
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,8 +39,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
             _isLiteral = isLiteral;
         }
 
-        public void Render(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties,
-            IRtfCanvas canvas)
+        public void Render(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties, IRtfCanvas canvas)
         {
             foreach (var token in template.Tokens)
             {
@@ -56,8 +55,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
             }
         }
 
-        private void RenderPropertyToken(PropertyToken propertyToken, IReadOnlyDictionary<string, LogEventPropertyValue> properties,
-            IRtfCanvas canvas)
+        private void RenderPropertyToken(PropertyToken propertyToken, IReadOnlyDictionary<string, LogEventPropertyValue> properties, IRtfCanvas canvas)
         {
             if (!properties.TryGetValue(propertyToken.PropertyName, out var propertyValue))
             {
@@ -68,8 +66,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
             RenderValue(_valueFormatter, propertyValue, canvas, propertyToken.Format ?? "");
         }
 
-        private void RenderValue(ValueFormatter valueFormatter,
-            LogEventPropertyValue propertyValue, IRtfCanvas canvas, string format)
+        private void RenderValue(ValueFormatter valueFormatter, LogEventPropertyValue propertyValue, IRtfCanvas canvas, string format)
         {
             if (_isLiteral && propertyValue is ScalarValue { Value: string } scalarValue)
             {

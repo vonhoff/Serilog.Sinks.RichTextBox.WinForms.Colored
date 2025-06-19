@@ -1,4 +1,4 @@
-﻿#region Copyright 2022 Simon Vonhoff & Contributors
+﻿#region Copyright 2025 Simon Vonhoff & Contributors
 
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,6 +19,7 @@
 using Serilog.Events;
 using Serilog.Formatting.Display;
 using Serilog.Parsing;
+using Serilog.Sinks.RichTextBoxForms.Extensions;
 using Serilog.Sinks.RichTextBoxForms.Rtf;
 using Serilog.Sinks.RichTextBoxForms.Themes;
 using System;
@@ -107,15 +108,24 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
 
         /// <summary>
         /// Convenience overload that allows rendering directly into a <see cref="System.Windows.Forms.RichTextBox"/>
-        /// without the caller needing to create the adapter manually. This is primarily for legacy tests and
-        /// backward-compatibility. New code should prefer passing an <see cref="IRtfCanvas"/> implementation.
+        /// without the caller needing to explicitly create an <see cref="IRtfCanvas"/> implementation. Internally this
+        /// builds the RTF using <see cref="RtfBuilder"/> and appends it to the control.
         /// </summary>
         /// <param name="logEvent">The log event to render.</param>
         /// <param name="richTextBox">Destination <see cref="System.Windows.Forms.RichTextBox"/>.</param>
         public void Render(LogEvent logEvent, System.Windows.Forms.RichTextBox richTextBox)
         {
+            if (logEvent == null) throw new ArgumentNullException(nameof(logEvent));
             if (richTextBox == null) throw new ArgumentNullException(nameof(richTextBox));
-            Render(logEvent, new Serilog.Sinks.RichTextBoxForms.Rtf.RichTextBoxCanvasAdapter(richTextBox));
+
+            // Build the document using the RichTextBox's current foreground/background as defaults so the
+            // appearance matches existing content.
+            var builder = new RtfBuilder(richTextBox.ForeColor, richTextBox.BackColor);
+            Render(logEvent, builder);
+
+            // Append the generated RTF to the control. We set autoScroll to true and keep an effectively unlimited
+            // line cache (int.MaxValue) because this helper is only intended for testing/back-compat scenarios.
+            richTextBox.AppendRtf(builder.Rtf, autoScroll: true, maxLogLines: int.MaxValue);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿#region Copyright 2022 Simon Vonhoff & Contributors
+﻿#region Copyright 2025 Simon Vonhoff & Contributors
 
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,17 +25,17 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
 {
     public static class RichTextBoxExtensions
     {
-        private const int WmUser = 0x400;
-        private const int EmGetScrollPos = WmUser + 221;
-        private const int EmSetScrollPos = WmUser + 222;
+        private const int WM_USER = 0x400;
+        private const int EM_GETSCROLLPOS = WM_USER + 221;
+        private const int EM_SETSCROLLPOS = WM_USER + 222;
+        private const int WM_VSCROLL = 277;
+        private const int SB_PAGEBOTTOM = 7;
         private const string NullCharacter = "\0";
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern IntPtr SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
-        private const int WM_VSCROLL = 277;
-        private const int SB_PAGEBOTTOM = 7;
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern IntPtr SendMessage(IntPtr hWnd, int wMsg, int wParam, ref Point lParam);
 
         /// <summary>
@@ -62,31 +62,26 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
         {
             richTextBox.Suspend();
             var scrollPoint = Point.Empty;
-            var previousSelection = richTextBox.SelectionStart;
-            var previousLength = richTextBox.SelectionLength;
+            var previousSelectionStart = richTextBox.SelectionStart;
+            var previousSelectionLength = richTextBox.SelectionLength;
 
-            if (autoScroll == false)
+            if (!autoScroll)
             {
-                SendMessage(richTextBox.Handle, EmGetScrollPos, 0, ref scrollPoint);
+                SendMessage(richTextBox.Handle, EM_GETSCROLLPOS, 0, ref scrollPoint);
             }
 
             richTextBox.SelectionStart = richTextBox.TextLength;
-
             if (richTextBox.TextLength > 0)
             {
                 richTextBox.SelectedText = Environment.NewLine;
             }
-
             richTextBox.SelectedRtf = rtf;
 
-            const int endLength = 1;
-
-            var selectionStart = richTextBox.TextLength - endLength;
+            var selectionStart = richTextBox.TextLength - 1;
             richTextBox.SelectionStart = selectionStart >= 0 ? selectionStart : 0;
-            richTextBox.SelectionLength = endLength;
+            richTextBox.SelectionLength = 1;
             richTextBox.SelectedText = NullCharacter;
 
-            // Avoid allocating a string[] via RichTextBox.Lines on every flush.
             var totalLines = richTextBox.GetLineFromCharIndex(richTextBox.TextLength) + 1;
             if (totalLines > maxLogLines)
             {
@@ -100,17 +95,17 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
                         richTextBox.SelectionStart = 0;
                         richTextBox.SelectionLength = charIndex;
                         richTextBox.SelectedText = NullCharacter;
-                        previousSelection = 0;
-                        previousLength = 0;
+                        previousSelectionStart = 0;
+                        previousSelectionLength = 0;
                     }
                 }
             }
 
-            if (autoScroll == false)
+            if (!autoScroll)
             {
-                richTextBox.SelectionStart = previousSelection;
-                richTextBox.SelectionLength = previousLength;
-                SendMessage(richTextBox.Handle, EmSetScrollPos, 0, ref scrollPoint);
+                richTextBox.SelectionStart = previousSelectionStart;
+                richTextBox.SelectionLength = previousSelectionLength;
+                SendMessage(richTextBox.Handle, EM_SETSCROLLPOS, 0, ref scrollPoint);
             }
             else
             {

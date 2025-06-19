@@ -1,4 +1,4 @@
-#region Copyright 2022 Simon Vonhoff & Contributors
+#region Copyright 2025 Simon Vonhoff & Contributors
 
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,13 +35,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
         public void Format(LogEventPropertyValue value, IRtfCanvas canvas, string format, bool isLiteral)
         {
             Visit(new ValueFormatterState(canvas, format, true, isLiteral), value);
-        }
-
-        // Backwards-compat overload for existing callers that still pass a RichTextBox.
-        public void Format(LogEventPropertyValue value, System.Windows.Forms.RichTextBox richTextBox, string format, bool isLiteral)
-        {
-            var adapter = new Serilog.Sinks.RichTextBoxForms.Rtf.RichTextBoxCanvasAdapter(richTextBox);
-            Format(value, adapter, format, isLiteral);
         }
     }
 }

@@ -1,4 +1,4 @@
-#region Copyright 2022 Simon Vonhoff & Contributors
+#region Copyright 2025 Simon Vonhoff & Contributors
 
 //
 // Licensed under the Apache License, Version 2.0 (the "License");

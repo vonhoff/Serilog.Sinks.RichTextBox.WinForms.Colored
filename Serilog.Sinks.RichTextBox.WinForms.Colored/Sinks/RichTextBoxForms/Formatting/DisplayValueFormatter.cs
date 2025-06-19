@@ -1,4 +1,4 @@
-#region Copyright 2022 Simon Vonhoff & Contributors
+#region Copyright 2025 Simon Vonhoff & Contributors
 
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,91 +38,101 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
         {
             var value = scalar.Value;
 
-            switch (value)
+            if (value is null)
             {
-                case null:
-                    Theme.Render(canvas, StyleToken.Null, "null");
-                    return;
-                case string text:
-                    bool effectivelyLiteral = isLiteral || (format != null && format.Contains("l"));
-                    if (effectivelyLiteral)
-                    {
-                        Theme.Render(canvas, StyleToken.String, text);
-                    }
-                    else
-                    {
-                        Theme.Render(canvas, StyleToken.String, $"\"{text.Replace("\"", "\\\"")}\"");
-                    }
-                    return;
-                case byte[] bytes:
-                    Theme.Render(canvas, StyleToken.String, $"\"{Convert.ToBase64String(bytes)}\"");
-                    return;
-                case bool b:
-                    Theme.Render(canvas, StyleToken.Boolean, b.ToString());
-                    return;
-                case char ch:
-                    Theme.Render(canvas, StyleToken.Scalar, ch.ToString());
-                    return;
-                case int i:
-                    Theme.Render(canvas, StyleToken.Number, i.ToString(_formatProvider));
-                    return;
-                case uint ui:
-                    Theme.Render(canvas, StyleToken.Number, ui.ToString(_formatProvider));
-                    return;
-                case long l:
-                    Theme.Render(canvas, StyleToken.Number, l.ToString(_formatProvider));
-                    return;
-                case ulong ul:
-                    Theme.Render(canvas, StyleToken.Number, ul.ToString(_formatProvider));
-                    return;
-                case decimal dec:
-                    Theme.Render(canvas, StyleToken.Number, dec.ToString(_formatProvider));
-                    return;
-                case byte bValue:
-                    Theme.Render(canvas, StyleToken.Number, bValue.ToString(_formatProvider));
-                    return;
-                case sbyte sb:
-                    Theme.Render(canvas, StyleToken.Number, sb.ToString(_formatProvider));
-                    return;
-                case short s:
-                    Theme.Render(canvas, StyleToken.Number, s.ToString(_formatProvider));
-                    return;
-                case ushort us:
-                    Theme.Render(canvas, StyleToken.Number, us.ToString(_formatProvider));
-                    return;
-                case float f:
-                    Theme.Render(canvas, StyleToken.Number, f.ToString(_formatProvider));
-                    return;
-                case double d:
-                    Theme.Render(canvas, StyleToken.Number, d.ToString(_formatProvider));
-                    return;
-                case DateTime dt:
-                    Theme.Render(canvas, StyleToken.Scalar, dt.ToString(format, _formatProvider));
-                    return;
-                case DateTimeOffset dto:
-                    Theme.Render(canvas, StyleToken.Scalar, dto.ToString(format, _formatProvider));
-                    return;
-                case TimeSpan ts:
-                    Theme.Render(canvas, StyleToken.Scalar, ts.ToString(string.IsNullOrEmpty(format) ? "c" : format, _formatProvider));
-                    return;
-                case Guid guid:
-                    Theme.Render(canvas, StyleToken.Scalar, guid.ToString(string.IsNullOrEmpty(format) ? "D" : format, _formatProvider));
-                    return;
-                case Uri uri:
-                    Theme.Render(canvas, StyleToken.Scalar, uri.ToString());
-                    return;
+                Theme.Render(canvas, StyleToken.Null, "null");
+                return;
+            }
+            if (value is string text)
+            {
+                RenderString(canvas, text, format, isLiteral);
+                return;
+            }
+            if (value is byte[] bytes)
+            {
+                Theme.Render(canvas, StyleToken.String, $"\"{Convert.ToBase64String(bytes)}\"");
+                return;
+            }
+            if (value is bool b)
+            {
+                Theme.Render(canvas, StyleToken.Boolean, b.ToString());
+                return;
+            }
+            if (value is Uri uri)
+            {
+                Theme.Render(canvas, StyleToken.Scalar, uri.ToString());
+                return;
+            }
+            if (value is IFormattable formattable)
+            {
+                RenderFormattable(canvas, formattable, format);
+                return;
             }
 
+            // fallback
             var writer = new StringWriter();
             scalar.Render(writer, null, _formatProvider);
             Theme.Render(canvas, StyleToken.Scalar, writer.ToString());
         }
 
-        // Backwards-compat overload
-        public void FormatLiteralValue(ScalarValue scalar, System.Windows.Forms.RichTextBox richTextBox, string? format, bool isLiteral)
+        private void RenderString(IRtfCanvas canvas, string text, string? format, bool isLiteral)
         {
-            var adapter = new Serilog.Sinks.RichTextBoxForms.Rtf.RichTextBoxCanvasAdapter(richTextBox);
-            FormatLiteralValue(scalar, adapter, format, isLiteral);
+            bool effectivelyLiteral = isLiteral || (format != null && format.Contains("l"));
+            if (effectivelyLiteral)
+            {
+                Theme.Render(canvas, StyleToken.String, text);
+            }
+            else
+            {
+                Theme.Render(canvas, StyleToken.String, $"\"{text.Replace("\"", "\\\"")}\"");
+            }
+        }
+
+        private void RenderFormattable(IRtfCanvas canvas, IFormattable formattable, string? format)
+        {
+            // Use Number style for numbers, Scalar for others (DateTime, Guid, etc.)
+            var type = formattable.GetType();
+            StyleToken token =
+                type == typeof(float) || type == typeof(double) || type == typeof(decimal) ||
+                type == typeof(int) || type == typeof(uint) || type == typeof(long) || type == typeof(ulong) ||
+                type == typeof(byte) || type == typeof(sbyte) || type == typeof(short) || type == typeof(ushort)
+                ? StyleToken.Number : StyleToken.Scalar;
+
+            string? effectiveFormat = format;
+
+            // Remove sink-specific format specifiers (e.g. "l" for literal, "j" for JSON) that are not
+            // recognised by the underlying IFormattable implementation and would otherwise trigger
+            // a FormatException.
+            if (!string.IsNullOrEmpty(effectiveFormat))
+            {
+                effectiveFormat = effectiveFormat
+                    .Replace("l", string.Empty)
+                    .Replace("j", string.Empty);
+
+                // If all characters were removed we end up with an empty string – treat this as no format.
+                if (string.IsNullOrWhiteSpace(effectiveFormat))
+                {
+                    effectiveFormat = null;
+                }
+            }
+
+            if (type == typeof(TimeSpan) && string.IsNullOrEmpty(effectiveFormat))
+                effectiveFormat = "c";
+            if (type == typeof(Guid) && string.IsNullOrEmpty(effectiveFormat))
+                effectiveFormat = "D";
+
+            string renderedValue;
+            try
+            {
+                renderedValue = formattable.ToString(effectiveFormat, _formatProvider);
+            }
+            catch (FormatException)
+            {
+                // Fall back to the default formatting if the specified format is not supported by the value.
+                renderedValue = formattable.ToString(null, _formatProvider);
+            }
+
+            Theme.Render(canvas, token, renderedValue);
         }
 
         protected override bool VisitDictionaryValue(ValueFormatterState state, DictionaryValue dictionary)

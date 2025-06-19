@@ -1,6 +1,6 @@
-namespace Serilog.Sinks.RichTextBoxForms.Common
+namespace Serilog.Sinks.RichTextBoxForms.Formatting
 {
-    public static class TextCasing
+    public static class TextFormatter
     {
         /// <summary>
         /// Applies simple casing rules recognised by the sink (u = upper, w = lower, t = title).

@@ -1,4 +1,4 @@
-﻿#region Copyright 2022 Simon Vonhoff & Contributors
+﻿#region Copyright 2025 Simon Vonhoff & Contributors
 
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +25,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Serilog.Sinks.RichTextBoxForms
@@ -33,13 +34,14 @@ namespace Serilog.Sinks.RichTextBoxForms
     {
         // Internal tuning constants – change here for future optimisation.
         private const int BatchSize = 250; // maximum events per flush
-        private const int FlushIntervalMs = 50; // maximum time between flushes
+        private const int FlushIntervalMs = 16; // maximum time between flushes
         private const int QueueCapacity = 10_000; // maximum events waiting to be rendered
         private readonly BlockingCollection<LogEvent> _messageQueue;
         private readonly RichTextBoxSinkOptions _options;
         private readonly ITokenRenderer _renderer;
         private readonly RichTextBox _richTextBox;
         private readonly CancellationTokenSource _tokenSource;
+        private readonly Task _processingTask;
 
         public RichTextBoxSink(RichTextBox richTextBox, RichTextBoxSinkOptions options, ITokenRenderer? renderer = null)
         {
@@ -48,7 +50,6 @@ namespace Serilog.Sinks.RichTextBoxForms
             _renderer = renderer ??
                         new TemplateRenderer(options.AppliedTheme, options.OutputTemplate, options.FormatProvider);
             _tokenSource = new CancellationTokenSource();
-            // Bounded queue – producers will block when capacity is reached, preventing memory growth and UI hangs.
             _messageQueue = new BlockingCollection<LogEvent>(QueueCapacity);
 
             richTextBox.Clear();
@@ -57,12 +58,22 @@ namespace Serilog.Sinks.RichTextBoxForms
             richTextBox.ForeColor = options.AppliedTheme.DefaultStyle.Foreground;
             richTextBox.BackColor = options.AppliedTheme.DefaultStyle.Background;
 
-            ThreadPool.QueueUserWorkItem(ProcessMessages, _tokenSource.Token);
+            _processingTask = Task.Run(() => ProcessMessages(_tokenSource.Token), _tokenSource.Token);
         }
 
         public void Dispose()
         {
-            _messageQueue.Dispose();
+            _messageQueue.CompleteAdding();
+
+            try
+            {
+                _processingTask.Wait();
+            }
+            catch (AggregateException ex) when (ex.InnerException is OperationCanceledException)
+            {
+                // Expected when the task observes the cancellation token
+            }
+
             _tokenSource.Cancel();
             _tokenSource.Dispose();
             GC.SuppressFinalize(this);
@@ -70,54 +81,45 @@ namespace Serilog.Sinks.RichTextBoxForms
 
         public void Emit(LogEvent logEvent)
         {
-            // Block when the queue is saturated so that no messages are lost.
-            // Honour cancellation so Dispose() can interrupt blocked producers.
             _messageQueue.Add(logEvent, _tokenSource.Token);
         }
 
-        private void ProcessMessages(object? obj)
+        private void ProcessMessages(CancellationToken token)
         {
-            var token = (CancellationToken)(obj ?? throw new ArgumentNullException(nameof(obj)));
             var logEvents = new List<LogEvent>(BatchSize);
             var builder = new RtfBuilder(_richTextBox.ForeColor, _richTextBox.BackColor);
-            var lastFlushTick = Environment.TickCount;
 
-            try
+            while (true)
             {
-                while (true)
+                LogEvent? nextEvent;
+
+                if (_messageQueue.TryTake(out nextEvent!, FlushIntervalMs, token))
                 {
-                    // Always wait for at least one event so we block when idle.
-                    var logEvent = _messageQueue.Take(token);
-                    logEvents.Add(logEvent);
-
-                    // Drain immediately available events up to BatchSize.
-                    while (logEvents.Count < BatchSize && _messageQueue.TryTake(out logEvent))
+                    logEvents.Add(nextEvent);
+                    while (logEvents.Count < BatchSize && _messageQueue.TryTake(out nextEvent))
                     {
-                        logEvents.Add(logEvent);
-                    }
-
-                    var now = Environment.TickCount;
-                    var elapsed = unchecked(now - lastFlushTick);
-
-                    if (logEvents.Count >= BatchSize || elapsed >= FlushIntervalMs)
-                    {
-                        foreach (var @event in logEvents)
-                        {
-                            _renderer.Render(@event, builder);
-                        }
-
-                        _richTextBox.AppendRtf(builder.Rtf, _options.AutoScroll, _options.MaxLogLines);
-                        builder.Clear();
-                        logEvents.Clear();
-                        lastFlushTick = now;
+                        logEvents.Add(nextEvent);
                     }
                 }
-            }
-            catch (ObjectDisposedException)
-            {
-            }
-            catch (OperationCanceledException)
-            {
+
+                if (logEvents.Count == 0)
+                {
+                    if (_messageQueue.IsCompleted)
+                    {
+                        break;
+                    }
+
+                    continue;
+                }
+
+                foreach (var @event in logEvents)
+                {
+                    _renderer.Render(@event, builder);
+                }
+
+                _richTextBox.AppendRtf(builder.Rtf, _options.AutoScroll, _options.MaxLogLines);
+                builder.Clear();
+                logEvents.Clear();
             }
         }
     }

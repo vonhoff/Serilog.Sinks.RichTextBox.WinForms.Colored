@@ -1,4 +1,4 @@
-﻿#region Copyright 2022 Simon Vonhoff & Contributors
+﻿#region Copyright 2025 Simon Vonhoff & Contributors
 
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,9 +23,9 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
 {
     public class Theme
     {
-        private readonly IReadOnlyDictionary<StyleToken, Style> _styles;
+        private readonly Dictionary<StyleToken, Style> _styles;
 
-        public Theme(Style defaultStyle, IReadOnlyDictionary<StyleToken, Style> styles)
+        public Theme(Style defaultStyle, Dictionary<StyleToken, Style> styles)
         {
             DefaultStyle = defaultStyle;
             _styles = styles;
