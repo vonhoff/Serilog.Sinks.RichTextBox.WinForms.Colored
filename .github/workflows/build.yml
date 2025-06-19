@@ -1,10 +1,22 @@
 name: Build and Test
 
 on:
-  push:
-    branches: [ master ]
   pull_request:
     branches: [ master ]
+    paths:
+      - '**'
+      - '!**.md'
+      - '!docs/**'
+      - '!.github/**'
+      - '.github/workflows/**'
+  push:
+    branches: [ master ]
+    paths:
+      - '**'
+      - '!**.md'
+      - '!docs/**'
+      - '!.github/**'
+      - '.github/workflows/**'
 
 jobs:
   build-and-test:
