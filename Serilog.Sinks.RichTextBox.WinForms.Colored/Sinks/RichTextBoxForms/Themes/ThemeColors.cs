@@ -20,7 +20,7 @@ using System.Drawing;
 
 namespace Serilog.Sinks.RichTextBoxForms.Themes
 {
-    internal static class ThemeColors
+    public static class ThemeColors
     {
         public static readonly Color Black = ColorTranslator.FromHtml("#000000");
         public static readonly Color DarkBlue = ColorTranslator.FromHtml("#000080");

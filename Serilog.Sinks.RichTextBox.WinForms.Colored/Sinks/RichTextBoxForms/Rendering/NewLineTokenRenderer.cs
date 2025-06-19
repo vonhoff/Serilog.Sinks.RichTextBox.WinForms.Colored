@@ -23,9 +23,11 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
     public class NewLineTokenRenderer : ITokenRenderer
     {
+        private const string NewLine = "\n\r";
+
         public void Render(LogEvent logEvent, IRtfCanvas canvas)
         {
-            canvas.AppendText("\n\r");
+            canvas.AppendText(NewLine);
         }
     }
 }

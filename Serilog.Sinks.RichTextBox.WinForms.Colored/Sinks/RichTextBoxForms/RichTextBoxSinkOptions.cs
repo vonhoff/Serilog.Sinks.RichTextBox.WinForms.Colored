@@ -26,14 +26,6 @@ namespace Serilog.Sinks.RichTextBoxForms
         private const string DefaultOutputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
         private int _maxLogLines;
 
-        /// <summary>
-        ///     Settings for the RichTextBoxSink
-        /// </summary>
-        /// <param name="appliedTheme">The theme to apply.</param>
-        /// <param name="autoScroll">Auto-scroll to bottom for new messages.</param>
-        /// <param name="maxLogLines">Maximum number of lines to keep.</param>
-        /// <param name="outputTemplate">Message format.</param>
-        /// <param name="formatProvider">Culture-specific formatting (null for default).</param>
         public RichTextBoxSinkOptions(
             Theme appliedTheme,
             bool autoScroll = true,

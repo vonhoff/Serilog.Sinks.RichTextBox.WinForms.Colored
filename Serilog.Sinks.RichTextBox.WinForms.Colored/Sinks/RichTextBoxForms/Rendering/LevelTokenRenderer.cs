@@ -27,7 +27,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
     public class LevelTokenRenderer : ITokenRenderer
     {
-        private static readonly Dictionary<LogEventLevel, StyleToken> Levels =
+        private static readonly IReadOnlyDictionary<LogEventLevel, StyleToken> Levels =
             new Dictionary<LogEventLevel, StyleToken>
             {
                 { LogEventLevel.Verbose, StyleToken.LevelVerbose },

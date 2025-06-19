@@ -64,16 +64,7 @@ namespace Serilog.Sinks.RichTextBoxForms
         public void Dispose()
         {
             _messageQueue.CompleteAdding();
-
-            try
-            {
-                _processingTask.Wait();
-            }
-            catch (AggregateException ex) when (ex.InnerException is OperationCanceledException)
-            {
-                // Expected when the task observes the cancellation token
-            }
-
+            _processingTask.Wait();
             _tokenSource.Cancel();
             _tokenSource.Dispose();
             GC.SuppressFinalize(this);
