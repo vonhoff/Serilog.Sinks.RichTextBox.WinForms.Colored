@@ -15,4 +15,4 @@ namespace Serilog.Tests.Integration
             Assert.Equal(expected, actual);
         }
     }
-} 
+}

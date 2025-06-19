@@ -42,7 +42,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Common
                 }
                 catch
                 {
-                    // Best-effort – swallow to keep logging functional if framework internals change.
+                    // Swallow to keep logging functional if framework internals change.
                 }
 
                 _isApplied = true;
@@ -52,8 +52,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Common
         private static void RemoveOffThreadHandlers()
         {
             var seType = typeof(SystemEvents);
-            var handlersField = seType.GetField("_handlers", BindingFlags.NonPublic | BindingFlags.Static)
-                               ?? seType.GetField("s_handlers", BindingFlags.NonPublic | BindingFlags.Static);
+            var handlersField = seType.GetField("_handlers", BindingFlags.NonPublic | BindingFlags.Static);
             if (handlersField == null) return;
 
             var handlers = handlersField.GetValue(null);
@@ -82,7 +81,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Common
                         continue;
                     if (threadRef.Target is not Thread thread) continue;
 
-                    if (thread.ManagedThreadId == _uiThreadId) continue; // keep UI-thread handlers
+                    if (thread.ManagedThreadId == _uiThreadId) continue;
 
                     if (delegateField.GetValue(invokeInfo) is not Delegate dlg) continue;
 
@@ -94,7 +93,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Common
                     }
                     catch
                     {
-                        // swallow – signature mismatch etc.
+                        // Swallow – signature mismatch etc.
                     }
                 }
             }
