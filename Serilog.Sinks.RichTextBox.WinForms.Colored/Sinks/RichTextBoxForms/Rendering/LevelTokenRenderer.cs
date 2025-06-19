@@ -19,9 +19,9 @@
 using Serilog.Events;
 using Serilog.Parsing;
 using Serilog.Sinks.RichTextBoxForms.Common;
+using Serilog.Sinks.RichTextBoxForms.Rtf;
 using Serilog.Sinks.RichTextBoxForms.Themes;
 using System.Collections.Generic;
-using System.Windows.Forms;
 
 namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
@@ -77,7 +77,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
             _levelToken = levelToken;
         }
 
-        public void Render(LogEvent logEvent, RichTextBox richTextBox)
+        public void Render(LogEvent logEvent, IRtfCanvas canvas)
         {
             var moniker = GetLevelMoniker(logEvent.Level, _levelToken.Format ?? "");
             if (!Levels.TryGetValue(logEvent.Level, out var levelStyle))
@@ -85,7 +85,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
                 levelStyle = StyleToken.Invalid;
             }
 
-            _theme.Render(richTextBox, levelStyle, moniker);
+            _theme.Render(canvas, levelStyle, moniker);
         }
 
         public static string GetLevelMoniker(LogEventLevel value, string format = "")

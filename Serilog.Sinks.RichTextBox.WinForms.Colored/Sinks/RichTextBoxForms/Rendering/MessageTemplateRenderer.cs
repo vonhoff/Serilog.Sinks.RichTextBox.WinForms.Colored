@@ -1,4 +1,4 @@
-﻿#region Copyright 2022 Simon Vonhoff & Contributors
+#region Copyright 2022 Simon Vonhoff & Contributors
 
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,10 +19,10 @@
 using Serilog.Events;
 using Serilog.Parsing;
 using Serilog.Sinks.RichTextBoxForms.Formatting;
+using Serilog.Sinks.RichTextBoxForms.Rtf;
 using Serilog.Sinks.RichTextBoxForms.Themes;
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 
 namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
@@ -40,44 +40,44 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
         }
 
         public void Render(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties,
-            RichTextBox richTextBox)
+            IRtfCanvas canvas)
         {
             foreach (var token in template.Tokens)
             {
                 if (token is TextToken textToken)
                 {
-                    _theme.Render(richTextBox, StyleToken.Text, textToken.Text);
+                    _theme.Render(canvas, StyleToken.Text, textToken.Text);
                 }
                 else
                 {
                     var propertyToken = (PropertyToken)token;
-                    RenderPropertyToken(propertyToken, properties, richTextBox);
+                    RenderPropertyToken(propertyToken, properties, canvas);
                 }
             }
         }
 
         private void RenderPropertyToken(PropertyToken propertyToken, IReadOnlyDictionary<string, LogEventPropertyValue> properties,
-            RichTextBox richTextBox)
+            IRtfCanvas canvas)
         {
             if (!properties.TryGetValue(propertyToken.PropertyName, out var propertyValue))
             {
-                _theme.Render(richTextBox, StyleToken.Invalid, propertyToken.ToString());
+                _theme.Render(canvas, StyleToken.Invalid, propertyToken.ToString());
                 return;
             }
 
-            RenderValue(_valueFormatter, propertyValue, richTextBox, propertyToken.Format ?? "");
+            RenderValue(_valueFormatter, propertyValue, canvas, propertyToken.Format ?? "");
         }
 
         private void RenderValue(ValueFormatter valueFormatter,
-            LogEventPropertyValue propertyValue, RichTextBox richTextBox, string format)
+            LogEventPropertyValue propertyValue, IRtfCanvas canvas, string format)
         {
             if (_isLiteral && propertyValue is ScalarValue { Value: string } scalarValue)
             {
-                _theme.Render(richTextBox, StyleToken.String, scalarValue.Value.ToString() ?? string.Empty);
+                _theme.Render(canvas, StyleToken.String, scalarValue.Value.ToString() ?? string.Empty);
                 return;
             }
 
-            valueFormatter.Format(propertyValue, richTextBox, format, _isLiteral);
+            valueFormatter.Format(propertyValue, canvas, format, _isLiteral);
         }
     }
 }

@@ -19,10 +19,10 @@
 using Serilog.Events;
 using Serilog.Formatting.Display;
 using Serilog.Parsing;
+using Serilog.Sinks.RichTextBoxForms.Rtf;
 using Serilog.Sinks.RichTextBoxForms.Themes;
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 
 namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
@@ -97,12 +97,25 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
             }
         }
 
-        public void Render(LogEvent logEvent, RichTextBox richTextBox)
+        public void Render(LogEvent logEvent, IRtfCanvas canvas)
         {
             foreach (var renderer in _renderers)
             {
-                renderer.Render(logEvent, richTextBox);
+                renderer.Render(logEvent, canvas);
             }
+        }
+
+        /// <summary>
+        /// Convenience overload that allows rendering directly into a <see cref="System.Windows.Forms.RichTextBox"/>
+        /// without the caller needing to create the adapter manually. This is primarily for legacy tests and
+        /// backward-compatibility. New code should prefer passing an <see cref="IRtfCanvas"/> implementation.
+        /// </summary>
+        /// <param name="logEvent">The log event to render.</param>
+        /// <param name="richTextBox">Destination <see cref="System.Windows.Forms.RichTextBox"/>.</param>
+        public void Render(LogEvent logEvent, System.Windows.Forms.RichTextBox richTextBox)
+        {
+            if (richTextBox == null) throw new ArgumentNullException(nameof(richTextBox));
+            Render(logEvent, new Serilog.Sinks.RichTextBoxForms.Rtf.RichTextBoxCanvasAdapter(richTextBox));
         }
     }
 }

@@ -24,8 +24,6 @@ namespace Serilog.Tests.Integration
 
             var options = new RichTextBoxSinkOptions(
                 appliedTheme: _defaultTheme,
-                messageBatchSize: 2,
-                messagePendingInterval: 1,
                 autoScroll: true,
                 maxLogLines: 1000
             );

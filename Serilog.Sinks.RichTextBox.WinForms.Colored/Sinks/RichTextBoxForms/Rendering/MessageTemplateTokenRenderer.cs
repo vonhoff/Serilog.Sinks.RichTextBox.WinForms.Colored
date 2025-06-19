@@ -19,9 +19,9 @@
 using Serilog.Events;
 using Serilog.Parsing;
 using Serilog.Sinks.RichTextBoxForms.Formatting;
+using Serilog.Sinks.RichTextBoxForms.Rtf;
 using Serilog.Sinks.RichTextBoxForms.Themes;
 using System;
-using System.Windows.Forms;
 
 namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
@@ -62,9 +62,9 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
             _renderer = new MessageTemplateRenderer(theme, valueFormatter, isLiteral);
         }
 
-        public void Render(LogEvent logEvent, RichTextBox richTextBox)
+        public void Render(LogEvent logEvent, IRtfCanvas canvas)
         {
-            _renderer.Render(logEvent.MessageTemplate, logEvent.Properties, richTextBox);
+            _renderer.Render(logEvent.MessageTemplate, logEvent.Properties, canvas);
         }
     }
 }

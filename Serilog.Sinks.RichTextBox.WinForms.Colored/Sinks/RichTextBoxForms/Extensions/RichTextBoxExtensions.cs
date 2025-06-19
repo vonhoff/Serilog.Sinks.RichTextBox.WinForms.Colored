@@ -30,6 +30,11 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
         private const int EmSetScrollPos = WmUser + 222;
         private const string NullCharacter = "\0";
 
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
+        private const int WM_VSCROLL = 277;
+        private const int SB_PAGEBOTTOM = 7;
+
         [DllImport("user32.dll")]
         private static extern IntPtr SendMessage(IntPtr hWnd, int wMsg, int wParam, ref Point lParam);
 
@@ -43,12 +48,18 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
         /// <param name="maxLogLines">Maximum number of lines to keep.</param>
         public static void AppendRtf(this RichTextBox richTextBox, string rtf, bool autoScroll, int maxLogLines)
         {
+            // Avoid the recursive double-call pattern – schedule the actual work only once.
             if (richTextBox.InvokeRequired)
             {
-                richTextBox.Invoke(new Action(() => AppendRtf(richTextBox, rtf, autoScroll, maxLogLines)));
+                richTextBox.BeginInvoke(new Action(() => AppendRtfInternal(richTextBox, rtf, autoScroll, maxLogLines)));
                 return;
             }
 
+            AppendRtfInternal(richTextBox, rtf, autoScroll, maxLogLines);
+        }
+
+        private static void AppendRtfInternal(RichTextBox richTextBox, string rtf, bool autoScroll, int maxLogLines)
+        {
             richTextBox.Suspend();
             var scrollPoint = Point.Empty;
             var previousSelection = richTextBox.SelectionStart;
@@ -68,27 +79,31 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
 
             richTextBox.SelectedRtf = rtf;
 
-            var newLineLength = Environment.NewLine.Length;
-            var selectionStart = richTextBox.TextLength - newLineLength;
+            const int endLength = 1;
+
+            var selectionStart = richTextBox.TextLength - endLength;
             richTextBox.SelectionStart = selectionStart >= 0 ? selectionStart : 0;
-            richTextBox.SelectionLength = newLineLength;
+            richTextBox.SelectionLength = endLength;
             richTextBox.SelectedText = NullCharacter;
 
-            if (richTextBox.Lines.Length > maxLogLines)
+            // Avoid allocating a string[] via RichTextBox.Lines on every flush.
+            var totalLines = richTextBox.GetLineFromCharIndex(richTextBox.TextLength) + 1;
+            if (totalLines > maxLogLines)
             {
-                var linesToRemove = richTextBox.Lines.Length - maxLogLines;
-                var charsToRemove = 0;
+                var linesToRemove = totalLines - maxLogLines;
 
-                for (var i = 0; i < linesToRemove; i++)
+                if (linesToRemove > 0)
                 {
-                    charsToRemove += richTextBox.Lines[i].Length + 1;
+                    var charIndex = richTextBox.GetFirstCharIndexFromLine(linesToRemove);
+                    if (charIndex > 0)
+                    {
+                        richTextBox.SelectionStart = 0;
+                        richTextBox.SelectionLength = charIndex;
+                        richTextBox.SelectedText = NullCharacter;
+                        previousSelection = 0;
+                        previousLength = 0;
+                    }
                 }
-
-                richTextBox.SelectionStart = 0;
-                richTextBox.SelectionLength = charsToRemove;
-                richTextBox.SelectedText = NullCharacter;
-                previousSelection = 0;
-                previousLength = 0;
             }
 
             if (autoScroll == false)
@@ -99,8 +114,8 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
             }
             else
             {
-                richTextBox.SelectionStart = richTextBox.TextLength;
-                richTextBox.ScrollToCaret();
+                SendMessage(richTextBox.Handle, WM_VSCROLL, (IntPtr)SB_PAGEBOTTOM, IntPtr.Zero);
+                richTextBox.SelectionStart = richTextBox.Text.Length;
             }
 
             richTextBox.Resume();

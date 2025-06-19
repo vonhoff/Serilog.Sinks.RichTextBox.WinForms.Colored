@@ -1,31 +1,24 @@
-﻿#region Copyright 2022 Simon Vonhoff & Contributors
-
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-
-#endregion
-
 namespace Serilog.Sinks.RichTextBoxForms.Common
 {
     public static class TextCasing
     {
-        public static string Format(string value, string? format = null)
+        /// <summary>
+        /// Applies simple casing rules recognised by the sink (u = upper, w = lower, t = title).
+        /// For any unknown or empty format this simply returns the input.
+        /// </summary>
+        public static string Format(string value, string? format)
         {
-            return format switch
+            if (string.IsNullOrEmpty(format) || string.IsNullOrEmpty(value))
             {
-                "u" => value.ToUpperInvariant(),
-                "w" => value.ToLowerInvariant(),
+                return value;
+            }
+
+            var first = format![0];
+            return first switch
+            {
+                'u' => value.ToUpperInvariant(),
+                'w' => value.ToLowerInvariant(),
+                't' => char.ToUpperInvariant(value[0]) + value.Substring(1).ToLowerInvariant(),
                 _ => value
             };
         }

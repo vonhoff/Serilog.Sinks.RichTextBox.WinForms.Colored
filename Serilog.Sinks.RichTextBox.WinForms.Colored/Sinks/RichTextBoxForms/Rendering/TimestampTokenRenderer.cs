@@ -18,10 +18,10 @@
 
 using Serilog.Events;
 using Serilog.Parsing;
+using Serilog.Sinks.RichTextBoxForms.Rtf;
 using Serilog.Sinks.RichTextBoxForms.Themes;
 using System;
 using System.IO;
-using System.Windows.Forms;
 
 namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
@@ -38,12 +38,12 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
             _formatProvider = formatProvider;
         }
 
-        public void Render(LogEvent logEvent, RichTextBox richTextBox)
+        public void Render(LogEvent logEvent, IRtfCanvas canvas)
         {
             var scalarValue = new ScalarValue(logEvent.Timestamp);
             var writer = new StringWriter();
             scalarValue.Render(writer, _token.Format, _formatProvider);
-            _theme.Render(richTextBox, StyleToken.SecondaryText, writer.ToString());
+            _theme.Render(canvas, StyleToken.SecondaryText, writer.ToString());
         }
     }
 }

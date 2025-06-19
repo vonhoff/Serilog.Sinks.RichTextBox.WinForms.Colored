@@ -1,4 +1,4 @@
-﻿#region Copyright 2022 Simon Vonhoff & Contributors
+#region Copyright 2022 Simon Vonhoff & Contributors
 
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,8 +18,8 @@
 
 using Serilog.Data;
 using Serilog.Events;
+using Serilog.Sinks.RichTextBoxForms.Rtf;
 using Serilog.Sinks.RichTextBoxForms.Themes;
-using System.Windows.Forms;
 
 namespace Serilog.Sinks.RichTextBoxForms.Formatting
 {
@@ -32,9 +32,16 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 
         public Theme Theme { get; set; }
 
-        public void Format(LogEventPropertyValue value, RichTextBox richTextBox, string format, bool isLiteral)
+        public void Format(LogEventPropertyValue value, IRtfCanvas canvas, string format, bool isLiteral)
         {
-            Visit(new ValueFormatterState(richTextBox, format, true, isLiteral), value);
+            Visit(new ValueFormatterState(canvas, format, true, isLiteral), value);
+        }
+
+        // Backwards-compat overload for existing callers that still pass a RichTextBox.
+        public void Format(LogEventPropertyValue value, System.Windows.Forms.RichTextBox richTextBox, string format, bool isLiteral)
+        {
+            var adapter = new Serilog.Sinks.RichTextBoxForms.Rtf.RichTextBoxCanvasAdapter(richTextBox);
+            Format(value, adapter, format, isLiteral);
         }
     }
 }

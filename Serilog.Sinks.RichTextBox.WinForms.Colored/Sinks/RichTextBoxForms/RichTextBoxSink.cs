@@ -20,22 +20,26 @@ using Serilog.Core;
 using Serilog.Events;
 using Serilog.Sinks.RichTextBoxForms.Extensions;
 using Serilog.Sinks.RichTextBoxForms.Rendering;
+using Serilog.Sinks.RichTextBoxForms.Rtf;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
-using Serilog.Sinks.RichTextBoxForms.Common;
 
 namespace Serilog.Sinks.RichTextBoxForms
 {
     public class RichTextBoxSink : ILogEventSink, IDisposable
     {
+        // Internal tuning constants – change here for future optimisation.
+        private const int BatchSize = 250; // maximum events per flush
+        private const int FlushIntervalMs = 50; // maximum time between flushes
+        private const int QueueCapacity = 10_000; // maximum events waiting to be rendered
         private readonly BlockingCollection<LogEvent> _messageQueue;
         private readonly RichTextBoxSinkOptions _options;
         private readonly ITokenRenderer _renderer;
         private readonly RichTextBox _richTextBox;
         private readonly CancellationTokenSource _tokenSource;
-        private readonly int _uiThreadId;
 
         public RichTextBoxSink(RichTextBox richTextBox, RichTextBoxSinkOptions options, ITokenRenderer? renderer = null)
         {
@@ -44,8 +48,8 @@ namespace Serilog.Sinks.RichTextBoxForms
             _renderer = renderer ??
                         new TemplateRenderer(options.AppliedTheme, options.OutputTemplate, options.FormatProvider);
             _tokenSource = new CancellationTokenSource();
-            _messageQueue = new BlockingCollection<LogEvent>();
-            _uiThreadId = Thread.CurrentThread.ManagedThreadId;
+            // Bounded queue – producers will block when capacity is reached, preventing memory growth and UI hangs.
+            _messageQueue = new BlockingCollection<LogEvent>(QueueCapacity);
 
             richTextBox.Clear();
             richTextBox.ReadOnly = true;
@@ -66,38 +70,46 @@ namespace Serilog.Sinks.RichTextBoxForms
 
         public void Emit(LogEvent logEvent)
         {
-            _messageQueue.Add(logEvent);
+            // Block when the queue is saturated so that no messages are lost.
+            // Honour cancellation so Dispose() can interrupt blocked producers.
+            _messageQueue.Add(logEvent, _tokenSource.Token);
         }
 
         private void ProcessMessages(object? obj)
         {
             var token = (CancellationToken)(obj ?? throw new ArgumentNullException(nameof(obj)));
-            var messageBatch = 1;
-            var buffer = new RichTextBox
-            {
-                Font = _richTextBox.Font,
-                DetectUrls = false,
-                ForeColor = _richTextBox.ForeColor,
-                BackColor = _richTextBox.BackColor
-            };
+            var logEvents = new List<LogEvent>(BatchSize);
+            var builder = new RtfBuilder(_richTextBox.ForeColor, _richTextBox.BackColor);
+            var lastFlushTick = Environment.TickCount;
+
             try
             {
                 while (true)
                 {
-                    if (_messageQueue.TryTake(out var logEvent, _options.MessagePendingInterval, token))
-                    {
-                        SystemEventsThreadSanitizer.EnsureApplied(_uiThreadId);
+                    // Always wait for at least one event so we block when idle.
+                    var logEvent = _messageQueue.Take(token);
+                    logEvents.Add(logEvent);
 
-                        _renderer.Render(logEvent, buffer);
-                        while (messageBatch < _options.MessageBatchSize && _messageQueue.TryTake(out logEvent, 0, token))
+                    // Drain immediately available events up to BatchSize.
+                    while (logEvents.Count < BatchSize && _messageQueue.TryTake(out logEvent))
+                    {
+                        logEvents.Add(logEvent);
+                    }
+
+                    var now = Environment.TickCount;
+                    var elapsed = unchecked(now - lastFlushTick);
+
+                    if (logEvents.Count >= BatchSize || elapsed >= FlushIntervalMs)
+                    {
+                        foreach (var @event in logEvents)
                         {
-                            _renderer.Render(logEvent, buffer);
-                            messageBatch++;
+                            _renderer.Render(@event, builder);
                         }
 
-                        _richTextBox.AppendRtf(buffer.Rtf!, _options.AutoScroll, _options.MaxLogLines);
-                        buffer.Clear();
-                        messageBatch = 1;
+                        _richTextBox.AppendRtf(builder.Rtf, _options.AutoScroll, _options.MaxLogLines);
+                        builder.Clear();
+                        logEvents.Clear();
+                        lastFlushTick = now;
                     }
                 }
             }

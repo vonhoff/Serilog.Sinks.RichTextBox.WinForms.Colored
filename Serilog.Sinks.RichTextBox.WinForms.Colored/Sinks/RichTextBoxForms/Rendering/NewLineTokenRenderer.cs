@@ -17,16 +17,16 @@
 #endregion
 
 using Serilog.Events;
+using Serilog.Sinks.RichTextBoxForms.Rtf;
 using System;
-using System.Windows.Forms;
 
 namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
     public class NewLineTokenRenderer : ITokenRenderer
     {
-        public void Render(LogEvent logEvent, RichTextBox richTextBox)
+        public void Render(LogEvent logEvent, IRtfCanvas canvas)
         {
-            richTextBox.AppendText(Environment.NewLine);
+            canvas.AppendText(Environment.NewLine);
         }
     }
 }

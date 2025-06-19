@@ -44,8 +44,6 @@ namespace Serilog
         /// <param name="formatProvider">Culture-specific formatting (null for default).</param>
         /// <param name="levelSwitch">Allows runtime level change.</param>
         /// <param name="theme">Output theme (default: Dark).</param>
-        /// <param name="messageBatchSize">Max messages per batch for printing.</param>
-        /// <param name="messagePendingInterval">Duration to hold incoming messages.</param>
         /// <param name="autoScroll">Auto-scroll to bottom for new messages.</param>
         /// <param name="maxLogLines">Maximum number of lines to keep.</param>
         /// <returns>Config object for chaining.</returns>
@@ -57,14 +55,12 @@ namespace Serilog
             IFormatProvider? formatProvider = null,
             LoggingLevelSwitch? levelSwitch = null,
             Theme? theme = null,
-            int messageBatchSize = 200,
-            int messagePendingInterval = 8,
             bool autoScroll = true,
             int maxLogLines = 0)
         {
             var appliedTheme = theme ?? ThemePresets.Literate;
             var renderer = new TemplateRenderer(appliedTheme, outputTemplate, formatProvider);
-            var options = new RichTextBoxSinkOptions(appliedTheme, messageBatchSize, messagePendingInterval, autoScroll, maxLogLines);
+            var options = new RichTextBoxSinkOptions(appliedTheme, autoScroll, maxLogLines, outputTemplate, formatProvider);
             var sink = new RichTextBoxSink(richTextBoxControl, options, renderer);
             return sinkConfiguration.Sink(sink, minimumLogEventLevel, levelSwitch);
         }

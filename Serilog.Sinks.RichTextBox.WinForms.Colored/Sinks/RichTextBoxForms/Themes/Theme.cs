@@ -16,8 +16,8 @@
 
 #endregion
 
+using Serilog.Sinks.RichTextBoxForms.Rtf;
 using System.Collections.Generic;
-using System.Windows.Forms;
 
 namespace Serilog.Sinks.RichTextBoxForms.Themes
 {
@@ -33,21 +33,21 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
 
         public Style DefaultStyle { get; set; }
 
-        public void Render(RichTextBox richTextBox, StyleToken styleToken, string value)
+        public void Render(IRtfCanvas canvas, StyleToken styleToken, string value)
         {
             if (!_styles.TryGetValue(styleToken, out var themeStyle))
             {
                 return;
             }
 
-            richTextBox.SelectionStart = richTextBox.TextLength;
-            richTextBox.SelectionLength = 0;
-            richTextBox.SelectionColor = themeStyle.Foreground;
-            richTextBox.SelectionBackColor = themeStyle.Background;
-            richTextBox.AppendText(value);
+            canvas.SelectionStart = canvas.TextLength;
+            canvas.SelectionLength = 0;
+            canvas.SelectionColor = themeStyle.Foreground;
+            canvas.SelectionBackColor = themeStyle.Background;
+            canvas.AppendText(value);
 
-            richTextBox.SelectionColor = DefaultStyle.Foreground;
-            richTextBox.SelectionBackColor = DefaultStyle.Background;
+            canvas.SelectionColor = DefaultStyle.Foreground;
+            canvas.SelectionBackColor = DefaultStyle.Background;
         }
     }
 }

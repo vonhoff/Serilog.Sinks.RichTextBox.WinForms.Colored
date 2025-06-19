@@ -25,33 +25,22 @@ namespace Serilog.Sinks.RichTextBoxForms
     {
         private const string DefaultOutputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
         private int _maxLogLines;
-        private int _messageBatchSize;
-        private int _messagePendingInterval;
 
         /// <summary>
         ///     Settings for the RichTextBoxSink
         /// </summary>
         /// <param name="appliedTheme">The theme to apply.</param>
-        /// <param name="messageBatchSize">Max messages per batch for printing.</param>
-        /// <param name="messagePendingInterval">Duration to hold incoming messages.</param>
         /// <param name="autoScroll">Auto-scroll to bottom for new messages.</param>
         /// <param name="maxLogLines">Maximum number of lines to keep.</param>
-        /// <param name="outputTemplate">
-        ///     Message format (default: "[{Timestamp:HH:mm:ss} {Level:u3}]
-        ///     {Message:lj}{NewLine}{Exception}").
-        /// </param>
+        /// <param name="outputTemplate">Message format.</param>
         /// <param name="formatProvider">Culture-specific formatting (null for default).</param>
         public RichTextBoxSinkOptions(
             Theme appliedTheme,
-            int messageBatchSize = 200,
-            int messagePendingInterval = 8,
             bool autoScroll = true,
-            int maxLogLines = 0,
+            int maxLogLines = 250,
             string outputTemplate = DefaultOutputTemplate,
             IFormatProvider? formatProvider = null)
         {
-            MessageBatchSize = messageBatchSize;
-            MessagePendingInterval = messagePendingInterval;
             AutoScroll = autoScroll;
             AppliedTheme = appliedTheme;
             MaxLogLines = maxLogLines;
@@ -63,22 +52,10 @@ namespace Serilog.Sinks.RichTextBoxForms
 
         public Theme AppliedTheme { get; set; }
 
-        public int MessageBatchSize
-        {
-            get => _messageBatchSize;
-            set => _messageBatchSize = value > 50 ? value : 50;
-        }
-
-        public int MessagePendingInterval
-        {
-            get => _messagePendingInterval;
-            set => _messagePendingInterval = value > 0 ? value : 1;
-        }
-
         public int MaxLogLines
         {
             get => _maxLogLines;
-            set => _maxLogLines = value > 0 ? value : int.MaxValue;
+            set => _maxLogLines = value > 0 ? value : 250;
         }
 
         public string OutputTemplate { get; set; }
