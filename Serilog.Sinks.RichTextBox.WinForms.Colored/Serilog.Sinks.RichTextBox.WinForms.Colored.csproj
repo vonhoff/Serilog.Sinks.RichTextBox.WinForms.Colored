@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<Authors>Simon Vonhoff</Authors>
 		<Company>github.com/vonhoff</Company>
-		<Copyright>Copyright © 2022 Simon Vonhoff - Provided under the Apache License, Version 2.0.</Copyright>
+		<Copyright>Copyright © 2025 Simon Vonhoff - Provided under the Apache License, Version 2.0.</Copyright>
 		<Description>A Serilog sink that writes log events to a WinForms RichTextBox control with colors and theme support.</Description>
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -19,22 +19,13 @@
 		<RepositoryUrl>https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored.git</RepositoryUrl>
 		<RootNamespace>Serilog</RootNamespace>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    	<TargetFrameworks Condition=" '$(OS)' == 'Windows_NT'">net471;net462</TargetFrameworks>
-    	<TargetFrameworks>$(TargetFrameworks);net9.0-windows;net8.0-windows;net6.0-windows;netcoreapp3.1-windows;netcoreapp3.0-windows</TargetFrameworks>
+    	<TargetFrameworks>net462;net471;net6.0-windows;net8.0-windows;net9.0-windows;netcoreapp3.0-windows;netcoreapp3.1-windows</TargetFrameworks>
 		<UseWindowsForms>true</UseWindowsForms>
-		<Version>2.1.1</Version>
+		<Version>3.0.0</Version>
 		<PackageReleaseNotes>
-			Public Changes:
-			- Replaced themes with newly designed themes.
-			- Moved old themes to "DarkClassic" and "LightClassic".
-			- Fixed bugs with the formatters (JSON and Literal).
-			- Changed the default configuration for optimal performance.
-			- Removed link detection, as it causes issues with the formatting.
-			- Updated TargetFrameworks to include net9.0-windows, netcoreapp3.1-windows, and netcoreapp3.0-windows.
-
-			Internal Changes:
-			- Removed useless code and cleaned up the project.
-			- Replaced ConcurrentQueue with a BlockingCollection in the sink.
+			- Fixed UI freeze caused by SystemEvents on background-thread RichTextBox.
+			- Aligned theme colors with Serilog WPF sink with WCAG compliance.
+			- Fixed auto-scroll issue on .NET Framework.
 
 			See repository for more information:
 			https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored
