@@ -24,7 +24,7 @@
 		<Version>3.0.0</Version>
 		<PackageReleaseNotes>
 			- Reduced configurable options to only the most relevant ones (breaking change).
-			- Aligned theme colors with Serilog WPF sink with WCAG compliance (breaking change).
+			- Aligned theme colors with Serilog WPF sink including WCAG compliance (breaking change).
 			- Fixed UI freeze caused by SystemEvents on background-thread RichTextBox.
 			- Optimized performance by removing the off-screen RichTextBox.
 			- Optimized log rendering, it feels almost instant now.
