@@ -16,7 +16,7 @@ A [Serilog](https://github.com/serilog/serilog) sink that writes log events to a
 - Auto-scrolling to latest messages
 - Line limiting to control memory usage
 - High-performance asynchronous processing
-- WCAG compliant color schemes
+- WCAG compliant color schemes aligned to Serilog WPF RichTextBox sink.
 
 ## Installation
 
@@ -84,27 +84,6 @@ Available built-in themes:
 | `ThemePresets.Literate`     | A literate theme with syntax highlighting and structured data formatting (default). |
 | `ThemePresets.Grayscale`    | A monochrome theme with high contrast for accessibility.                     |
 | `ThemePresets.Colored`      | A colorful theme with vibrant colors for different log levels.              |
-
-You can customize the themes by creating your own theme instance or modifying the existing ones. The themes support various style tokens for different parts of the log message, including:
-- Text colors for different log levels
-- Syntax highlighting for strings, numbers, and booleans
-- Background colors for error and fatal messages
-- Custom styling for null values and invalid content
-
-### Configuration Parameters
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `richTextBoxControl` | RichTextBox | Required | The RichTextBox control to write logs to |
-| `theme` | Theme | `ThemePresets.Literate` | The theme to apply for coloring |
-| `autoScroll` | bool | `true` | Whether to automatically scroll to the latest message |
-| `maxLogLines` | int | `1000` | Maximum number of log lines to keep in memory |
-| `batchSize` | int | `250` | Number of log events to process in a batch |
-| `flushInterval` | int | `16` | Interval in milliseconds to flush logs |
-| `queueCapacity` | int | `10000` | Maximum number of log events in the processing queue |
-| `outputTemplate` | string | `"[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}"` | The output template for formatting log messages |
-| `formatProvider` | IFormatProvider | `null` | Culture-specific formatting provider |
-| `minimumLogEventLevel` | LogEventLevel | `LogEventLevel.Verbose` | Minimum log level to process |
 
 ## Frequently Asked Questions
 
