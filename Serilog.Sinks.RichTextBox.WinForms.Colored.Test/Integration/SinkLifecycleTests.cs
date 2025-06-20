@@ -13,7 +13,7 @@ namespace Serilog.Tests.Integration
         {
             var testRichTextBox = new RichTextBox();
             var testOptions = new RichTextBoxSinkOptions(
-                appliedTheme: ThemePresets.Literate,
+                theme: ThemePresets.Literate,
                 autoScroll: true,
                 maxLogLines: 1000
             );

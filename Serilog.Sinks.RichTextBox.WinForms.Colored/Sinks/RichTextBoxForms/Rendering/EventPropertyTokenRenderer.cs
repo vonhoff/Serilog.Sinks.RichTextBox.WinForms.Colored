@@ -23,13 +23,20 @@ using Serilog.Sinks.RichTextBoxForms.Rtf;
 using Serilog.Sinks.RichTextBoxForms.Themes;
 using System;
 using System.IO;
+using System.Text;
 
 namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
     public class EventPropertyTokenRenderer : ITokenRenderer
     {
-        [ThreadStatic]
-        private static StringWriter? _valueWriter;
+        /// <summary>
+        /// Small buffer size used when formatting non-string property values. A <see cref="StringBuilder"/>
+        /// of at least this capacity is rented from <see cref="StringBuilderCache"/> for each render and
+        /// returned afterwards so that no large builders are retained on the LOH. Allocating the tiny
+        /// <see cref="StringWriter"/> wrapper per call is cheaper than holding on to a potentially huge
+        /// buffer via the previous <c>[ThreadStatic]</c> cache.
+        /// </summary>
+        private const int InitialBufferSize = 256;
 
         private readonly IFormatProvider? _formatProvider;
         private readonly Theme _theme;
@@ -56,10 +63,19 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
             }
             else
             {
-                var writer = _valueWriter ??= new StringWriter();
-                writer.GetStringBuilder().Clear();
-                propertyValue.Render(writer, _token.Format, _formatProvider);
-                _theme.Render(canvas, StyleToken.SecondaryText, writer.ToString());
+                // Rent a reasonably-sized builder from the cache to avoid repeated allocations
+                // without retaining very large buffers between calls.
+                var sb = StringBuilderCache.Acquire(InitialBufferSize);
+
+                using (var writer = new StringWriter(sb))
+                {
+                    propertyValue.Render(writer, _token.Format, _formatProvider);
+                }
+
+                _theme.Render(canvas, StyleToken.SecondaryText, sb);
+
+                // Return the builder so it can be reused, unless it has grown too large.
+                StringBuilderCache.Release(sb);
             }
         }
     }

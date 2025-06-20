@@ -43,7 +43,7 @@ namespace Demo
         private void Initialize()
         {
             _options = new RichTextBoxSinkOptions(
-                appliedTheme: ThemePresets.Literate,
+                theme: ThemePresets.Literate,
                 outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:l}{NewLine}{Exception}",
                 formatProvider: new CultureInfo("en-US"));
 

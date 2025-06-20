@@ -25,7 +25,7 @@ namespace Serilog.Tests.Integration
             _parser = new MessageTemplateParser();
 
             var options = new RichTextBoxSinkOptions(
-                appliedTheme: _defaultTheme,
+                theme: _defaultTheme,
                 autoScroll: true,
                 maxLogLines: 1000
             );

@@ -18,6 +18,7 @@
 
 using Serilog.Sinks.RichTextBoxForms.Rtf;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Serilog.Sinks.RichTextBoxForms.Themes
 {
@@ -42,6 +43,25 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
             canvas.SelectionColor = themeStyle.Foreground;
             canvas.SelectionBackColor = themeStyle.Background;
             canvas.AppendText(value);
+
+            canvas.SelectionColor = DefaultStyle.Foreground;
+            canvas.SelectionBackColor = DefaultStyle.Background;
+        }
+
+        /// <summary>
+        /// Renders the provided <see cref="StringBuilder"/> without allocating an intermediate
+        /// string. This avoids a potentially large Gen-0 allocation when the caller already owns
+        /// the builder instance.
+        /// </summary>
+        public void Render(IRtfCanvas canvas, StyleToken styleToken, StringBuilder value)
+        {
+            var themeStyle = _styles[styleToken];
+
+            canvas.SelectionStart = canvas.TextLength;
+            canvas.SelectionLength = 0;
+            canvas.SelectionColor = themeStyle.Foreground;
+            canvas.SelectionBackColor = themeStyle.Background;
+            canvas.AppendText(value.ToString());
 
             canvas.SelectionColor = DefaultStyle.Foreground;
             canvas.SelectionBackColor = DefaultStyle.Background;

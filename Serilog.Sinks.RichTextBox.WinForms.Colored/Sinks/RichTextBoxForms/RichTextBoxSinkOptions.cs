@@ -30,17 +30,17 @@ namespace Serilog.Sinks.RichTextBoxForms
         private int _queueCapacity;
 
         public RichTextBoxSinkOptions(
-            Theme appliedTheme,
+            Theme theme,
             bool autoScroll = true,
-            int maxLogLines = 200,
+            int maxLogLines = 1000,
             int batchSize = 100,
-            int flushInterval = 50,
-            int queueCapacity = 1000,
+            int flushInterval = 10,
+            int queueCapacity = 10000,
             string outputTemplate = DefaultOutputTemplate,
             IFormatProvider? formatProvider = null)
         {
             AutoScroll = autoScroll;
-            AppliedTheme = appliedTheme;
+            Theme = theme;
             MaxLogLines = maxLogLines;
             OutputTemplate = outputTemplate;
             FormatProvider = formatProvider;
@@ -51,17 +51,13 @@ namespace Serilog.Sinks.RichTextBoxForms
 
         public bool AutoScroll { get; set; }
 
-        public Theme AppliedTheme { get; set; }
+        public Theme Theme { get; set; }
 
         public int MaxLogLines
         {
             get => _maxLogLines;
             set => _maxLogLines = value > 0 ? value : 250;
         }
-
-        public string OutputTemplate { get; set; }
-
-        public IFormatProvider? FormatProvider { get; set; }
 
         public int BatchSize
         {
@@ -80,5 +76,9 @@ namespace Serilog.Sinks.RichTextBoxForms
             get => _queueCapacity;
             set => _queueCapacity = value > 0 ? value : 1000;
         }
+
+        public string OutputTemplate { get; set; }
+
+        public IFormatProvider? FormatProvider { get; set; }
     }
 }

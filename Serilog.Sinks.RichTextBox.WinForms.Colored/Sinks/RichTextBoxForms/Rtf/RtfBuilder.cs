@@ -90,7 +90,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
                 return idx;
             }
 
-            idx = _colorTable.Count + 1; // RTF colour indexes start at 1.
+            idx = _colorTable.Count + 1;
             _colorTable.Add(color, idx);
             return idx;
         }
@@ -128,7 +128,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
                         }
                         else
                         {
-                            // Unicode escape.
                             _body.Append(@"\\u").Append(Convert.ToInt32(ch)).Append('?');
                         }
                         break;
@@ -138,7 +137,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
 
         private string BuildDocument()
         {
-            var document = new StringBuilder(_body.Length + 256);
+            var document = StringBuilderCache.Acquire(_body.Length + 256);
             document.Append(@"{\rtf1\ansi\deff0");
             document.Append("{\\colortbl ;");
 
@@ -159,7 +158,9 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
             document.Append('}');
             document.Append(_body);
             document.Append('}');
-            return document.ToString();
+            var result = document.ToString();
+            StringBuilderCache.Release(document);
+            return result;
         }
 
         public void Dispose()
@@ -179,9 +180,18 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
             {
                 _body.Capacity = MaxRetainedCapacity;
             }
-            _colorTable.Clear();
 
-            // Re-register default colours so their indexes are 1 and 2 again.
+            // Do not clear the colour table each time – this avoids repeated allocations
+            // and dictionary re-population during heavy logging.
+            // If the table has grown unusually large (e.g. many dynamic colours) we reset it
+            // to prevent unbounded memory usage.
+            const int MaxColourEntries = 64;
+            if (_colorTable.Count > MaxColourEntries)
+            {
+                _colorTable.Clear();
+            }
+
+            // Ensure we have valid indexes for the default foreground/background colours.
             _currentFgIndex = RegisterColor(_selectionColor);
             _currentBgIndex = RegisterColor(_selectionBackColor);
             _textLength = 0;

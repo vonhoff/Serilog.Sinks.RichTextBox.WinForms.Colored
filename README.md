@@ -98,10 +98,10 @@ You can customize the themes by creating your own theme instance or modifying th
 | `richTextBoxControl` | RichTextBox | Required | The RichTextBox control to write logs to |
 | `theme` | Theme | `ThemePresets.Literate` | The theme to apply for coloring |
 | `autoScroll` | bool | `true` | Whether to automatically scroll to the latest message |
-| `maxLogLines` | int | `250` | Maximum number of log lines to keep in memory |
-| `batchSize` | int | `500` | Number of log events to process in a batch |
+| `maxLogLines` | int | `1000` | Maximum number of log lines to keep in memory |
+| `batchSize` | int | `250` | Number of log events to process in a batch |
 | `flushInterval` | int | `16` | Interval in milliseconds to flush logs |
-| `queueCapacity` | int | `1000` | Maximum number of log events in the processing queue |
+| `queueCapacity` | int | `10000` | Maximum number of log events in the processing queue |
 | `outputTemplate` | string | `"[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}"` | The output template for formatting log messages |
 | `formatProvider` | IFormatProvider | `null` | Culture-specific formatting provider |
 | `minimumLogEventLevel` | LogEventLevel | `LogEventLevel.Verbose` | Minimum log level to process |

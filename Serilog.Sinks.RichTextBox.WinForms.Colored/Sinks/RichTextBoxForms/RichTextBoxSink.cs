@@ -43,16 +43,15 @@ namespace Serilog.Sinks.RichTextBoxForms
         {
             _options = options;
             _richTextBox = richTextBox;
-            _renderer = renderer ??
-                        new TemplateRenderer(options.AppliedTheme, options.OutputTemplate, options.FormatProvider);
+            _renderer = renderer ?? new TemplateRenderer(options.Theme, options.OutputTemplate, options.FormatProvider);
             _tokenSource = new CancellationTokenSource();
             _messageQueue = new BlockingCollection<LogEvent>(_options.QueueCapacity);
 
             richTextBox.Clear();
             richTextBox.ReadOnly = true;
             richTextBox.DetectUrls = false;
-            richTextBox.ForeColor = options.AppliedTheme.DefaultStyle.Foreground;
-            richTextBox.BackColor = options.AppliedTheme.DefaultStyle.Background;
+            richTextBox.ForeColor = options.Theme.DefaultStyle.Foreground;
+            richTextBox.BackColor = options.Theme.DefaultStyle.Background;
 
             _processingTask = Task.Run(() => ProcessMessages(_tokenSource.Token), _tokenSource.Token);
         }
