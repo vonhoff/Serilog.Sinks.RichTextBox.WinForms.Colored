@@ -12,9 +12,11 @@ A [Serilog](https://github.com/serilog/serilog) sink that writes log events to a
 ## Features
 
 - Colored log events in a WinForms RichTextBox control
-- Dark and Light theme presets with customization options
+- Multiple theme presets with customization options
 - Auto-scrolling to latest messages
 - Line limiting to control memory usage
+- High-performance asynchronous processing
+- WCAG compliant color schemes
 
 ## Installation
 
@@ -61,15 +63,16 @@ You can customize the sink using various parameters from the RichTextBox extensi
 Log.Logger = new LoggerConfiguration()
     .WriteTo.RichTextBox(
         richTextBoxControl: richTextBox1,
-        minimumLogEventLevel: LogEventLevel.Debug,
-        outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}",
-        theme: ThemePresets.Light,
-        messageBatchSize: 200,
-        messagePendingInterval: 16,
+        theme: ThemePresets.Literate,
         autoScroll: true,
-        maxLogLines: 512)
+        maxLogLines: 250,
+        batchSize: 500,
+        flushInterval: 16,
+        queueCapacity: 1000,
+        outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}",
+        formatProvider: null,
+        minimumLogEventLevel: LogEventLevel.Verbose)
     .CreateLogger();
-
 ```
 
 ### Themes
@@ -78,16 +81,30 @@ Available built-in themes:
 
 | Theme                       | Description                                                                  |
 |-----------------------------|------------------------------------------------------------------------------|
-| `ThemePresets.Dark`         | A dark theme inspired by modern IDEs and the Serilog Console sink.           |
-| `ThemePresets.Light`        | A light theme with vibrant colors and high contrast for optimal readability. |
-| `ThemePresets.DarkClassic`  | A theme replicating the Serilog Console sink.                                |
-| `ThemePresets.LightClassic` | A theme with a light background and contrasting colors.                      |
+| `ThemePresets.Literate`     | A literate theme with syntax highlighting and structured data formatting (default). |
+| `ThemePresets.Grayscale`    | A monochrome theme with high contrast for accessibility.                     |
+| `ThemePresets.Colored`      | A colorful theme with vibrant colors for different log levels.              |
 
 You can customize the themes by creating your own theme instance or modifying the existing ones. The themes support various style tokens for different parts of the log message, including:
 - Text colors for different log levels
 - Syntax highlighting for strings, numbers, and booleans
 - Background colors for error and fatal messages
 - Custom styling for null values and invalid content
+
+### Configuration Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `richTextBoxControl` | RichTextBox | Required | The RichTextBox control to write logs to |
+| `theme` | Theme | `ThemePresets.Literate` | The theme to apply for coloring |
+| `autoScroll` | bool | `true` | Whether to automatically scroll to the latest message |
+| `maxLogLines` | int | `250` | Maximum number of log lines to keep in memory |
+| `batchSize` | int | `500` | Number of log events to process in a batch |
+| `flushInterval` | int | `16` | Interval in milliseconds to flush logs |
+| `queueCapacity` | int | `1000` | Maximum number of log events in the processing queue |
+| `outputTemplate` | string | `"[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}"` | The output template for formatting log messages |
+| `formatProvider` | IFormatProvider | `null` | Culture-specific formatting provider |
+| `minimumLogEventLevel` | LogEventLevel | `LogEventLevel.Verbose` | Minimum log level to process |
 
 ## Frequently Asked Questions
 
