@@ -28,7 +28,7 @@ namespace Serilog.Tests.Integration
                 });
 
             // Act
-            renderer.Render(logEvent, _richTextBox);
+            renderer.Render(logEvent, _canvas);
 
             // Assert
             var text = _richTextBox.Text;
@@ -58,7 +58,7 @@ namespace Serilog.Tests.Integration
                 });
 
             // Act
-            renderer.Render(logEvent, _richTextBox);
+            renderer.Render(logEvent, _canvas);
 
             // Assert
             var text = _richTextBox.Text;
@@ -93,7 +93,7 @@ namespace Serilog.Tests.Integration
                 });
 
             // Act
-            renderer.Render(logEvent, _richTextBox);
+            renderer.Render(logEvent, _canvas);
 
             // Assert
             var text = _richTextBox.Text;
@@ -121,7 +121,7 @@ namespace Serilog.Tests.Integration
                 });
 
             // Act
-            renderer.Render(logEvent, _richTextBox);
+            renderer.Render(logEvent, _canvas);
 
             // Assert
             var text = _richTextBox.Text;
@@ -150,7 +150,7 @@ namespace Serilog.Tests.Integration
                 });
 
             // Act
-            renderer.Render(logEvent, _richTextBox);
+            renderer.Render(logEvent, _canvas);
 
             // Assert
             var text = _richTextBox.Text;

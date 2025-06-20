@@ -35,10 +35,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
 
         public void Render(IRtfCanvas canvas, StyleToken styleToken, string value)
         {
-            if (!_styles.TryGetValue(styleToken, out var themeStyle))
-            {
-                return;
-            }
+            var themeStyle = _styles[styleToken];
 
             canvas.SelectionStart = canvas.TextLength;
             canvas.SelectionLength = 0;

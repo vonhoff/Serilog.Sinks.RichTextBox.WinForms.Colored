@@ -32,10 +32,6 @@ namespace Serilog.Sinks.RichTextBoxForms
 {
     public class RichTextBoxSink : ILogEventSink, IDisposable
     {
-        // Internal tuning constants – change here for future optimisation.
-        private const int BatchSize = 250; // maximum events per flush
-        private const int FlushIntervalMs = 16; // maximum time between flushes
-        private const int QueueCapacity = 10_000; // maximum events waiting to be rendered
         private readonly BlockingCollection<LogEvent> _messageQueue;
         private readonly RichTextBoxSinkOptions _options;
         private readonly ITokenRenderer _renderer;
@@ -50,7 +46,7 @@ namespace Serilog.Sinks.RichTextBoxForms
             _renderer = renderer ??
                         new TemplateRenderer(options.AppliedTheme, options.OutputTemplate, options.FormatProvider);
             _tokenSource = new CancellationTokenSource();
-            _messageQueue = new BlockingCollection<LogEvent>(QueueCapacity);
+            _messageQueue = new BlockingCollection<LogEvent>(_options.QueueCapacity);
 
             richTextBox.Clear();
             richTextBox.ReadOnly = true;
@@ -77,17 +73,17 @@ namespace Serilog.Sinks.RichTextBoxForms
 
         private void ProcessMessages(CancellationToken token)
         {
-            var logEvents = new List<LogEvent>(BatchSize);
+            var logEvents = new List<LogEvent>(_options.BatchSize);
             var builder = new RtfBuilder(_richTextBox.ForeColor, _richTextBox.BackColor);
 
             while (true)
             {
                 LogEvent? nextEvent;
 
-                if (_messageQueue.TryTake(out nextEvent!, FlushIntervalMs, token))
+                if (_messageQueue.TryTake(out nextEvent!, _options.FlushInterval, token))
                 {
                     logEvents.Add(nextEvent);
-                    while (logEvents.Count < BatchSize && _messageQueue.TryTake(out nextEvent))
+                    while (logEvents.Count < _options.BatchSize && _messageQueue.TryTake(out nextEvent))
                     {
                         logEvents.Add(nextEvent);
                     }

@@ -21,22 +21,20 @@ using Serilog.Parsing;
 using Serilog.Sinks.RichTextBoxForms.Formatting;
 using Serilog.Sinks.RichTextBoxForms.Rtf;
 using Serilog.Sinks.RichTextBoxForms.Themes;
-using System.Collections.Generic;
 
 namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
     public class LevelTokenRenderer : ITokenRenderer
     {
-        private static readonly IReadOnlyDictionary<LogEventLevel, StyleToken> Levels =
-            new Dictionary<LogEventLevel, StyleToken>
-            {
-                { LogEventLevel.Verbose, StyleToken.LevelVerbose },
-                { LogEventLevel.Debug, StyleToken.LevelDebug },
-                { LogEventLevel.Information, StyleToken.LevelInformation },
-                { LogEventLevel.Warning, StyleToken.LevelWarning },
-                { LogEventLevel.Error, StyleToken.LevelError },
-                { LogEventLevel.Fatal, StyleToken.LevelFatal }
-            };
+        private static readonly StyleToken[] LevelStyles =
+        {
+            StyleToken.LevelVerbose,
+            StyleToken.LevelDebug,
+            StyleToken.LevelInformation,
+            StyleToken.LevelWarning,
+            StyleToken.LevelError,
+            StyleToken.LevelFatal
+        };
 
         private static readonly string[][] LowercaseLevelMap =
         {
@@ -70,21 +68,24 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
 
         private readonly PropertyToken _levelToken;
         private readonly Theme _theme;
+        private readonly string[] _monikers = new string[LevelStyles.Length];
 
         public LevelTokenRenderer(Theme theme, PropertyToken levelToken)
         {
             _theme = theme;
             _levelToken = levelToken;
+            var format = _levelToken.Format ?? string.Empty;
+            for (int i = 0; i < _monikers.Length; i++)
+            {
+                _monikers[i] = GetLevelMoniker((LogEventLevel)i, format);
+            }
         }
 
         public void Render(LogEvent logEvent, IRtfCanvas canvas)
         {
-            var moniker = GetLevelMoniker(logEvent.Level, _levelToken.Format ?? "");
-            if (!Levels.TryGetValue(logEvent.Level, out var levelStyle))
-            {
-                levelStyle = StyleToken.Invalid;
-            }
-
+            var levelIndex = (int)logEvent.Level;
+            var moniker = _monikers[levelIndex];
+            var levelStyle = LevelStyles[levelIndex];
             _theme.Render(canvas, levelStyle, moniker);
         }
 
@@ -95,8 +96,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
                 return TextFormatter.Format(value.ToString(), format);
             }
 
-            // Using int.Parse() here requires allocating a string to exclude the first character prefix.
-            // Junk like "wxy" will be accepted but produce benign results.
             var width = format[1] - '0';
             if (format.Length == 3)
             {

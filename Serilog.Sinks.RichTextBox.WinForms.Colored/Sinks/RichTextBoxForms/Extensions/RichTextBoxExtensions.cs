@@ -17,38 +17,45 @@
 #endregion
 
 using System;
-using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace Serilog.Sinks.RichTextBoxForms.Extensions
 {
-    public static class RichTextBoxExtensions
+    public static partial class RichTextBoxExtensions
     {
+        [StructLayout(LayoutKind.Sequential)]
+        private struct Point
+        {
+            public int X;
+            public int Y;
+        }
+
         private const int WM_USER = 0x400;
         private const int EM_GETSCROLLPOS = WM_USER + 221;
         private const int EM_SETSCROLLPOS = WM_USER + 222;
         private const int WM_VSCROLL = 277;
         private const int SB_PAGEBOTTOM = 7;
-        private const string NullCharacter = "\0";
 
+#if NET7_0_OR_GREATER
+        // Use source-generated P/Invoke for newer target frameworks to avoid the startup
+        // penalty of runtime marshalling stub generation.
+        [LibraryImport("user32.dll")]
+        private static partial IntPtr SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
+
+        [LibraryImport("user32.dll")]
+        private static partial IntPtr SendMessage(IntPtr hWnd, int wMsg, int wParam, ref Point lParam);
+#else
+        // Fallback for older target frameworks that do not support source-generated P/Invokes.
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern IntPtr SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern IntPtr SendMessage(IntPtr hWnd, int wMsg, int wParam, ref Point lParam);
+#endif
 
-        /// <summary>
-        ///     Updates the content of a <see cref="RichTextBox" />
-        ///     with the specified content in rich text format (RTF).
-        /// </summary>
-        /// <param name="richTextBox">The <see cref="RichTextBox" /> to update.</param>
-        /// <param name="rtf">The content in rich text format (RTF).</param>
-        /// <param name="autoScroll">Automatically scroll on update.</param>
-        /// <param name="maxLogLines">Maximum number of lines to keep.</param>
         public static void AppendRtf(this RichTextBox richTextBox, string rtf, bool autoScroll, int maxLogLines)
         {
-            // Avoid the recursive double-call pattern – schedule the actual work only once.
             if (richTextBox.InvokeRequired)
             {
                 richTextBox.BeginInvoke(new Action(() => AppendRtfInternal(richTextBox, rtf, autoScroll, maxLogLines)));
@@ -61,9 +68,11 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
         private static void AppendRtfInternal(RichTextBox richTextBox, string rtf, bool autoScroll, int maxLogLines)
         {
             richTextBox.Suspend();
-            var scrollPoint = Point.Empty;
-            var previousSelectionStart = richTextBox.SelectionStart;
-            var previousSelectionLength = richTextBox.SelectionLength;
+            richTextBox.ReadOnly = false;
+
+            var scrollPoint = new Point();
+            var previousStart = richTextBox.SelectionStart;
+            var previousLength = richTextBox.SelectionLength;
 
             if (!autoScroll)
             {
@@ -71,40 +80,29 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
             }
 
             richTextBox.SelectionStart = richTextBox.TextLength;
-            if (richTextBox.TextLength > 0)
-            {
-                richTextBox.SelectedText = Environment.NewLine;
-            }
             richTextBox.SelectedRtf = rtf;
 
-            var selectionStart = richTextBox.TextLength - 1;
-            richTextBox.SelectionStart = selectionStart >= 0 ? selectionStart : 0;
-            richTextBox.SelectionLength = 1;
-            richTextBox.SelectedText = NullCharacter;
-
-            var totalLines = richTextBox.GetLineFromCharIndex(richTextBox.TextLength) + 1;
-            if (totalLines > maxLogLines)
+            if (richTextBox.Lines.Length > maxLogLines)
             {
-                var linesToRemove = totalLines - maxLogLines;
+                var linesToRemove = richTextBox.Lines.Length - maxLogLines;
+                var charsToRemove = 0;
 
-                if (linesToRemove > 0)
+                for (var i = 0; i < linesToRemove; i++)
                 {
-                    var charIndex = richTextBox.GetFirstCharIndexFromLine(linesToRemove);
-                    if (charIndex > 0)
-                    {
-                        richTextBox.SelectionStart = 0;
-                        richTextBox.SelectionLength = charIndex;
-                        richTextBox.SelectedText = NullCharacter;
-                        previousSelectionStart = 0;
-                        previousSelectionLength = 0;
-                    }
+                    charsToRemove += richTextBox.Lines[i].Length + 1;
                 }
+
+                richTextBox.SelectionStart = 0;
+                richTextBox.SelectionLength = charsToRemove;
+                richTextBox.SelectedText = string.Empty;
+                previousStart = 0;
+                previousLength = 0;
             }
 
             if (!autoScroll)
             {
-                richTextBox.SelectionStart = previousSelectionStart;
-                richTextBox.SelectionLength = previousSelectionLength;
+                richTextBox.SelectionStart = previousStart;
+                richTextBox.SelectionLength = previousLength;
                 SendMessage(richTextBox.Handle, EM_SETSCROLLPOS, 0, ref scrollPoint);
             }
             else
@@ -113,6 +111,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
                 richTextBox.SelectionStart = richTextBox.Text.Length;
             }
 
+            richTextBox.ReadOnly = true;
             richTextBox.Resume();
         }
     }

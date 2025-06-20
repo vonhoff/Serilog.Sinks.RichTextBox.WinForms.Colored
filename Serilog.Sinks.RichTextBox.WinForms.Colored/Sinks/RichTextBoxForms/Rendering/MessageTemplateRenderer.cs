@@ -70,7 +70,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
         {
             if (_isLiteral && propertyValue is ScalarValue { Value: string } scalarValue)
             {
-                _theme.Render(canvas, StyleToken.String, scalarValue.Value.ToString() ?? string.Empty);
+                _theme.Render(canvas, StyleToken.String, (string)scalarValue.Value);
                 return;
             }
 

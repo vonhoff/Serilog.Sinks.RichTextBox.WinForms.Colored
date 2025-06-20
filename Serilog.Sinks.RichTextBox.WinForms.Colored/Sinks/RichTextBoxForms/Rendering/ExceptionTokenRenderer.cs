@@ -36,7 +36,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
 
         public void Render(LogEvent logEvent, IRtfCanvas canvas)
         {
-            if (logEvent.Exception is null)
+            if (logEvent.Exception == null)
             {
                 return;
             }

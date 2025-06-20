@@ -21,7 +21,6 @@ using Serilog.Parsing;
 using Serilog.Sinks.RichTextBoxForms.Rtf;
 using Serilog.Sinks.RichTextBoxForms.Themes;
 using System;
-using System.IO;
 
 namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
@@ -40,10 +39,8 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
 
         public void Render(LogEvent logEvent, IRtfCanvas canvas)
         {
-            var scalarValue = new ScalarValue(logEvent.Timestamp);
-            var writer = new StringWriter();
-            scalarValue.Render(writer, _token.Format, _formatProvider);
-            _theme.Render(canvas, StyleToken.SecondaryText, writer.ToString());
+            var s = logEvent.Timestamp.ToString(_token.Format, _formatProvider);
+            _theme.Render(canvas, StyleToken.SecondaryText, s);
         }
     }
 }

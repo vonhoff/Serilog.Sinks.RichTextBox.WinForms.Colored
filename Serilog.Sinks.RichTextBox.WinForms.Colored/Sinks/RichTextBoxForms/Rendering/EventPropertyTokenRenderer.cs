@@ -28,6 +28,9 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
     public class EventPropertyTokenRenderer : ITokenRenderer
     {
+        [ThreadStatic]
+        private static StringWriter? _valueWriter;
+
         private readonly IFormatProvider? _formatProvider;
         private readonly Theme _theme;
         private readonly PropertyToken _token;
@@ -46,19 +49,18 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
                 return;
             }
 
-            var writer = new StringWriter();
-
             if (propertyValue is ScalarValue { Value: string literalString })
             {
                 var cased = TextFormatter.Format(literalString, _token.Format);
-                writer.Write(cased);
+                _theme.Render(canvas, StyleToken.SecondaryText, cased);
             }
             else
             {
+                var writer = _valueWriter ??= new StringWriter();
+                writer.GetStringBuilder().Clear();
                 propertyValue.Render(writer, _token.Format, _formatProvider);
+                _theme.Render(canvas, StyleToken.SecondaryText, writer.ToString());
             }
-
-            _theme.Render(canvas, StyleToken.SecondaryText, writer.ToString());
         }
     }
 }
