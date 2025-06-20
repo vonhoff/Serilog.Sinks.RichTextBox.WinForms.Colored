@@ -38,6 +38,13 @@ jobs:
         reporttypes: 'Html;HtmlSummary'
         title: 'Code Coverage Report'
 
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: './coverage/report'
+      continue-on-error: true
+
     - name: Check coverage threshold
       run: |
         $coverage = Select-Xml -Path "./coverage/**/coverage.cobertura.xml" -XPath "//coverage/@line-rate" | Select-Object -ExpandProperty Node | Select-Object -ExpandProperty Value
@@ -47,9 +54,3 @@ jobs:
           Write-Error "Code coverage ($coveragePercent%) is below the required threshold of 75%"
           exit 1
         }
-
-    - name: Upload coverage report
-      uses: actions/upload-artifact@v4
-      with:
-        name: coverage-report
-        path: './coverage/report'
