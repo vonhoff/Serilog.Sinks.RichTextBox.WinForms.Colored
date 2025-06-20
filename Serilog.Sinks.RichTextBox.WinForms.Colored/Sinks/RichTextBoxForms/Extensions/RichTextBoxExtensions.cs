@@ -82,21 +82,28 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
             richTextBox.SelectionStart = richTextBox.TextLength;
             richTextBox.SelectedRtf = rtf;
 
-            if (richTextBox.Lines.Length > maxLogLines)
+            // Avoid using the richTextBox.Lines property on every append as it allocates
+            // a new string array for the entire document and leads to excessive GC pressure
+            // under heavy logging. Instead, rely on WinForms helpers that do not allocate.
+            var currentLineCount = richTextBox.GetLineFromCharIndex(richTextBox.TextLength) + 1;
+
+            if (currentLineCount > maxLogLines)
             {
-                var linesToRemove = richTextBox.Lines.Length - maxLogLines;
-                var charsToRemove = 0;
+                var linesToRemove = currentLineCount - maxLogLines;
 
-                for (var i = 0; i < linesToRemove; i++)
+                // `GetFirstCharIndexFromLine` returns the character index for the first character
+                // in the specified line. By asking for the first line *after* the removal range
+                // we get the exact character offset to trim.
+                var charsToRemove = richTextBox.GetFirstCharIndexFromLine(linesToRemove);
+
+                if (charsToRemove > 0)
                 {
-                    charsToRemove += richTextBox.Lines[i].Length + 1;
+                    richTextBox.SelectionStart = 0;
+                    richTextBox.SelectionLength = charsToRemove;
+                    richTextBox.SelectedText = string.Empty;
+                    previousStart = 0;
+                    previousLength = 0;
                 }
-
-                richTextBox.SelectionStart = 0;
-                richTextBox.SelectionLength = charsToRemove;
-                richTextBox.SelectedText = string.Empty;
-                previousStart = 0;
-                previousLength = 0;
             }
 
             if (!autoScroll)
