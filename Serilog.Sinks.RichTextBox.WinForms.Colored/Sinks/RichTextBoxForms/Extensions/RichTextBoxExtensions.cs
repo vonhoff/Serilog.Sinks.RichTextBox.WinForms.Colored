@@ -40,10 +40,10 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
 #if NET7_0_OR_GREATER
         // Use source-generated P/Invoke for newer target frameworks to avoid the startup
         // penalty of runtime marshalling stub generation.
-        [LibraryImport("user32.dll")]
+        [LibraryImport("user32.dll", EntryPoint = "SendMessageW")]
         private static partial IntPtr SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
 
-        [LibraryImport("user32.dll")]
+        [LibraryImport("user32.dll", EntryPoint = "SendMessageW")]
         private static partial IntPtr SendMessage(IntPtr hWnd, int wMsg, int wParam, ref Point lParam);
 #else
         // Fallback for older target frameworks that do not support source-generated P/Invokes.

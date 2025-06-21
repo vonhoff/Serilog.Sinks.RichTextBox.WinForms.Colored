@@ -50,7 +50,7 @@ jobs:
         $coverage = Select-Xml -Path "./coverage/**/coverage.cobertura.xml" -XPath "//coverage/@line-rate" | Select-Object -ExpandProperty Node | Select-Object -ExpandProperty Value
         $coveragePercent = [math]::Round([double]$coverage * 100, 2)
         Write-Host "Current line coverage: $coveragePercent%"
-        if ($coveragePercent -lt 70) {
+        if ($coveragePercent -lt 75) {
           Write-Error "Code coverage ($coveragePercent%) is below the required threshold of 70%"
           exit 1
         }

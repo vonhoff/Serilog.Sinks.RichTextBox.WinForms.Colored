@@ -77,24 +77,34 @@ namespace Serilog.Sinks.RichTextBoxForms
         public void Emit(LogEvent logEvent)
         {
             _buffer.Add(logEvent);
-            Interlocked.Exchange(ref _hasNewMessages, 1);
-            _signal.Set();
+            if (Interlocked.Exchange(ref _hasNewMessages, 1) == 0)
+            {
+                _signal.Set();
+            }
         }
 
         private void ProcessMessages(CancellationToken token)
         {
             var builder = new RtfBuilder(_options.Theme);
             var snapshot = new System.Collections.Generic.List<LogEvent>(_options.MaxLogLines);
+            var lastFlush = DateTime.UtcNow;
 
             while (!token.IsCancellationRequested)
             {
                 _signal.WaitOne(_options.FlushInterval);
-
-                if (Interlocked.Exchange(ref _hasNewMessages, 0) == 0)
+                if (Interlocked.CompareExchange(ref _hasNewMessages, 1, 1) == 0)
                 {
                     continue;
                 }
 
+                var now = DateTime.UtcNow;
+                var elapsed = now - lastFlush;
+                if (elapsed < _options.FlushInterval)
+                {
+                    continue;
+                }
+
+                Interlocked.Exchange(ref _hasNewMessages, 0);
                 _buffer.TakeSnapshot(snapshot);
                 builder.Clear();
                 foreach (var evt in snapshot)
@@ -103,6 +113,7 @@ namespace Serilog.Sinks.RichTextBoxForms
                 }
 
                 _richTextBox.SetRtf(builder.Rtf, _options.AutoScroll);
+                lastFlush = now;
             }
         }
     }
