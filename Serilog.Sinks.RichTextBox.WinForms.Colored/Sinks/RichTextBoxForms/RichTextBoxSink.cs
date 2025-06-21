@@ -88,35 +88,37 @@ namespace Serilog.Sinks.RichTextBoxForms
         {
             var builder = new RtfBuilder(_options.Theme);
             var snapshot = new System.Collections.Generic.List<LogEvent>(_options.MaxLogLines);
-            var lastFlush = DateTime.UtcNow;
             var flushInterval = TimeSpan.FromMilliseconds(FlushIntervalMs);
+            var lastFlush = DateTime.UtcNow;
 
             while (!token.IsCancellationRequested)
             {
-                _signal.WaitOne(flushInterval);
-                if (Interlocked.CompareExchange(ref _hasNewMessages, 1, 1) == 0)
+                _signal.WaitOne();
+
+                if (Interlocked.CompareExchange(ref _hasNewMessages, 0, 1) == 1)
                 {
-                    continue;
+                    var now = DateTime.UtcNow;
+                    var elapsed = now - lastFlush;
+                    if (elapsed < flushInterval)
+                    {
+                        // Wait for the remaining time, or until a new message arrives
+                        var remaining = flushInterval - elapsed;
+                        if (remaining > TimeSpan.Zero)
+                        {
+                            _signal.WaitOne(remaining);
+                        }
+                    }
+
+                    // Take a snapshot and flush
+                    _buffer.TakeSnapshot(snapshot);
+                    builder.Clear();
+                    foreach (var evt in snapshot)
+                    {
+                        _renderer.Render(evt, builder);
+                    }
+                    _richTextBox.SetRtf(builder.Rtf, _options.AutoScroll);
+                    lastFlush = DateTime.UtcNow;
                 }
-
-                var now = DateTime.UtcNow;
-                var elapsed = now - lastFlush;
-                if (elapsed < flushInterval)
-                {
-                    continue;
-                }
-
-                _buffer.TakeSnapshot(snapshot);
-                builder.Clear();
-                foreach (var evt in snapshot)
-                {
-                    _renderer.Render(evt, builder);
-                }
-
-                _richTextBox.SetRtf(builder.Rtf, _options.AutoScroll);
-                Interlocked.Exchange(ref _hasNewMessages, 0);
-
-                lastFlush = now;
             }
         }
     }
