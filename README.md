@@ -45,7 +45,7 @@ Configure the logger to use the sink:
 
 ```csharp
 Log.Logger = new LoggerConfiguration()
-    .WriteTo.RichTextBox(richTextBox1)
+    .WriteTo.RichTextBox(richTextBox1, theme: ThemePresets.Literate)
     .CreateLogger();
 
 Log.Information("Hello, world!");
@@ -57,7 +57,7 @@ Available built-in themes:
 
 | Theme                       | Description                                                                  |
 |-----------------------------|------------------------------------------------------------------------------|
-| `ThemePresets.Literate`     | Styled to replicate the default theme of Serilog.Sinks.Console (default)     |
+| `ThemePresets.Literate`     | Styled to replicate the default theme of Serilog.Sinks.Console __(default)__ |
 | `ThemePresets.Grayscale`    | A theme using only shades of gray, white, and black                          |
 | `ThemePresets.Colored`      | A theme based on the original Serilog.Sinks.ColoredConsole sink              |
 | `ThemePresets.Luminous`     | A light theme with high contrast for accessibility                           |
