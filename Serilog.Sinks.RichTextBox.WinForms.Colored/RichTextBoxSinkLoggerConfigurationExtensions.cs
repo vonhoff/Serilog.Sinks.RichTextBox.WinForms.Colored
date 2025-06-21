@@ -52,7 +52,7 @@ namespace Serilog
             Theme? theme = null,
             bool autoScroll = true,
             int maxLogLines = 256,
-            double flushInterval = 83.34,
+            double flushInterval = 500,
             string outputTemplate = OutputTemplate,
             IFormatProvider? formatProvider = null,
             LogEventLevel minimumLogEventLevel = LogEventLevel.Verbose,
