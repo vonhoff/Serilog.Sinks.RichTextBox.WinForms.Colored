@@ -2,18 +2,10 @@ using System.Collections.Generic;
 
 namespace Serilog.Sinks.RichTextBoxForms.Collections
 {
-    /// <summary>
-    /// Thread-safe circular buffer that overwrites the oldest element when capacity is exceeded.
-    /// Optimized for the pattern «many producers / single consumer snapshot». Add() never blocks; the
-    /// internal array size is fixed (<see cref="Capacity"/>). Snapshot() returns a snapshot of the
-    /// current content in chronological order (oldest → newest).
-    /// </summary>
     internal sealed class ConcurrentCircularBuffer<T>
     {
         private readonly T[] _buffer;
         private readonly int _capacity;
-
-        // _head points to the index of the oldest entry. _count is the number of valid items.
         private int _head;
         private int _count;
 
@@ -27,22 +19,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Collections
             _count = 0;
         }
 
-        public int Capacity => _capacity;
-
-        public int Count
-        {
-            get
-            {
-                lock (_sync)
-                {
-                    return _count;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Adds an item to the buffer, overwriting the oldest element when the buffer is full.
-        /// </summary>
         public void Add(T item)
         {
             lock (_sync)
@@ -61,10 +37,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Collections
             }
         }
 
-        /// <summary>
-        /// Fills the provided list with a snapshot of the current content in chronological order.
-        /// The list is cleared before being filled.
-        /// </summary>
         public void TakeSnapshot(List<T> target)
         {
             lock (_sync)

@@ -39,38 +39,29 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
         {
             var value = scalar.Value;
 
-            if (value is null)
+            switch (value)
             {
-                Theme.Render(canvas, StyleToken.Null, "null");
-                return;
-            }
-            if (value is string text)
-            {
-                RenderString(text, canvas, format, isLiteral);
-                return;
-            }
-            if (value is byte[] bytes)
-            {
-                Theme.Render(canvas, StyleToken.String, $"\"{Convert.ToBase64String(bytes)}\"");
-                return;
-            }
-            if (value is bool b)
-            {
-                Theme.Render(canvas, StyleToken.Boolean, b.ToString());
-                return;
-            }
-            if (value is Uri uri)
-            {
-                Theme.Render(canvas, StyleToken.Scalar, uri.ToString());
-                return;
-            }
-            if (value is IFormattable formattable)
-            {
-                RenderFormattable(formattable, format, canvas);
-                return;
+                case null:
+                    Theme.Render(canvas, StyleToken.Null, "null");
+                    return;
+                case string text:
+                    RenderString(text, canvas, format, isLiteral);
+                    return;
+                case byte[] bytes:
+                    Theme.Render(canvas, StyleToken.String, $"\"{Convert.ToBase64String(bytes)}\"");
+                    return;
+                case bool b:
+                    Theme.Render(canvas, StyleToken.Boolean, b.ToString());
+                    return;
+                case Uri uri:
+                    Theme.Render(canvas, StyleToken.Scalar, uri.ToString());
+                    return;
+                case IFormattable formattable:
+                    RenderFormattable(formattable, format, canvas);
+                    return;
             }
 
-            var sb = StringBuilderCache.Acquire(256);
+            var sb = StringBuilderCache.Acquire();
 
             using (var writer = new StringWriter(sb))
             {
@@ -82,28 +73,21 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 
         private void RenderString(string text, IRtfCanvas canvas, string? format, bool isLiteral)
         {
-            bool effectivelyLiteral = isLiteral || (format != null && format.Contains("l"));
-            if (effectivelyLiteral)
-            {
-                Theme.Render(canvas, StyleToken.String, text);
-            }
-            else
-            {
-                Theme.Render(canvas, StyleToken.String, $"\"{text.Replace("\"", "\\\"")}\"");
-            }
+            var effectivelyLiteral = isLiteral || (format != null && format.Contains("l"));
+            Theme.Render(canvas, StyleToken.String, effectivelyLiteral ? text : $"\"{text.Replace("\"", "\\\"")}\"");
         }
 
         private void RenderFormattable(IFormattable formattable, string? format, IRtfCanvas canvas)
         {
             // Use Number style for numbers, Scalar for others (DateTime, Guid, etc.)
             var type = formattable.GetType();
-            StyleToken token =
+            var token =
                 type == typeof(float) || type == typeof(double) || type == typeof(decimal) ||
                 type == typeof(int) || type == typeof(uint) || type == typeof(long) || type == typeof(ulong) ||
                 type == typeof(byte) || type == typeof(sbyte) || type == typeof(short) || type == typeof(ushort)
                 ? StyleToken.Number : StyleToken.Scalar;
 
-            string? effectiveFormat = format;
+            var effectiveFormat = format;
 
             // Remove sink-specific format specifiers (e.g. "l" for literal, "j" for JSON) that are not
             // recognised by the underlying IFormattable implementation and would otherwise trigger
@@ -140,7 +124,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 
         protected override bool VisitDictionaryValue(ValueFormatterState state, DictionaryValue dictionary)
         {
-            if (state.Format != null && state.Format.Contains("j"))
+            if (state.Format.Contains("j"))
             {
                 _jsonValueFormatter ??= new JsonValueFormatter(Theme, _formatProvider);
                 _jsonValueFormatter.Format(dictionary, state.Canvas, state.Format, state.IsLiteral);
@@ -177,7 +161,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 
         protected override bool VisitSequenceValue(ValueFormatterState state, SequenceValue sequence)
         {
-            if (state.Format != null && state.Format.Contains("j"))
+            if (state.Format.Contains("j"))
             {
                 _jsonValueFormatter ??= new JsonValueFormatter(Theme, _formatProvider);
                 _jsonValueFormatter.Format(sequence, state.Canvas, state.Format, state.IsLiteral);
@@ -204,7 +188,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 
         protected override bool VisitStructureValue(ValueFormatterState state, StructureValue structure)
         {
-            if (state.Format != null && state.Format.Contains("j"))
+            if (state.Format.Contains("j"))
             {
                 _jsonValueFormatter ??= new JsonValueFormatter(Theme, _formatProvider);
                 _jsonValueFormatter.Format(structure, state.Canvas, state.Format, state.IsLiteral);

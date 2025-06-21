@@ -30,11 +30,11 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             Theme = theme;
         }
 
-        public Theme Theme { get; set; }
+        protected Theme Theme { get; }
 
         public void Format(LogEventPropertyValue value, IRtfCanvas canvas, string format, bool isLiteral)
         {
-            Visit(new ValueFormatterState(canvas, format, true, isLiteral), value);
+            Visit(new ValueFormatterState(canvas, format, isLiteral), value);
         }
     }
 }

@@ -66,16 +66,14 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
             new[] { "F", "FA", "FTL", "FATL" }
         };
 
-        private readonly PropertyToken _levelToken;
         private readonly Theme _theme;
         private readonly string[] _monikers = new string[LevelStyles.Length];
 
         public LevelTokenRenderer(Theme theme, PropertyToken levelToken)
         {
             _theme = theme;
-            _levelToken = levelToken;
-            var format = _levelToken.Format ?? string.Empty;
-            for (int i = 0; i < _monikers.Length; i++)
+            var format = levelToken.Format ?? string.Empty;
+            for (var i = 0; i < _monikers.Length; i++)
             {
                 _monikers[i] = GetLevelMoniker((LogEventLevel)i, format);
             }
@@ -89,7 +87,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
             _theme.Render(canvas, levelStyle, moniker);
         }
 
-        public static string GetLevelMoniker(LogEventLevel value, string format = "")
+        private static string GetLevelMoniker(LogEventLevel value, string format = "")
         {
             if (format.Length != 2 && format.Length != 3)
             {
@@ -103,24 +101,24 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
                 width += format[2] - '0';
             }
 
-            if (width < 1)
+            switch (width)
             {
-                return string.Empty;
-            }
+                case < 1:
+                    return string.Empty;
+                case > 4:
+                    {
+                        var stringValue = value.ToString();
+                        if (stringValue.Length > width)
+                        {
+                            stringValue = stringValue.Substring(0, width);
+                        }
 
-            if (width > 4)
-            {
-                var stringValue = value.ToString();
-                if (stringValue.Length > width)
-                {
-                    stringValue = stringValue.Substring(0, width);
-                }
-
-                return TextFormatter.Format(stringValue, format);
+                        return TextFormatter.Format(stringValue, format);
+                    }
             }
 
             var index = (int)value;
-            if (index < 0 || index > (int)LogEventLevel.Fatal)
+            if (index is < 0 or > (int)LogEventLevel.Fatal)
             {
                 return TextFormatter.Format(value.ToString(), format);
             }

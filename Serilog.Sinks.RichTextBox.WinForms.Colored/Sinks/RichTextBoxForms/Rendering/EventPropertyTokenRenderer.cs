@@ -28,9 +28,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
     public class EventPropertyTokenRenderer : ITokenRenderer
     {
-        /// Recommended initial buffer size for formatting non-string property values.
-        private const int InitialBufferSize = 256;
-
         private readonly IFormatProvider? _formatProvider;
         private readonly Theme _theme;
         private readonly PropertyToken _token;
@@ -56,7 +53,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
             }
             else
             {
-                var sb = StringBuilderCache.Acquire(InitialBufferSize);
+                var sb = StringBuilderCache.Acquire();
 
                 using (var writer = new StringWriter(sb))
                 {

@@ -29,13 +29,11 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
     public class PropertiesTokenRenderer : ITokenRenderer
     {
-        private readonly MessageTemplate _outputTemplate;
         private readonly ValueFormatter _valueFormatter;
         private readonly HashSet<string> _outputTemplateProperties;
 
         public PropertiesTokenRenderer(Theme theme, PropertyToken token, MessageTemplate outputTemplate, IFormatProvider? formatProvider)
         {
-            _outputTemplate = outputTemplate;
             _valueFormatter = token.Format?.Contains("j") == true
                 ? new JsonValueFormatter(theme, formatProvider)
                 : new DisplayValueFormatter(theme, formatProvider);

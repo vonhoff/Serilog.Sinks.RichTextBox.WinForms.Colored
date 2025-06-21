@@ -12,17 +12,19 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
 
         public static StringBuilder Acquire(int capacity = 256)
         {
-            if (capacity <= MaxBuilderSize)
+            if (capacity > MaxBuilderSize)
             {
-                var sb = _cachedInstance;
-                if (sb != null && sb.Capacity >= capacity)
-                {
-                    sb.Clear();
-                    return sb;
-                }
+                return new StringBuilder(capacity);
             }
 
-            return new StringBuilder(capacity);
+            var sb = _cachedInstance;
+            if (sb == null || sb.Capacity < capacity)
+            {
+                return new StringBuilder(capacity);
+            }
+
+            sb.Clear();
+            return sb;
         }
 
         public static void Release(StringBuilder sb)

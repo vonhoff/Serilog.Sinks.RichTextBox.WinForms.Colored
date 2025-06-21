@@ -41,7 +41,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
                 [StyleToken.LevelInformation] = new(ThemeColors.White),
                 [StyleToken.LevelWarning] = new(ThemeColors.Yellow),
                 [StyleToken.LevelError] = new(ThemeColors.White, ThemeColors.Red),
-                [StyleToken.LevelFatal] = new(ThemeColors.White, ThemeColors.Red),
+                [StyleToken.LevelFatal] = new(ThemeColors.White, ThemeColors.Red)
             });
 
         public static Theme Grayscale { get; } = new(
@@ -63,7 +63,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
                 [StyleToken.LevelInformation] = new(ThemeColors.White),
                 [StyleToken.LevelWarning] = new(ThemeColors.White, ThemeColors.DarkGray),
                 [StyleToken.LevelError] = new(ThemeColors.Black, ThemeColors.White),
-                [StyleToken.LevelFatal] = new(ThemeColors.Black, ThemeColors.White),
+                [StyleToken.LevelFatal] = new(ThemeColors.Black, ThemeColors.White)
             });
 
         public static Theme Colored { get; } = new(
@@ -85,7 +85,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
                 [StyleToken.LevelInformation] = new(ThemeColors.White, ThemeColors.Blue),
                 [StyleToken.LevelWarning] = new(ThemeColors.DarkGray, ThemeColors.Yellow),
                 [StyleToken.LevelError] = new(ThemeColors.White, ThemeColors.Red),
-                [StyleToken.LevelFatal] = new(ThemeColors.White, ThemeColors.Red),
+                [StyleToken.LevelFatal] = new(ThemeColors.White, ThemeColors.Red)
             });
 
         public static Theme Luminous { get; } = new(
@@ -107,7 +107,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
                 [StyleToken.LevelInformation] = new(ThemeColors.DarkGreen, ThemeColors.White),
                 [StyleToken.LevelWarning] = new(ThemeColors.Black, ThemeColors.Yellow),
                 [StyleToken.LevelError] = new(ThemeColors.White, ThemeColors.Red),
-                [StyleToken.LevelFatal] = new(ThemeColors.White, ThemeColors.Red),
+                [StyleToken.LevelFatal] = new(ThemeColors.White, ThemeColors.Red)
             });
     }
 }

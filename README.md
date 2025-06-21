@@ -34,7 +34,7 @@ private void InitializeComponent()
 {
     this.richTextBox1.BackColor = System.Drawing.SystemColors.Window;
     this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-    this.richTextBox1.Font = new System.Drawing.Font("Cascadia Mono", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+    this.richTextBox1.Font = new System.Drawing.Font("Cascadia Mono", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
     this.richTextBox1.Location = new System.Drawing.Point(0, 0);
     this.richTextBox1.Name = "richTextBox1";
 }

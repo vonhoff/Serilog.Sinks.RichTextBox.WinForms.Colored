@@ -12,18 +12,14 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
         private readonly Dictionary<Color, int> _colorTable = new();
         private int _currentFgIndex;
         private int _currentBgIndex;
-        private int _selectionStart;
         private int _selectionLength;
-        private int _textLength;
-        private Color _selectionColor;
-        private Color _selectionBackColor;
 
         public RtfBuilder(Theme theme)
         {
-            _selectionColor = theme.DefaultStyle.Foreground;
-            _selectionBackColor = theme.DefaultStyle.Background;
-            _currentFgIndex = RegisterColor(_selectionColor);
-            _currentBgIndex = RegisterColor(_selectionBackColor);
+            SelectionColor = theme.DefaultStyle.Foreground;
+            SelectionBackColor = theme.DefaultStyle.Background;
+            _currentFgIndex = RegisterColor(SelectionColor);
+            _currentBgIndex = RegisterColor(SelectionBackColor);
 
             foreach (var colour in theme.Colors)
             {
@@ -31,13 +27,9 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
             }
         }
 
-        public int TextLength => _textLength;
+        public int TextLength { get; private set; }
 
-        public int SelectionStart
-        {
-            get => _selectionStart;
-            set => _selectionStart = value;
-        }
+        public int SelectionStart { get; set; }
 
         public int SelectionLength
         {
@@ -45,31 +37,23 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
             set => _selectionLength = value;
         }
 
-        public Color SelectionColor
-        {
-            get => _selectionColor;
-            set => _selectionColor = value;
-        }
+        public Color SelectionColor { get; set; }
 
-        public Color SelectionBackColor
-        {
-            get => _selectionBackColor;
-            set => _selectionBackColor = value;
-        }
+        public Color SelectionBackColor { get; set; }
 
         public void AppendText(string text)
         {
             EnsureColourSwitch();
             EscapeAndAppend(text);
-            _textLength += text.Length;
+            TextLength += text.Length;
         }
 
         public string Rtf => BuildDocument();
 
         private void EnsureColourSwitch()
         {
-            var fgIdx = RegisterColor(_selectionColor);
-            var bgIdx = RegisterColor(_selectionBackColor);
+            var fgIdx = RegisterColor(SelectionColor);
+            var bgIdx = RegisterColor(SelectionBackColor);
 
             if (fgIdx == _currentFgIndex && bgIdx == _currentBgIndex)
             {
@@ -112,28 +96,31 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
             for (var i = 0; i < value.Length; i++)
             {
                 var ch = value[i];
-                if (ch > 0x7f || ch == '\\' || ch == '{' || ch == '}' || ch == '\n' || ch == '\r')
+                if (ch <= 0x7f && ch != '\\' && ch != '{' && ch != '}' && ch != '\n' && ch != '\r')
                 {
-                    if (i > segmentStart)
-                    {
-                        _body.Append(value, segmentStart, i - segmentStart);
-                    }
-
-                    if (ch > 0x7f)
-                    {
-                        _body.Append("\\u").Append((int)ch).Append('?');
-                    }
-                    else if (ch == '\\' || ch == '{' || ch == '}')
-                    {
-                        _body.Append('\\').Append(ch);
-                    }
-                    else if (ch == '\n')
-                    {
-                        _body.Append("\\par\r\n");
-                    }
-
-                    segmentStart = i + 1;
+                    continue;
                 }
+
+                if (i > segmentStart)
+                {
+                    _body.Append(value, segmentStart, i - segmentStart);
+                }
+
+                if (ch > 0x7f)
+                {
+                    _body.Append("\\u").Append((int)ch).Append('?');
+                }
+                else switch (ch)
+                    {
+                        case '\\' or '{' or '}':
+                            _body.Append('\\').Append(ch);
+                            break;
+                        case '\n':
+                            _body.Append("\\par\r\n");
+                            break;
+                    }
+
+                segmentStart = i + 1;
             }
 
             if (segmentStart < value.Length)
@@ -179,13 +166,13 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
             // resets its length, the backing buffer (Capacity) is retained which
             // keeps the memory alive until the next Gen-2 GC collection, causing
             // memory bloat and noticeable GC pauses.
-            const int MaxRetainedBuilderSize = 64 * 1024;
-            if (_body.Capacity > MaxRetainedBuilderSize)
+            const int maxRetainedBuilderSize = 64 * 1024;
+            if (_body.Capacity > maxRetainedBuilderSize)
             {
-                _body.Capacity = MaxRetainedBuilderSize;
+                _body.Capacity = maxRetainedBuilderSize;
             }
 
-            _textLength = 0;
+            TextLength = 0;
         }
     }
 }

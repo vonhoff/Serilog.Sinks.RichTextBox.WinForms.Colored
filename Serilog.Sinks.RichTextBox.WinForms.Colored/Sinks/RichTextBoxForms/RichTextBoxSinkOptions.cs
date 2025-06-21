@@ -55,22 +55,22 @@ namespace Serilog.Sinks.RichTextBoxForms
 
         public bool AutoScroll { get; set; }
 
-        public Theme Theme { get; set; }
+        public Theme Theme { get; }
 
         public int MaxLogLines
         {
             get => _maxLogLines;
-            set => _maxLogLines = value > 3 ? value : 128;
+            private set => _maxLogLines = value > 3 ? value : 128;
         }
 
         public TimeSpan FlushInterval
         {
             get => _flushInterval;
-            set => _flushInterval = value > TimeSpan.FromMilliseconds(8.34) ? value : TimeSpan.FromMilliseconds(83.34);
+            private set => _flushInterval = value > TimeSpan.FromMilliseconds(8.34) ? value : TimeSpan.FromMilliseconds(83.34);
         }
 
-        public string OutputTemplate { get; set; }
+        public string OutputTemplate { get; }
 
-        public IFormatProvider? FormatProvider { get; set; }
+        public IFormatProvider? FormatProvider { get; }
     }
 }

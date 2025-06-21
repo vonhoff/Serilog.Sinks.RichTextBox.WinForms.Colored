@@ -172,18 +172,18 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 
                         using (var writer = new StringWriter(sb))
                         {
-                            // For dates in JSON, always use ISO 8601 format (O)
-                            if (value is DateTime dt)
+                            switch (value)
                             {
-                                writer.Write(dt.ToString("O", CultureInfo.InvariantCulture));
-                            }
-                            else if (value is DateTimeOffset dto)
-                            {
-                                writer.Write(dto.ToString("O", CultureInfo.InvariantCulture));
-                            }
-                            else
-                            {
-                                scalar.Render(writer, null, _formatProvider);
+                                // For dates in JSON, always use ISO 8601 format (O)
+                                case DateTime dt:
+                                    writer.Write(dt.ToString("O", CultureInfo.InvariantCulture));
+                                    break;
+                                case DateTimeOffset dto:
+                                    writer.Write(dto.ToString("O", CultureInfo.InvariantCulture));
+                                    break;
+                                default:
+                                    scalar.Render(writer, null, _formatProvider);
+                                    break;
                             }
                         }
 
@@ -199,7 +199,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                             return;
                         }
 
-                        var sb = StringBuilderCache.Acquire(256);
+                        var sb = StringBuilderCache.Acquire();
 
                         using (var writer = new StringWriter(sb))
                         {
@@ -217,13 +217,13 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
         {
             // Use Number style for numbers, Scalar for others (DateTime, Guid, etc.)
             var type = formattable.GetType();
-            StyleToken token =
+            var token =
                 type == typeof(float) || type == typeof(double) || type == typeof(decimal) ||
                 type == typeof(int) || type == typeof(uint) || type == typeof(long) || type == typeof(ulong) ||
                 type == typeof(byte) || type == typeof(sbyte) || type == typeof(short) || type == typeof(ushort)
                 ? StyleToken.Number : StyleToken.Scalar;
 
-            string? effectiveFormat = format;
+            var effectiveFormat = format;
 
             // Remove sink-specific format specifiers (e.g. "l" for literal, "j" for JSON) that are not
             // recognised by the underlying IFormattable implementation and would otherwise trigger
@@ -258,20 +258,19 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             Theme.Render(canvas, token, renderedValue);
         }
 
-        public static void WriteQuotedJsonString(string str, TextWriter output)
+        private static void WriteQuotedJsonString(string str, TextWriter output)
         {
             output.Write('\"');
 
-            for (var i = 0; i < str.Length; ++i)
+            foreach (var c in str)
             {
-                var c = str[i];
                 switch (c)
                 {
                     case '"':
                         output.Write("\\\"");
                         break;
                     case '\\':
-                        output.Write("\\\\");
+                        output.Write(@"\\");
                         break;
                     case '\n':
                         output.Write("\\n");
@@ -297,7 +296,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             output.Write('\"');
         }
 
-        public static string GetQuotedJsonString(string str)
+        private static string GetQuotedJsonString(string str)
         {
             var sb = StringBuilderCache.Acquire(str.Length + 2);
             using (var writer = new StringWriter(sb))

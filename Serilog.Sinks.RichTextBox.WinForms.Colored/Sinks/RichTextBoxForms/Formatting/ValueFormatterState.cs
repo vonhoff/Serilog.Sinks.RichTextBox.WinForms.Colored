@@ -22,30 +22,20 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 {
     public readonly struct ValueFormatterState
     {
-        public ValueFormatterState(IRtfCanvas canvas)
-        {
-            Canvas = canvas;
-            Format = string.Empty;
-            IsTopLevel = false;
-            IsLiteral = false;
-        }
-
-        public ValueFormatterState(IRtfCanvas canvas, string format, bool isTopLevel, bool isLiteral)
+        public ValueFormatterState(IRtfCanvas canvas, string format, bool isLiteral)
         {
             Canvas = canvas;
             Format = format;
-            IsTopLevel = isTopLevel;
             IsLiteral = isLiteral;
         }
 
         public string Format { get; }
-        public bool IsTopLevel { get; }
         public bool IsLiteral { get; }
         public IRtfCanvas Canvas { get; }
 
         public ValueFormatterState Next(string? format = null)
         {
-            return new ValueFormatterState(Canvas, format ?? Format, false, IsLiteral);
+            return new ValueFormatterState(Canvas, format ?? Format, IsLiteral);
         }
     }
 }

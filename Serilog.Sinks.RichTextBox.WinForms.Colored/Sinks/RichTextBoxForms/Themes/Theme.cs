@@ -33,7 +33,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
             _styles = styles;
         }
 
-        public Style DefaultStyle { get; set; }
+        public Style DefaultStyle { get; }
 
         /// <summary>
         /// Returns an enumeration of all <see cref="Color"/> instances that may be produced by this
