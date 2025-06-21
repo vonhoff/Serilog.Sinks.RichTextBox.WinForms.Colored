@@ -79,8 +79,6 @@ namespace Serilog.Sinks.RichTextBoxForms
         {
             _buffer.Add(logEvent);
             Interlocked.Exchange(ref _hasNewMessages, 1);
-
-            // Signal the processing task that there are new messages to process
             _signal.Set();
         }
 
@@ -101,15 +99,16 @@ namespace Serilog.Sinks.RichTextBoxForms
                     var elapsed = now - lastFlush;
                     if (elapsed < flushInterval)
                     {
-                        // Wait for the remaining time, or until a new message arrives
                         var remaining = flushInterval - elapsed;
                         if (remaining > TimeSpan.Zero)
                         {
-                            _signal.WaitOne(remaining);
+                            Thread.Sleep(remaining);
                         }
                     }
 
-                    // Take a snapshot and flush
+                    Interlocked.Exchange(ref _hasNewMessages, 0);
+
+                    // Take a snapshot of the current buffer
                     _buffer.TakeSnapshot(snapshot);
                     builder.Clear();
                     foreach (var evt in snapshot)

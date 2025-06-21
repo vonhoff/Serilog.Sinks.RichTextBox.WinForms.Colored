@@ -160,12 +160,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
         {
             _body.Clear();
 
-            // Prevent unbounded memory retention by the underlying StringBuilder.
-            // When very large log batches have been rendered, the StringBuilder can
-            // grow to hundreds of kilobytes or even megabytes. Although Clear()
-            // resets its length, the backing buffer (Capacity) is retained which
-            // keeps the memory alive until the next Gen-2 GC collection, causing
-            // memory bloat and noticeable GC pauses.
             const int maxRetainedBuilderSize = 64 * 1024;
             if (_body.Capacity > maxRetainedBuilderSize)
             {
