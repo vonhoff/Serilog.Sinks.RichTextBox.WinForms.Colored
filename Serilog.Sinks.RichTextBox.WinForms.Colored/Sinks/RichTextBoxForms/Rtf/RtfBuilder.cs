@@ -1,3 +1,4 @@
+using Serilog.Sinks.RichTextBoxForms.Themes;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -17,12 +18,20 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
         private Color _selectionColor;
         private Color _selectionBackColor;
 
-        public RtfBuilder(Color defaultForeground, Color? defaultBackground = null)
+        public RtfBuilder(Theme theme)
         {
-            _selectionColor = defaultForeground;
-            _selectionBackColor = defaultBackground ?? Color.Transparent;
+            _selectionColor = theme.DefaultStyle.Foreground;
+            _selectionBackColor = theme.DefaultStyle.Background;
+
+            // Register default colours first so that they get low palette indexes (1 and 2).
             _currentFgIndex = RegisterColor(_selectionColor);
             _currentBgIndex = RegisterColor(_selectionBackColor);
+
+            // Pre-register every colour referenced by the theme
+            foreach (var colour in theme.Colors)
+            {
+                RegisterColor(colour);
+            }
         }
 
         public int TextLength => _textLength;
@@ -102,36 +111,52 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
                 return;
             }
 
-            foreach (var ch in value)
+            int segmentStart = 0;
+            for (int i = 0; i < value.Length; i++)
             {
-                switch (ch)
+                char ch = value[i];
+                string? replacement = ch switch
                 {
-                    case '\\':
-                        _body.Append("\\\\");
-                        break;
-                    case '{':
-                        _body.Append("\\{");
-                        break;
-                    case '}':
-                        _body.Append("\\}");
-                        break;
-                    case '\n':
-                        _body.Append("\\par\r\n");
-                        break;
-                    case '\r':
-                        // Skip – handled by \n branch.
-                        break;
-                    default:
-                        if (ch <= 0x7f)
-                        {
-                            _body.Append(ch);
-                        }
-                        else
-                        {
-                            _body.Append(@"\\u").Append(Convert.ToInt32(ch)).Append('?');
-                        }
-                        break;
+                    '\\' => "\\\\",
+                    '{' => "\\{",
+                    '}' => "\\}",
+                    '\n' => "\\par\r\n",
+                    '\r' => string.Empty,
+                    _ => null
+                };
+
+                // Non-ASCII characters need to be escaped using their UTF-16 code unit.
+                if (replacement is null && ch > 0x7f)
+                {
+                    if (i > segmentStart)
+                    {
+                        _body.Append(value, segmentStart, i - segmentStart);
+                    }
+
+                    _body.Append("\\u").Append((int)ch).Append('?');
+                    segmentStart = i + 1;
+                    continue;
                 }
+
+                if (replacement is not null)
+                {
+                    if (i > segmentStart)
+                    {
+                        _body.Append(value, segmentStart, i - segmentStart);
+                    }
+
+                    if (replacement.Length > 0)
+                    {
+                        _body.Append(replacement);
+                    }
+
+                    segmentStart = i + 1;
+                }
+            }
+
+            if (segmentStart < value.Length)
+            {
+                _body.Append(value, segmentStart, value.Length - segmentStart);
             }
         }
 
@@ -141,18 +166,11 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
             document.Append(@"{\rtf1\ansi\deff0");
             document.Append("{\\colortbl ;");
 
-            var ordered = new Color[_colorTable.Count + 1];
-            foreach (var kvp in _colorTable)
+            foreach (var key in _colorTable.Keys)
             {
-                ordered[kvp.Value] = kvp.Key;
-            }
-
-            for (var i = 1; i < ordered.Length; i++)
-            {
-                var c = ordered[i];
-                document.Append("\\red").Append(c.R)
-                         .Append("\\green").Append(c.G)
-                         .Append("\\blue").Append(c.B).Append(';');
+                document.Append("\\red").Append(key.R)
+                         .Append("\\green").Append(key.G)
+                         .Append("\\blue").Append(key.B).Append(';');
             }
 
             document.Append('}');
@@ -172,28 +190,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
         public void Clear()
         {
             _body.Clear();
-
-            // Trim the internal buffer so we don't retain very large char arrays
-            // on the Large Object Heap after a heavy burst of logging.
-            const int MaxRetainedCapacity = 4096; // 8 KB
-            if (_body.Capacity > MaxRetainedCapacity)
-            {
-                _body.Capacity = MaxRetainedCapacity;
-            }
-
-            // Do not clear the colour table each time – this avoids repeated allocations
-            // and dictionary re-population during heavy logging.
-            // If the table has grown unusually large (e.g. many dynamic colours) we reset it
-            // to prevent unbounded memory usage.
-            const int MaxColourEntries = 64;
-            if (_colorTable.Count > MaxColourEntries)
-            {
-                _colorTable.Clear();
-            }
-
-            // Ensure we have valid indexes for the default foreground/background colours.
-            _currentFgIndex = RegisterColor(_selectionColor);
-            _currentBgIndex = RegisterColor(_selectionBackColor);
             _textLength = 0;
         }
     }

@@ -18,6 +18,7 @@
 
 using Serilog.Sinks.RichTextBoxForms.Rtf;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 
 namespace Serilog.Sinks.RichTextBoxForms.Themes
@@ -33,6 +34,32 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
         }
 
         public Style DefaultStyle { get; set; }
+
+        /// <summary>
+        /// Returns an enumeration of all <see cref="Color"/> instances that may be produced by this
+        /// theme (foreground and background of the default style plus every configured token style).
+        /// </summary>
+        /// <remarks>
+        /// The collection may contain duplicates; callers that need a distinct set should de-duplicate
+        /// the sequence (e.g. via <c>Distinct()</c>). The method intentionally avoids allocating a
+        /// defensive copy of the underlying styles dictionary.
+        /// </remarks>
+        public IEnumerable<Color> Colors
+        {
+            get
+            {
+                // Default style first so that typical UI foreground/background colours are registered
+                // with low palette indexes.
+                yield return DefaultStyle.Foreground;
+                yield return DefaultStyle.Background;
+
+                foreach (var style in _styles.Values)
+                {
+                    yield return style.Foreground;
+                    yield return style.Background;
+                }
+            }
+        }
 
         public void Render(IRtfCanvas canvas, StyleToken styleToken, string value)
         {

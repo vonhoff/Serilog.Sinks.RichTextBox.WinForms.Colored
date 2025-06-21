@@ -28,12 +28,10 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 {
     public class JsonValueFormatter : ValueFormatter
     {
-        private readonly DisplayValueFormatter _displayFormatter;
         private readonly IFormatProvider? _formatProvider;
 
         public JsonValueFormatter(Theme theme, IFormatProvider? formatProvider) : base(theme)
         {
-            _displayFormatter = new DisplayValueFormatter(theme, formatProvider);
             _formatProvider = formatProvider;
         }
 
@@ -180,39 +178,111 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                 case Guid:
                 case Uri:
                     {
-                        // For dates in JSON, always use ISO 8601 format (O)
-                        var writer = new StringWriter();
-                        if (value is DateTime dt)
+                        var sb = StringBuilderCache.Acquire(64);
+                        try
                         {
-                            writer.Write(dt.ToString("O", CultureInfo.InvariantCulture));
+                            using (var writer = new StringWriter(sb))
+                            {
+                                // For dates in JSON, always use ISO 8601 format (O)
+                                if (value is DateTime dt)
+                                {
+                                    writer.Write(dt.ToString("O", CultureInfo.InvariantCulture));
+                                }
+                                else if (value is DateTimeOffset dto)
+                                {
+                                    writer.Write(dto.ToString("O", CultureInfo.InvariantCulture));
+                                }
+                                else
+                                {
+                                    scalar.Render(writer, null, _formatProvider);
+                                }
+                            }
+                            Theme.Render(canvas, StyleToken.Scalar, GetQuotedJsonString(sb.ToString()));
                         }
-                        else if (value is DateTimeOffset dto)
+                        finally
                         {
-                            writer.Write(dto.ToString("O", CultureInfo.InvariantCulture));
+                            StringBuilderCache.Release(sb);
                         }
-                        else
-                        {
-                            scalar.Render(writer, null, _formatProvider);
-                        }
-                        Theme.Render(canvas, StyleToken.Scalar, GetQuotedJsonString(writer.ToString()));
                         return;
                     }
                 default:
                     {
-                        // Use DisplayValueFormatter for all other scalar values (numbers, etc.)
-                        _displayFormatter.FormatLiteralValue(scalar, canvas, null, false);
+                        if (value is IFormattable formattable)
+                        {
+                            RenderFormattable(canvas, formattable, null);
+                            return;
+                        }
+
+                        var sb = StringBuilderCache.Acquire(256);
+                        try
+                        {
+                            using (var writer = new StringWriter(sb))
+                            {
+                                scalar.Render(writer, null, _formatProvider);
+                            }
+                            Theme.Render(canvas, StyleToken.Scalar, sb.ToString());
+                        }
+                        finally
+                        {
+                            StringBuilderCache.Release(sb);
+                        }
                         return;
                     }
             }
+        }
+
+        private void RenderFormattable(IRtfCanvas canvas, IFormattable formattable, string? format)
+        {
+            // Use Number style for numbers, Scalar for others (DateTime, Guid, etc.)
+            var type = formattable.GetType();
+            StyleToken token =
+                type == typeof(float) || type == typeof(double) || type == typeof(decimal) ||
+                type == typeof(int) || type == typeof(uint) || type == typeof(long) || type == typeof(ulong) ||
+                type == typeof(byte) || type == typeof(sbyte) || type == typeof(short) || type == typeof(ushort)
+                ? StyleToken.Number : StyleToken.Scalar;
+
+            string? effectiveFormat = format;
+
+            // Remove sink-specific format specifiers (e.g. "l" for literal, "j" for JSON) that are not
+            // recognised by the underlying IFormattable implementation and would otherwise trigger
+            // a FormatException.
+            if (!string.IsNullOrEmpty(effectiveFormat))
+            {
+                effectiveFormat = effectiveFormat!.Replace("l", string.Empty).Replace("j", string.Empty);
+
+                // If all characters were removed we end up with an empty string – treat this as no format.
+                if (string.IsNullOrWhiteSpace(effectiveFormat))
+                {
+                    effectiveFormat = null;
+                }
+            }
+
+            if (type == typeof(TimeSpan) && string.IsNullOrEmpty(effectiveFormat))
+                effectiveFormat = "c";
+            if (type == typeof(Guid) && string.IsNullOrEmpty(effectiveFormat))
+                effectiveFormat = "D";
+
+            string renderedValue;
+            try
+            {
+                renderedValue = formattable.ToString(effectiveFormat, _formatProvider);
+            }
+            catch (FormatException)
+            {
+                // Fall back to the default formatting if the specified format is not supported by the value.
+                renderedValue = formattable.ToString(null, _formatProvider);
+            }
+
+            Theme.Render(canvas, token, renderedValue);
         }
 
         /// <summary>
         ///     Write a valid JSON string literal, escaping as necessary.
         /// </summary>
         /// <param name="str">The string value to write.</param>
-        public static string GetQuotedJsonString(string str)
+        /// <param name="output">The output.</param>
+        public static void WriteQuotedJsonString(string str, TextWriter output)
         {
-            var output = new StringWriter();
             output.Write('\"');
 
             for (var i = 0; i < str.Length; ++i)
@@ -247,9 +317,24 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                         break;
                 }
             }
-
             output.Write('\"');
-            return output.ToString();
+        }
+
+        public static string GetQuotedJsonString(string str)
+        {
+            var sb = StringBuilderCache.Acquire(str.Length + 2);
+            try
+            {
+                using (var writer = new StringWriter(sb))
+                {
+                    WriteQuotedJsonString(str, writer);
+                    return sb.ToString();
+                }
+            }
+            finally
+            {
+                StringBuilderCache.Release(sb);
+            }
         }
     }
 }

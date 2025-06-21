@@ -42,22 +42,20 @@ namespace Serilog
         /// </param>
         /// <param name="formatProvider">Culture-specific formatting (null for default).</param>
         /// <param name="levelSwitch">Allows runtime level change.</param>
-        /// <param name="theme">Output theme (default: Dark).</param>
+        /// <param name="theme">Output theme (default: Literate).</param>
         /// <param name="autoScroll">Auto-scroll to bottom for new messages.</param>
         /// <param name="maxLogLines">Maximum number of lines to keep.</param>
-        /// <param name="batchSize">Number of log events to process in a batch (default: 500).</param>
-        /// <param name="flushInterval">Interval (ms) to flush logs (default: 16).</param>
-        /// <param name="queueCapacity">Maximum number of log events in the queue (default: 1000).</param>
+        /// <param name="batchSize">Number of log events to process in a batch (default: 256).</param>
+        /// <param name="queueCapacity">Maximum number of log events in the queue (default: 5000).</param>
         /// <returns>Config object for chaining.</returns>
         public static LoggerConfiguration RichTextBox(
             this LoggerSinkConfiguration sinkConfiguration,
             RichTextBox richTextBoxControl,
             Theme? theme = null,
             bool autoScroll = true,
-            int maxLogLines = 250,
-            int batchSize = 500,
-            int flushInterval = 16,
-            int queueCapacity = 1000,
+            int maxLogLines = 512,
+            int batchSize = 256,
+            int queueCapacity = 5000,
             string outputTemplate = OutputTemplate,
             IFormatProvider? formatProvider = null,
             LogEventLevel minimumLogEventLevel = LogEventLevel.Verbose,
@@ -70,7 +68,6 @@ namespace Serilog
                 autoScroll,
                 maxLogLines,
                 batchSize,
-                flushInterval,
                 queueCapacity,
                 outputTemplate,
                 formatProvider);

@@ -154,14 +154,12 @@ namespace Demo
         {
             for (var stepNumber = 1; stepNumber <= 100; stepNumber++)
             {
-                var stepName = $"Step {stepNumber:000}";
-
-                Log.Verbose("Processing batch item {StepName} - Status: {Status}", stepName, "InProgress");
-                Log.Debug("Batch processing metrics for {StepName} - Duration: {Duration}ms", stepName, 150);
-                Log.Information("Completed processing {StepName} - Items processed: {Count}", stepName, 1000);
-                Log.Warning("Performance warning for {StepName} - Response time: {ResponseTime}ms", stepName, 500);
-                Log.Error("Failed to process {StepName} - Error code: {ErrorCode}", stepName, "E1001");
-                Log.Fatal("Critical failure in {StepName} - System state: {State}", stepName, "Unrecoverable");
+                Log.Verbose("Processing batch item Step {StepNumber:000} - Status: {Status}", stepNumber, "InProgress");
+                Log.Debug("Batch processing metrics for Step {StepNumber:000} - Duration: {Duration}ms", stepNumber, 150);
+                Log.Information("Completed processing Step {StepNumber:000} - Items processed: {Count}", stepNumber, 1000);
+                Log.Warning("Performance warning for Step {StepNumber:000} - Response time: {ResponseTime}ms", stepNumber, 500);
+                Log.Error("Failed to process Step {StepNumber:000} - Error code: {ErrorCode}", stepNumber, "E1001");
+                Log.Fatal("Critical failure in Step {StepNumber:000} - System state: {State}", stepNumber, "Unrecoverable");
             }
         }
 
@@ -174,14 +172,12 @@ namespace Demo
                 var stepNumber = i;
                 var task = Task.Run(() =>
                 {
-                    var stepName = $"Step {stepNumber:000}";
-
-                    Log.Verbose("Background task {StepName} - Status: {Status}", stepName, "Started");
-                    Log.Debug("Background task {StepName} - Thread ID: {ThreadId}", stepName, Environment.CurrentManagedThreadId);
-                    Log.Information("Background task {StepName} - Progress: {Progress}%", stepName, 75);
-                    Log.Warning("Background task {StepName} - Resource usage: {CpuUsage}%", stepName, 85);
-                    Log.Error("Background task {StepName} - Failed with code: {ErrorCode}", stepName, "E2001");
-                    Log.Fatal("Background task {StepName} - System impact: {Impact}", stepName, "Critical");
+                    Log.Verbose("Background task Step {StepNumber:000} - Status: {Status}", stepNumber, "Started");
+                    Log.Debug("Background task Step {StepNumber:000} - Thread ID: {ThreadId}", stepNumber, Environment.CurrentManagedThreadId);
+                    Log.Information("Background task Step {StepNumber:000} - Progress: {Progress}%", stepNumber, 75);
+                    Log.Warning("Background task Step {StepNumber:000} - Resource usage: {CpuUsage}%", stepNumber, 85);
+                    Log.Error("Background task Step {StepNumber:000} - Failed with code: {ErrorCode}", stepNumber, "E2001");
+                    Log.Fatal("Background task Step {StepNumber:000} - System impact: {Impact}", stepNumber, "Critical");
                 });
 
                 tasks.Add(task);

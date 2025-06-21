@@ -73,13 +73,13 @@ namespace Serilog.Sinks.RichTextBoxForms
         private void ProcessMessages(CancellationToken token)
         {
             var logEvents = new List<LogEvent>(_options.BatchSize);
-            var builder = new RtfBuilder(_richTextBox.ForeColor, _richTextBox.BackColor);
+            var builder = new RtfBuilder(_options.Theme);
 
             while (true)
             {
                 LogEvent? nextEvent;
 
-                if (_messageQueue.TryTake(out nextEvent!, _options.FlushInterval, token))
+                if (_messageQueue.TryTake(out nextEvent!, -1, token))
                 {
                     logEvents.Add(nextEvent);
                     while (logEvents.Count < _options.BatchSize && _messageQueue.TryTake(out nextEvent))
@@ -88,14 +88,9 @@ namespace Serilog.Sinks.RichTextBoxForms
                     }
                 }
 
-                if (logEvents.Count == 0)
+                if (_messageQueue.IsCompleted)
                 {
-                    if (_messageQueue.IsCompleted)
-                    {
-                        break;
-                    }
-
-                    continue;
+                    break;
                 }
 
                 foreach (var @event in logEvents)

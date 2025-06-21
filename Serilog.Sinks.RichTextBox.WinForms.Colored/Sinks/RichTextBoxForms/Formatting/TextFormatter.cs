@@ -2,10 +2,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 {
     public static class TextFormatter
     {
-        /// <summary>
-        /// Applies simple casing rules recognised by the sink (u = upper, w = lower, t = title).
-        /// For any unknown or empty format this simply returns the input.
-        /// </summary>
         public static string Format(string value, string? format)
         {
             if (string.IsNullOrEmpty(format) || string.IsNullOrEmpty(value))
