@@ -86,16 +86,14 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
             // a new string array for the entire document and leads to excessive GC pressure
             // under heavy logging. Instead, rely on WinForms helpers that do not allocate.
             var currentLineCount = richTextBox.GetLineFromCharIndex(richTextBox.TextLength) + 1;
-
             if (currentLineCount > maxLogLines)
             {
                 var linesToRemove = currentLineCount - maxLogLines;
 
                 // `GetFirstCharIndexFromLine` returns the character index for the first character
-                // in the specified line. By asking for the first line *after* the removal range
+                // in the specified line. By asking for the first line after the removal range
                 // we get the exact character offset to trim.
                 var charsToRemove = richTextBox.GetFirstCharIndexFromLine(linesToRemove);
-
                 if (charsToRemove > 0)
                 {
                     richTextBox.SelectionStart = 0;

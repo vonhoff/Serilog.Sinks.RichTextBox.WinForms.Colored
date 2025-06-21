@@ -50,7 +50,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
             {
                 [StyleToken.Text] = new(ThemeColors.White),
                 [StyleToken.SecondaryText] = new(ThemeColors.Gray),
-                [StyleToken.TertiaryText] = new(ThemeColors.DarkGray),
+                [StyleToken.TertiaryText] = new(ThemeColors.Gray),
                 [StyleToken.Invalid] = new(ThemeColors.White, ThemeColors.DarkGray),
                 [StyleToken.Null] = new(ThemeColors.White),
                 [StyleToken.Name] = new(ThemeColors.Gray),
@@ -58,8 +58,8 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
                 [StyleToken.Number] = new(ThemeColors.White),
                 [StyleToken.Boolean] = new(ThemeColors.White),
                 [StyleToken.Scalar] = new(ThemeColors.White),
-                [StyleToken.LevelVerbose] = new(ThemeColors.DarkGray),
-                [StyleToken.LevelDebug] = new(ThemeColors.DarkGray),
+                [StyleToken.LevelVerbose] = new(ThemeColors.Gray),
+                [StyleToken.LevelDebug] = new(ThemeColors.Gray),
                 [StyleToken.LevelInformation] = new(ThemeColors.White),
                 [StyleToken.LevelWarning] = new(ThemeColors.White, ThemeColors.DarkGray),
                 [StyleToken.LevelError] = new(ThemeColors.Black, ThemeColors.White),
@@ -84,6 +84,28 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
                 [StyleToken.LevelDebug] = new(ThemeColors.White, ThemeColors.DarkGray),
                 [StyleToken.LevelInformation] = new(ThemeColors.White, ThemeColors.Blue),
                 [StyleToken.LevelWarning] = new(ThemeColors.DarkGray, ThemeColors.Yellow),
+                [StyleToken.LevelError] = new(ThemeColors.White, ThemeColors.Red),
+                [StyleToken.LevelFatal] = new(ThemeColors.White, ThemeColors.Red),
+            });
+
+        public static Theme Luminous { get; } = new(
+            new Style(ThemeColors.Black, ThemeColors.White),
+            new Dictionary<StyleToken, Style>
+            {
+                [StyleToken.Text] = new(ThemeColors.Black, ThemeColors.White),
+                [StyleToken.SecondaryText] = new(ThemeColors.DarkGray, ThemeColors.White),
+                [StyleToken.TertiaryText] = new(ThemeColors.DarkGray, ThemeColors.White),
+                [StyleToken.Invalid] = new(ThemeColors.White, ThemeColors.Red),
+                [StyleToken.Null] = new(ThemeColors.DarkBlue, ThemeColors.White),
+                [StyleToken.Name] = new(ThemeColors.DarkMagenta, ThemeColors.White),
+                [StyleToken.String] = new(ThemeColors.DarkGreen, ThemeColors.White),
+                [StyleToken.Number] = new(ThemeColors.DarkCyan, ThemeColors.White),
+                [StyleToken.Boolean] = new(ThemeColors.DarkYellow, ThemeColors.White),
+                [StyleToken.Scalar] = new(ThemeColors.DarkCyan, ThemeColors.White),
+                [StyleToken.LevelVerbose] = new(ThemeColors.DarkGray, ThemeColors.White),
+                [StyleToken.LevelDebug] = new(ThemeColors.DarkBlue, ThemeColors.White),
+                [StyleToken.LevelInformation] = new(ThemeColors.DarkGreen, ThemeColors.White),
+                [StyleToken.LevelWarning] = new(ThemeColors.Black, ThemeColors.Yellow),
                 [StyleToken.LevelError] = new(ThemeColors.White, ThemeColors.Red),
                 [StyleToken.LevelFatal] = new(ThemeColors.White, ThemeColors.Red),
             });

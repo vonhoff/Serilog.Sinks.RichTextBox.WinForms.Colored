@@ -24,7 +24,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
     {
         public Style(Color foreground)
         {
-            Background = default;
+            Background = Color.Black;
             Foreground = foreground;
         }
 

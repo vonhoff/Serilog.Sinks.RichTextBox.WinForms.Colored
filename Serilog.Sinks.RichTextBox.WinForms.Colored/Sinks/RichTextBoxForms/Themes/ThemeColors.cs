@@ -23,12 +23,11 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
     public static class ThemeColors
     {
         public static readonly Color Black = ColorTranslator.FromHtml("#000000");
-        public static readonly Color DarkBlue = ColorTranslator.FromHtml("#000080");
-        public static readonly Color DarkGreen = ColorTranslator.FromHtml("#008000");
-        public static readonly Color DarkCyan = ColorTranslator.FromHtml("#008080");
-        public static readonly Color DarkRed = ColorTranslator.FromHtml("#800000");
+        public static readonly Color DarkBlue = ColorTranslator.FromHtml("#000070");
+        public static readonly Color DarkGreen = ColorTranslator.FromHtml("#004D00");
+        public static readonly Color DarkCyan = ColorTranslator.FromHtml("#005252");
         public static readonly Color DarkMagenta = ColorTranslator.FromHtml("#800080");
-        public static readonly Color DarkYellow = ColorTranslator.FromHtml("#808000");
+        public static readonly Color DarkYellow = ColorTranslator.FromHtml("#575700");
         public static readonly Color Gray = ColorTranslator.FromHtml("#C2C2C2");
         public static readonly Color DarkGray = ColorTranslator.FromHtml("#333333");
         public static readonly Color Blue = ColorTranslator.FromHtml("#0000ff");

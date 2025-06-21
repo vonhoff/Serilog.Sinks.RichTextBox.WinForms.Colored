@@ -33,7 +33,7 @@ namespace Serilog.Sinks.RichTextBoxForms
             Theme theme,
             bool autoScroll = true,
             int maxLogLines = 1000,
-            int batchSize = 100,
+            int batchSize = 250,
             int flushInterval = 10,
             int queueCapacity = 10000,
             string outputTemplate = DefaultOutputTemplate,

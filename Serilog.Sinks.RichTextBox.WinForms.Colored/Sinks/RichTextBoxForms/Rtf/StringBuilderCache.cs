@@ -3,12 +3,6 @@ using System.Text;
 
 namespace Serilog.Sinks.RichTextBoxForms.Rtf
 {
-    /// <summary>
-    /// Very lightweight <see cref="StringBuilder"/> pool similar to the
-    /// internal BCL <c>StringBuilderCache</c>. We only cache builders that are
-    /// up to <see cref="MaxBuilderSize"/> characters to avoid retaining very
-    /// large buffers on the LOH.
-    /// </summary>
     internal static class StringBuilderCache
     {
         // Max char capacity we are willing to cache (32 KB = 64 kB on the LOH threshold).
@@ -34,7 +28,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
                 }
             }
 
-            // No cached instance – allocate a new one with the requested capacity.
             return new StringBuilder(capacity);
         }
 
@@ -53,4 +46,4 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
             _cachedInstance = sb;
         }
     }
-}
+} 
