@@ -3,9 +3,8 @@ using Serilog.Parsing;
 using Serilog.Sinks.RichTextBoxForms;
 using Serilog.Sinks.RichTextBoxForms.Rendering;
 using Serilog.Sinks.RichTextBoxForms.Themes;
-using Serilog.Sinks.RichTextBoxForms.Rtf;
 
-namespace Serilog.Tests.Integration
+namespace Serilog.Tests
 {
     public abstract class RichTextBoxSinkTestBase : IDisposable
     {

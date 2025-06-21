@@ -18,7 +18,7 @@ A [Serilog](https://github.com/serilog/serilog) sink that writes log events to a
 - High-performance asynchronous processing
 - WCAG compliant color schemes based on the [Serilog WPF RichTextBox](https://github.com/serilog-contrib/serilog-sinks-richtextbox) sink.
 
-## Getting Started
+## Get Started
 
 Install the package from NuGet:
 
@@ -41,7 +41,7 @@ private void InitializeComponent()
 }
 ```
 
-Configure the logger to use the sink:
+Configure the logger to use the sink using the `RichTextBox` extension method:
 
 ```csharp
 Log.Logger = new LoggerConfiguration()
@@ -50,6 +50,8 @@ Log.Logger = new LoggerConfiguration()
 
 Log.Information("Hello, world!");
 ```
+
+See the [Extension Method](Serilog.Sinks.RichTextBox.WinForms.Colored/RichTextBoxSinkLoggerConfigurationExtensions.cs) for more configuration options.
 
 ## Themes
 

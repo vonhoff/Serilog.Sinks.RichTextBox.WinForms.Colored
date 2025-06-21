@@ -27,7 +27,7 @@ using System.Windows.Forms;
 
 namespace Serilog
 {
-    public static class RichTextBoxFormsSinkLoggerConfigurationExtensions
+    public static class RichTextBoxSinkLoggerConfigurationExtensions
     {
         private const string OutputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
 
@@ -38,8 +38,7 @@ namespace Serilog
         /// <param name="richTextBoxControl">The RichTextBox to write to.</param>
         /// <param name="minimumLogEventLevel">Minimum event level (ignored if levelSwitch is set).</param>
         /// <param name="outputTemplate">
-        ///     Message format (default: "[{Timestamp:HH:mm:ss} {Level:u3}]
-        ///     {Message:lj}{NewLine}{Exception}").
+        ///     Message format (default: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}").
         /// </param>
         /// <param name="formatProvider">Culture-specific formatting (null for default).</param>
         /// <param name="levelSwitch">Allows runtime level change.</param>

@@ -1,9 +1,6 @@
 using Serilog.Sinks.RichTextBoxForms.Rtf;
-using System.Drawing;
-using System.Windows.Forms;
-using System;
 
-namespace Serilog.Tests.Integration
+namespace Serilog.Tests
 {
     public sealed class RichTextBoxCanvasAdapter : IRtfCanvas
     {

@@ -46,4 +46,4 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
             _cachedInstance = sb;
         }
     }
-} 
+}
