@@ -1,4 +1,4 @@
-﻿#region Copyright 2022 Simon Vonhoff & Contributors
+﻿#region Copyright 2025 Simon Vonhoff & Contributors
 
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,89 +18,106 @@
 
 using Serilog.Core;
 using Serilog.Events;
+using Serilog.Sinks.RichTextBoxForms.Collections;
 using Serilog.Sinks.RichTextBoxForms.Extensions;
 using Serilog.Sinks.RichTextBoxForms.Rendering;
+using Serilog.Sinks.RichTextBoxForms.Rtf;
 using System;
-using System.Collections.Concurrent;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Serilog.Sinks.RichTextBoxForms
 {
     public class RichTextBoxSink : ILogEventSink, IDisposable
     {
-        private readonly BlockingCollection<LogEvent> _messageQueue;
+        private const double FlushIntervalMs = 1000.0 / 12.0;
+        private readonly ConcurrentCircularBuffer<LogEvent> _buffer;
+        private readonly AutoResetEvent _signal;
         private readonly RichTextBoxSinkOptions _options;
         private readonly ITokenRenderer _renderer;
         private readonly RichTextBox _richTextBox;
         private readonly CancellationTokenSource _tokenSource;
+        private readonly Task _processingTask;
+        private bool _disposed;
+        private int _hasNewMessages;
 
         public RichTextBoxSink(RichTextBox richTextBox, RichTextBoxSinkOptions options, ITokenRenderer? renderer = null)
         {
             _options = options;
             _richTextBox = richTextBox;
-            _renderer = renderer ??
-                        new TemplateRenderer(options.AppliedTheme, options.OutputTemplate, options.FormatProvider);
+            _renderer = renderer ?? new TemplateRenderer(options.Theme, options.OutputTemplate, options.FormatProvider);
             _tokenSource = new CancellationTokenSource();
-            _messageQueue = new BlockingCollection<LogEvent>();
+
+            _buffer = new ConcurrentCircularBuffer<LogEvent>(options.MaxLogLines);
+            _signal = new AutoResetEvent(false);
+            _hasNewMessages = 0;
 
             richTextBox.Clear();
             richTextBox.ReadOnly = true;
             richTextBox.DetectUrls = false;
-            richTextBox.ForeColor = options.AppliedTheme.DefaultStyle.Foreground;
-            richTextBox.BackColor = options.AppliedTheme.DefaultStyle.Background;
+            richTextBox.ForeColor = options.Theme.DefaultStyle.Foreground;
+            richTextBox.BackColor = options.Theme.DefaultStyle.Background;
 
-            ThreadPool.QueueUserWorkItem(ProcessMessages, _tokenSource.Token);
+            _processingTask = Task.Run(() => ProcessMessages(_tokenSource.Token));
         }
 
         public void Dispose()
         {
-            _messageQueue.Dispose();
+            if (_disposed) return;
+
+            _disposed = true;
             _tokenSource.Cancel();
+            _signal.Set();
+            _processingTask.Wait();
+            _signal.Dispose();
             _tokenSource.Dispose();
             GC.SuppressFinalize(this);
         }
 
         public void Emit(LogEvent logEvent)
         {
-            _messageQueue.Add(logEvent);
+            _buffer.Add(logEvent);
+            Interlocked.Exchange(ref _hasNewMessages, 1);
+            _signal.Set();
         }
 
-        private void ProcessMessages(object? obj)
+        private void ProcessMessages(CancellationToken token)
         {
-            var token = (CancellationToken)(obj ?? throw new ArgumentNullException(nameof(obj)));
-            var messageBatch = 1;
-            var buffer = new RichTextBox
-            {
-                Font = _richTextBox.Font,
-                DetectUrls = false,
-                ForeColor = _richTextBox.ForeColor,
-                BackColor = _richTextBox.BackColor
-            };
-            try
-            {
-                while (true)
-                {
-                    if (_messageQueue.TryTake(out var logEvent, _options.MessagePendingInterval, token))
-                    {
-                        _renderer.Render(logEvent, buffer);
-                        while (messageBatch < _options.MessageBatchSize && _messageQueue.TryTake(out logEvent, 0, token))
-                        {
-                            _renderer.Render(logEvent, buffer);
-                            messageBatch++;
-                        }
+            var builder = new RtfBuilder(_options.Theme);
+            var snapshot = new System.Collections.Generic.List<LogEvent>(_options.MaxLogLines);
+            var flushInterval = TimeSpan.FromMilliseconds(FlushIntervalMs);
+            var lastFlush = DateTime.UtcNow;
 
-                        _richTextBox.AppendRtf(buffer.Rtf!, _options.AutoScroll, _options.MaxLogLines);
-                        buffer.Clear();
-                        messageBatch = 1;
+            while (!token.IsCancellationRequested)
+            {
+                _signal.WaitOne();
+
+                if (Interlocked.CompareExchange(ref _hasNewMessages, 0, 1) == 1)
+                {
+                    var now = DateTime.UtcNow;
+                    var elapsed = now - lastFlush;
+                    if (elapsed < flushInterval)
+                    {
+                        var remaining = flushInterval - elapsed;
+                        if (remaining > TimeSpan.Zero)
+                        {
+                            Thread.Sleep(remaining);
+                        }
                     }
+
+                    Interlocked.Exchange(ref _hasNewMessages, 0);
+
+                    // Take a snapshot of the current buffer
+                    _buffer.TakeSnapshot(snapshot);
+                    builder.Clear();
+                    foreach (var evt in snapshot)
+                    {
+                        _renderer.Render(evt, builder);
+                    }
+                    _richTextBox.SetRtf(builder.Rtf, _options.AutoScroll);
+                    lastFlush = DateTime.UtcNow;
                 }
-            }
-            catch (ObjectDisposedException)
-            {
-            }
-            catch (OperationCanceledException)
-            {
             }
         }
     }

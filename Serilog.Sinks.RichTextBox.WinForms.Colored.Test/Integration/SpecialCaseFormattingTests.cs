@@ -2,7 +2,7 @@ using Serilog.Events;
 using System.Globalization;
 using Xunit;
 
-namespace Serilog.Tests
+namespace Serilog.Tests.Integration
 {
     public class SpecialCaseFormattingTests : RichTextBoxSinkTestBase
     {

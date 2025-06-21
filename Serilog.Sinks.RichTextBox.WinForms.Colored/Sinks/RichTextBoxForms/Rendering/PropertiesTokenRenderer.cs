@@ -1,4 +1,4 @@
-﻿#region Copyright 2022 Simon Vonhoff & Contributors
+﻿#region Copyright 2025 Simon Vonhoff & Contributors
 
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,37 +19,39 @@
 using Serilog.Events;
 using Serilog.Parsing;
 using Serilog.Sinks.RichTextBoxForms.Formatting;
+using Serilog.Sinks.RichTextBoxForms.Rtf;
 using Serilog.Sinks.RichTextBoxForms.Themes;
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 
 namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
     public class PropertiesTokenRenderer : ITokenRenderer
     {
-        private readonly MessageTemplate _outputTemplate;
         private readonly ValueFormatter _valueFormatter;
+        private readonly HashSet<string> _outputTemplateProperties;
 
         public PropertiesTokenRenderer(Theme theme, PropertyToken token, MessageTemplate outputTemplate, IFormatProvider? formatProvider)
         {
-            _outputTemplate = outputTemplate;
-
             _valueFormatter = token.Format?.Contains("j") == true
                 ? new JsonValueFormatter(theme, formatProvider)
                 : new DisplayValueFormatter(theme, formatProvider);
+
+            _outputTemplateProperties = new HashSet<string>(
+                outputTemplate.Tokens.OfType<PropertyToken>().Select(p => p.PropertyName));
         }
 
-        public void Render(LogEvent logEvent, RichTextBox richTextBox)
+        public void Render(LogEvent logEvent, IRtfCanvas canvas)
         {
             var included = logEvent.Properties
                 .Where(p =>
                     !TemplateContainsPropertyName(logEvent.MessageTemplate, p.Key) &&
-                    !TemplateContainsPropertyName(_outputTemplate, p.Key))
+                    !_outputTemplateProperties.Contains(p.Key))
                 .Select(p => new LogEventProperty(p.Key, p.Value));
 
             var value = new StructureValue(included);
-            _valueFormatter.Format(value, richTextBox, string.Empty, false);
+            _valueFormatter.Format(value, canvas, string.Empty, false);
         }
 
         private static bool TemplateContainsPropertyName(MessageTemplate template, string propertyName)

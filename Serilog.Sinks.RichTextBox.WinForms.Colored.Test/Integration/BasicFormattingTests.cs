@@ -1,7 +1,7 @@
 using Serilog.Events;
 using Xunit;
 
-namespace Serilog.Tests
+namespace Serilog.Tests.Integration
 {
     public class BasicFormattingTests : RichTextBoxSinkTestBase
     {
@@ -27,7 +27,7 @@ namespace Serilog.Tests
                 new[] { new LogEventProperty("String", new ScalarValue("test")) });
 
             // Act
-            _renderer.Render(logEvent, _richTextBox);
+            _renderer.Render(logEvent, _canvas);
 
             // Assert
             var text = _richTextBox.Text;
@@ -60,7 +60,7 @@ namespace Serilog.Tests
                 new[] { new LogEventProperty("Dict", dictValue) });
 
             // Act
-            _renderer.Render(logEvent, _richTextBox);
+            _renderer.Render(logEvent, _canvas);
 
             // Assert
             var text = _richTextBox.Text;
@@ -85,7 +85,7 @@ namespace Serilog.Tests
                 new[] { new LogEventProperty("Array", sequenceValue) });
 
             // Act
-            _renderer.Render(logEvent, _richTextBox);
+            _renderer.Render(logEvent, _canvas);
 
             // Assert
             var text = _richTextBox.Text;
@@ -113,7 +113,7 @@ namespace Serilog.Tests
                 new[] { new LogEventProperty("Object", structureValue) });
 
             // Act
-            _renderer.Render(logEvent, _richTextBox);
+            _renderer.Render(logEvent, _canvas);
 
             // Assert
             var text = _richTextBox.Text;
@@ -147,7 +147,7 @@ namespace Serilog.Tests
                 new[] { new LogEventProperty("Complex", complex) });
 
             // Act
-            _renderer.Render(logEvent, _richTextBox);
+            _renderer.Render(logEvent, _canvas);
 
             // Assert
             var text = _richTextBox.Text;
@@ -175,7 +175,7 @@ namespace Serilog.Tests
                 new[] { new LogEventProperty("Array", sequenceValue) });
 
             // Act
-            _renderer.Render(logEvent, _richTextBox);
+            _renderer.Render(logEvent, _canvas);
 
             // Assert
             var text = _richTextBox.Text;
@@ -200,7 +200,7 @@ namespace Serilog.Tests
                 new[] { new LogEventProperty("NestedArray", sequenceValue) });
 
             // Act
-            _renderer.Render(logEvent, _richTextBox);
+            _renderer.Render(logEvent, _canvas);
 
             // Assert
             var text = _richTextBox.Text;
@@ -224,7 +224,7 @@ namespace Serilog.Tests
                 new[] { new LogEventProperty("EmptyArray", sequenceValue) });
 
             // Act
-            _renderer.Render(logEvent, _richTextBox);
+            _renderer.Render(logEvent, _canvas);
 
             // Assert
             var text = _richTextBox.Text;
@@ -251,7 +251,7 @@ namespace Serilog.Tests
                 new[] { new LogEventProperty("Object", structureValue) });
 
             // Act
-            _renderer.Render(logEvent, _richTextBox);
+            _renderer.Render(logEvent, _canvas);
 
             // Assert
             var text = _richTextBox.Text;
@@ -282,7 +282,7 @@ namespace Serilog.Tests
                 new[] { new LogEventProperty("Object", structureValue) });
 
             // Act
-            _renderer.Render(logEvent, _richTextBox);
+            _renderer.Render(logEvent, _canvas);
 
             // Assert
             var text = _richTextBox.Text;
@@ -307,7 +307,7 @@ namespace Serilog.Tests
                 new[] { new LogEventProperty("Object", structureValue) });
 
             // Act
-            _renderer.Render(logEvent, _richTextBox);
+            _renderer.Render(logEvent, _canvas);
 
             // Assert
             var text = _richTextBox.Text;

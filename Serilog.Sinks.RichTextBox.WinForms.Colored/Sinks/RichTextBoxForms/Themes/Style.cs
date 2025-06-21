@@ -1,4 +1,4 @@
-﻿#region Copyright 2022 Simon Vonhoff & Contributors
+﻿#region Copyright 2025 Simon Vonhoff & Contributors
 
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,7 +24,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
     {
         public Style(Color foreground)
         {
-            Background = default;
+            Background = Color.Black;
             Foreground = foreground;
         }
 

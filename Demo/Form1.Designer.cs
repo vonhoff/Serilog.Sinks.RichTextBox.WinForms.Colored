@@ -28,304 +28,291 @@
         /// </summary>
         private void InitializeComponent()
         {
-            toolStrip1 = new System.Windows.Forms.ToolStrip();
-            btnClear = new System.Windows.Forms.ToolStripButton();
-            toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            btnVerbose = new System.Windows.Forms.ToolStripButton();
-            btnDebug = new System.Windows.Forms.ToolStripButton();
-            btnInformation = new System.Windows.Forms.ToolStripButton();
-            btnWarning = new System.Windows.Forms.ToolStripButton();
-            btnError = new System.Windows.Forms.ToolStripButton();
-            btnFatal = new System.Windows.Forms.ToolStripButton();
-            toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            btnParallelFor = new System.Windows.Forms.ToolStripButton();
-            btnTaskRun = new System.Windows.Forms.ToolStripButton();
-            toolStrip2 = new System.Windows.Forms.ToolStrip();
-            btnObject = new System.Windows.Forms.ToolStripButton();
-            toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            btnScalar = new System.Windows.Forms.ToolStripButton();
-            btnDictionary = new System.Windows.Forms.ToolStripButton();
-            btnStructure = new System.Windows.Forms.ToolStripButton();
-            btnComplex = new System.Windows.Forms.ToolStripButton();
-            toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
-            btnDispose = new System.Windows.Forms.ToolStripButton();
-            toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            btnReset = new System.Windows.Forms.ToolStripButton();
-            toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
-            btnAutoScroll = new System.Windows.Forms.ToolStripButton();
-            toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
-            btnLogLimit = new System.Windows.Forms.ToolStripButton();
-            panel1 = new System.Windows.Forms.Panel();
-            richTextBox1 = new System.Windows.Forms.RichTextBox();
-            toolStrip1.SuspendLayout();
-            toolStrip2.SuspendLayout();
-            panel1.SuspendLayout();
-            SuspendLayout();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.btnVerbose = new System.Windows.Forms.ToolStripButton();
+            this.btnDebug = new System.Windows.Forms.ToolStripButton();
+            this.btnInformation = new System.Windows.Forms.ToolStripButton();
+            this.btnWarning = new System.Windows.Forms.ToolStripButton();
+            this.btnError = new System.Windows.Forms.ToolStripButton();
+            this.btnFatal = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnParallelFor = new System.Windows.Forms.ToolStripButton();
+            this.btnTaskRun = new System.Windows.Forms.ToolStripButton();
+            this.toolStrip2 = new System.Windows.Forms.ToolStrip();
+            this.btnObject = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnScalar = new System.Windows.Forms.ToolStripButton();
+            this.btnDictionary = new System.Windows.Forms.ToolStripButton();
+            this.btnStructure = new System.Windows.Forms.ToolStripButton();
+            this.btnComplex = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnDispose = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnReset = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnAutoScroll = new System.Windows.Forms.ToolStripButton();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.toolStrip1.SuspendLayout();
+            this.toolStrip2.SuspendLayout();
+            this.panel1.SuspendLayout();
+            this.SuspendLayout();
             // 
             // toolStrip1
             // 
-            toolStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { btnClear, toolStripSeparator3, btnVerbose, btnDebug, btnInformation, btnWarning, btnError, btnFatal, toolStripSeparator1, btnParallelFor, btnTaskRun });
-            toolStrip1.Location = new System.Drawing.Point(0, 0);
-            toolStrip1.Name = "toolStrip1";
-            toolStrip1.Padding = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            toolStrip1.Size = new System.Drawing.Size(1208, 25);
-            toolStrip1.TabIndex = 0;
-            toolStrip1.Text = "toolStrip1";
-            // 
-            // btnClear
-            // 
-            btnClear.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            btnClear.Name = "btnClear";
-            btnClear.Size = new System.Drawing.Size(38, 22);
-            btnClear.Text = "Clear";
-            btnClear.ToolTipText = "Clear the log output";
-            btnClear.Click += btnClear_Click;
-            // 
-            // toolStripSeparator3
-            // 
-            toolStripSeparator3.Name = "toolStripSeparator3";
-            toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
+            this.toolStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnVerbose,
+            this.btnDebug,
+            this.btnInformation,
+            this.btnWarning,
+            this.btnError,
+            this.btnFatal,
+            this.toolStripSeparator1,
+            this.btnParallelFor,
+            this.btnTaskRun});
+            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Padding = new System.Windows.Forms.Padding(3, 0, 3, 0);
+            this.toolStrip1.Size = new System.Drawing.Size(1035, 25);
+            this.toolStrip1.TabIndex = 0;
+            this.toolStrip1.Text = "toolStrip1";
             // 
             // btnVerbose
             // 
-            btnVerbose.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            btnVerbose.Name = "btnVerbose";
-            btnVerbose.Size = new System.Drawing.Size(52, 22);
-            btnVerbose.Text = "Verbose";
-            btnVerbose.ToolTipText = "Log a verbose message";
-            btnVerbose.Click += btnVerbose_Click;
+            this.btnVerbose.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnVerbose.Name = "btnVerbose";
+            this.btnVerbose.Size = new System.Drawing.Size(52, 22);
+            this.btnVerbose.Text = "Verbose";
+            this.btnVerbose.ToolTipText = "Log a verbose message";
+            this.btnVerbose.Click += new System.EventHandler(this.btnVerbose_Click);
             // 
             // btnDebug
             // 
-            btnDebug.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            btnDebug.Name = "btnDebug";
-            btnDebug.Size = new System.Drawing.Size(46, 22);
-            btnDebug.Text = "Debug";
-            btnDebug.ToolTipText = "Log a debug message";
-            btnDebug.Click += btnDebug_Click;
+            this.btnDebug.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnDebug.Name = "btnDebug";
+            this.btnDebug.Size = new System.Drawing.Size(46, 22);
+            this.btnDebug.Text = "Debug";
+            this.btnDebug.ToolTipText = "Log a debug message";
+            this.btnDebug.Click += new System.EventHandler(this.btnDebug_Click);
             // 
             // btnInformation
             // 
-            btnInformation.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            btnInformation.Name = "btnInformation";
-            btnInformation.Size = new System.Drawing.Size(74, 22);
-            btnInformation.Text = "Information";
-            btnInformation.ToolTipText = "Log an information message";
-            btnInformation.Click += btnInformation_Click;
+            this.btnInformation.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnInformation.Name = "btnInformation";
+            this.btnInformation.Size = new System.Drawing.Size(74, 22);
+            this.btnInformation.Text = "Information";
+            this.btnInformation.ToolTipText = "Log an information message";
+            this.btnInformation.Click += new System.EventHandler(this.btnInformation_Click);
             // 
             // btnWarning
             // 
-            btnWarning.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            btnWarning.Name = "btnWarning";
-            btnWarning.Size = new System.Drawing.Size(56, 22);
-            btnWarning.Text = "Warning";
-            btnWarning.ToolTipText = "Log a warning message";
-            btnWarning.Click += btnWarning_Click;
+            this.btnWarning.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnWarning.Name = "btnWarning";
+            this.btnWarning.Size = new System.Drawing.Size(56, 22);
+            this.btnWarning.Text = "Warning";
+            this.btnWarning.ToolTipText = "Log a warning message";
+            this.btnWarning.Click += new System.EventHandler(this.btnWarning_Click);
             // 
             // btnError
             // 
-            btnError.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            btnError.Name = "btnError";
-            btnError.Size = new System.Drawing.Size(36, 22);
-            btnError.Text = "Error";
-            btnError.ToolTipText = "Log an error message";
-            btnError.Click += btnError_Click;
+            this.btnError.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnError.Name = "btnError";
+            this.btnError.Size = new System.Drawing.Size(36, 22);
+            this.btnError.Text = "Error";
+            this.btnError.ToolTipText = "Log an error message";
+            this.btnError.Click += new System.EventHandler(this.btnError_Click);
             // 
             // btnFatal
             // 
-            btnFatal.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            btnFatal.Name = "btnFatal";
-            btnFatal.Size = new System.Drawing.Size(36, 22);
-            btnFatal.Text = "Fatal";
-            btnFatal.ToolTipText = "Log a fatal message";
-            btnFatal.Click += btnFatal_Click;
+            this.btnFatal.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnFatal.Name = "btnFatal";
+            this.btnFatal.Size = new System.Drawing.Size(36, 22);
+            this.btnFatal.Text = "Fatal";
+            this.btnFatal.ToolTipText = "Log a fatal message";
+            this.btnFatal.Click += new System.EventHandler(this.btnFatal_Click);
             // 
             // toolStripSeparator1
             // 
-            toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
             // btnParallelFor
             // 
-            btnParallelFor.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            btnParallelFor.Name = "btnParallelFor";
-            btnParallelFor.Size = new System.Drawing.Size(106, 22);
-            btnParallelFor.Text = "Parallel.For(100*6)";
-            btnParallelFor.ToolTipText = "Demonstrate parallel logging with 600 messages";
-            btnParallelFor.Click += btnParallelFor_Click;
+            this.btnParallelFor.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnParallelFor.Name = "btnParallelFor";
+            this.btnParallelFor.Size = new System.Drawing.Size(112, 22);
+            this.btnParallelFor.Text = "Parallel.For(1000*6)";
+            this.btnParallelFor.ToolTipText = "Demonstrate parallel logging with 6000 messages";
+            this.btnParallelFor.Click += new System.EventHandler(this.btnParallelFor_Click);
             // 
             // btnTaskRun
             // 
-            btnTaskRun.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            btnTaskRun.Name = "btnTaskRun";
-            btnTaskRun.Size = new System.Drawing.Size(95, 22);
-            btnTaskRun.Text = "Task.Run(100*6)";
-            btnTaskRun.ToolTipText = "Demonstrate async logging with 600 messages";
-            btnTaskRun.Click += btnTaskRun_Click;
+            this.btnTaskRun.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnTaskRun.Name = "btnTaskRun";
+            this.btnTaskRun.Size = new System.Drawing.Size(101, 22);
+            this.btnTaskRun.Text = "Task.Run(1000*6)";
+            this.btnTaskRun.ToolTipText = "Demonstrate async logging with 6000 messages";
+            this.btnTaskRun.Click += new System.EventHandler(this.btnTaskRun_Click);
             // 
             // toolStrip2
             // 
-            toolStrip2.ImageScalingSize = new System.Drawing.Size(20, 20);
-            toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { btnObject, toolStripSeparator4, btnScalar, btnDictionary, btnStructure, btnComplex, toolStripSeparator8, btnDispose, toolStripSeparator5, btnReset, toolStripSeparator6, btnAutoScroll, toolStripSeparator7, btnLogLimit });
-            toolStrip2.Location = new System.Drawing.Point(0, 25);
-            toolStrip2.Name = "toolStrip2";
-            toolStrip2.Padding = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            toolStrip2.Size = new System.Drawing.Size(1208, 25);
-            toolStrip2.TabIndex = 3;
-            toolStrip2.Text = "toolStrip2";
+            this.toolStrip2.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnObject,
+            this.toolStripSeparator4,
+            this.btnScalar,
+            this.btnDictionary,
+            this.btnStructure,
+            this.btnComplex,
+            this.toolStripSeparator8,
+            this.btnDispose,
+            this.toolStripSeparator5,
+            this.btnReset,
+            this.toolStripSeparator6,
+            this.btnAutoScroll});
+            this.toolStrip2.Location = new System.Drawing.Point(0, 25);
+            this.toolStrip2.Name = "toolStrip2";
+            this.toolStrip2.Padding = new System.Windows.Forms.Padding(3, 0, 3, 0);
+            this.toolStrip2.Size = new System.Drawing.Size(1035, 25);
+            this.toolStrip2.TabIndex = 3;
+            this.toolStrip2.Text = "toolStrip2";
             // 
             // btnObject
             // 
-            btnObject.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            btnObject.Name = "btnObject";
-            btnObject.Size = new System.Drawing.Size(39, 22);
-            btnObject.Text = "JSON";
-            btnObject.ToolTipText = "Log a JSON object";
-            btnObject.Click += btnObject_Click;
+            this.btnObject.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnObject.Name = "btnObject";
+            this.btnObject.Size = new System.Drawing.Size(39, 22);
+            this.btnObject.Text = "JSON";
+            this.btnObject.ToolTipText = "Log a JSON object";
+            this.btnObject.Click += new System.EventHandler(this.btnObject_Click);
             // 
             // toolStripSeparator4
             // 
-            toolStripSeparator4.Name = "toolStripSeparator4";
-            toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
             // 
             // btnScalar
             // 
-            btnScalar.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            btnScalar.Name = "btnScalar";
-            btnScalar.Size = new System.Drawing.Size(42, 22);
-            btnScalar.Text = "Scalar";
-            btnScalar.ToolTipText = "Log scalar values";
-            btnScalar.Click += btnScalar_Click;
+            this.btnScalar.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnScalar.Name = "btnScalar";
+            this.btnScalar.Size = new System.Drawing.Size(42, 22);
+            this.btnScalar.Text = "Scalar";
+            this.btnScalar.ToolTipText = "Log scalar values";
+            this.btnScalar.Click += new System.EventHandler(this.btnScalar_Click);
             // 
             // btnDictionary
             // 
-            btnDictionary.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            btnDictionary.Name = "btnDictionary";
-            btnDictionary.Size = new System.Drawing.Size(65, 22);
-            btnDictionary.Text = "Dictionary";
-            btnDictionary.ToolTipText = "Log a dictionary object";
-            btnDictionary.Click += btnDictionary_Click;
+            this.btnDictionary.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnDictionary.Name = "btnDictionary";
+            this.btnDictionary.Size = new System.Drawing.Size(65, 22);
+            this.btnDictionary.Text = "Dictionary";
+            this.btnDictionary.ToolTipText = "Log a dictionary object";
+            this.btnDictionary.Click += new System.EventHandler(this.btnDictionary_Click);
             // 
             // btnStructure
             // 
-            btnStructure.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            btnStructure.Name = "btnStructure";
-            btnStructure.Size = new System.Drawing.Size(59, 22);
-            btnStructure.Text = "Structure";
-            btnStructure.ToolTipText = "Log a structured object";
-            btnStructure.Click += btnStructure_Click;
+            this.btnStructure.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnStructure.Name = "btnStructure";
+            this.btnStructure.Size = new System.Drawing.Size(59, 22);
+            this.btnStructure.Text = "Structure";
+            this.btnStructure.ToolTipText = "Log a structured object";
+            this.btnStructure.Click += new System.EventHandler(this.btnStructure_Click);
             // 
             // btnComplex
             // 
-            btnComplex.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            btnComplex.Name = "btnComplex";
-            btnComplex.Size = new System.Drawing.Size(58, 22);
-            btnComplex.Text = "Complex";
-            btnComplex.ToolTipText = "Log a complex nested object";
-            btnComplex.Click += btnComplex_Click;
+            this.btnComplex.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnComplex.Name = "btnComplex";
+            this.btnComplex.Size = new System.Drawing.Size(58, 22);
+            this.btnComplex.Text = "Complex";
+            this.btnComplex.ToolTipText = "Log a complex nested object";
+            this.btnComplex.Click += new System.EventHandler(this.btnComplex_Click);
             // 
             // toolStripSeparator8
             // 
-            toolStripSeparator8.Name = "toolStripSeparator8";
-            toolStripSeparator8.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparator8.Name = "toolStripSeparator8";
+            this.toolStripSeparator8.Size = new System.Drawing.Size(6, 25);
             // 
             // btnDispose
             // 
-            btnDispose.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            btnDispose.Name = "btnDispose";
-            btnDispose.Size = new System.Drawing.Size(52, 22);
-            btnDispose.Text = "Dispose";
-            btnDispose.ToolTipText = "Dispose the logger";
-            btnDispose.Click += btnDispose_Click;
+            this.btnDispose.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnDispose.Name = "btnDispose";
+            this.btnDispose.Size = new System.Drawing.Size(52, 22);
+            this.btnDispose.Text = "Dispose";
+            this.btnDispose.ToolTipText = "Dispose the logger";
+            this.btnDispose.Click += new System.EventHandler(this.btnDispose_Click);
             // 
             // toolStripSeparator5
             // 
-            toolStripSeparator5.Name = "toolStripSeparator5";
-            toolStripSeparator5.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 25);
             // 
             // btnReset
             // 
-            btnReset.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            btnReset.Name = "btnReset";
-            btnReset.Size = new System.Drawing.Size(39, 22);
-            btnReset.Text = "Reset";
-            btnReset.ToolTipText = "Reset the logger";
-            btnReset.Click += btnReset_Click;
+            this.btnReset.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnReset.Name = "btnReset";
+            this.btnReset.Size = new System.Drawing.Size(39, 22);
+            this.btnReset.Text = "Reset";
+            this.btnReset.ToolTipText = "Reset the logger";
+            this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
             // 
             // toolStripSeparator6
             // 
-            toolStripSeparator6.Name = "toolStripSeparator6";
-            toolStripSeparator6.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 25);
             // 
             // btnAutoScroll
             // 
-            btnAutoScroll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            btnAutoScroll.Name = "btnAutoScroll";
-            btnAutoScroll.Size = new System.Drawing.Size(110, 22);
-            btnAutoScroll.Text = "Disable Auto Scroll";
-            btnAutoScroll.ToolTipText = "Toggle auto-scroll behavior";
-            btnAutoScroll.Click += btnAutoScroll_Click;
-            // 
-            // toolStripSeparator7
-            // 
-            toolStripSeparator7.Name = "toolStripSeparator7";
-            toolStripSeparator7.Size = new System.Drawing.Size(6, 25);
-            // 
-            // btnLogLimit
-            // 
-            btnLogLimit.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            btnLogLimit.Name = "btnLogLimit";
-            btnLogLimit.Size = new System.Drawing.Size(101, 22);
-            btnLogLimit.Text = "Enable Line Limit";
-            btnLogLimit.ToolTipText = "Toggle log line limit";
-            btnLogLimit.Click += btnLogLimit_Click;
+            this.btnAutoScroll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnAutoScroll.Name = "btnAutoScroll";
+            this.btnAutoScroll.Size = new System.Drawing.Size(110, 22);
+            this.btnAutoScroll.Text = "Disable Auto Scroll";
+            this.btnAutoScroll.ToolTipText = "Toggle auto-scroll behavior";
+            this.btnAutoScroll.Click += new System.EventHandler(this.btnAutoScroll_Click);
             // 
             // panel1
             // 
-            panel1.Controls.Add(richTextBox1);
-            panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            panel1.Location = new System.Drawing.Point(0, 50);
-            panel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            panel1.Name = "panel1";
-            panel1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            panel1.Size = new System.Drawing.Size(1208, 535);
-            panel1.TabIndex = 1;
+            this.panel1.Controls.Add(this.richTextBox1);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 50);
+            this.panel1.Name = "panel1";
+            this.panel1.Padding = new System.Windows.Forms.Padding(3);
+            this.panel1.Size = new System.Drawing.Size(1035, 457);
+            this.panel1.TabIndex = 1;
             // 
             // richTextBox1
             // 
-            richTextBox1.BackColor = System.Drawing.SystemColors.Window;
-            richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            richTextBox1.Font = new System.Drawing.Font("Cascadia Code", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-            richTextBox1.Location = new System.Drawing.Point(4, 3);
-            richTextBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new System.Drawing.Size(1200, 529);
-            richTextBox1.TabIndex = 0;
-            richTextBox1.Text = "";
+            this.richTextBox1.BackColor = System.Drawing.SystemColors.Window;
+            this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.richTextBox1.Font = new System.Drawing.Font("Cascadia Mono", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.richTextBox1.Location = new System.Drawing.Point(3, 3);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.Size = new System.Drawing.Size(1029, 451);
+            this.richTextBox1.TabIndex = 0;
+            this.richTextBox1.Text = "";
             // 
             // Form1
             // 
-            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(1208, 585);
-            Controls.Add(panel1);
-            Controls.Add(toolStrip2);
-            Controls.Add(toolStrip1);
-            KeyPreview = true;
-            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            MinimumSize = new System.Drawing.Size(702, 165);
-            Name = "Form1";
-            Text = "Serilog RichTextBox Demo";
-            Load += Form1_Load;
-            KeyDown += Form1_KeyDown;
-            toolStrip1.ResumeLayout(false);
-            toolStrip1.PerformLayout();
-            toolStrip2.ResumeLayout(false);
-            toolStrip2.PerformLayout();
-            panel1.ResumeLayout(false);
-            ResumeLayout(false);
-            PerformLayout();
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(1035, 507);
+            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.toolStrip2);
+            this.Controls.Add(this.toolStrip1);
+            this.KeyPreview = true;
+            this.MinimumSize = new System.Drawing.Size(604, 148);
+            this.Name = "Form1";
+            this.Text = "Serilog RichTextBox Demo";
+            this.Load += new System.EventHandler(this.Form1_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
+            this.toolStrip2.ResumeLayout(false);
+            this.toolStrip2.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
         }
 
         #endregion
@@ -334,7 +321,6 @@
         private System.Windows.Forms.ToolStrip toolStrip2;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.RichTextBox richTextBox1;
-        private System.Windows.Forms.ToolStripButton btnClear;
         private System.Windows.Forms.ToolStripButton btnVerbose;
         private System.Windows.Forms.ToolStripButton btnDebug;
         private System.Windows.Forms.ToolStripButton btnInformation;
@@ -356,8 +342,5 @@
         private System.Windows.Forms.ToolStripButton btnReset;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripButton btnAutoScroll;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
-        private System.Windows.Forms.ToolStripButton btnLogLimit;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
     }
 }

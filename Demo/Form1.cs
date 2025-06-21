@@ -1,4 +1,4 @@
-﻿#region Copyright 2022 Simon Vonhoff & Contributors
+﻿#region Copyright 2025 Simon Vonhoff & Contributors
 
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,7 +43,7 @@ namespace Demo
         private void Initialize()
         {
             _options = new RichTextBoxSinkOptions(
-                appliedTheme: ThemePresets.Dark,
+                theme: ThemePresets.Literate,
                 outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:l}{NewLine}{Exception}",
                 formatProvider: new CultureInfo("en-US"));
 
@@ -59,13 +59,13 @@ namespace Demo
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            SelfLog.Enable(message => 
+            SelfLog.Enable(message =>
             {
                 Trace.WriteLine($"INTERNAL ERROR: {message}");
             });
             Initialize();
 
-            Log.Information("Application started. Environment: {Environment}, Version: {Version}", 
+            Log.Information("Application started. Environment: {Environment}, Version: {Version}",
                 Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development",
                 typeof(Form1).Assembly.GetName().Version);
 
@@ -83,7 +83,7 @@ namespace Demo
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Database operation failed. Connection string: {ConnectionString}", 
+                Log.Error(ex, "Database operation failed. Connection string: {ConnectionString}",
                     "Server=localhost;Trusted_Connection=True;");
             }
         }
@@ -92,11 +92,6 @@ namespace Demo
         {
             Log.Debug("Dispose requested.");
             Log.CloseAndFlush();
-        }
-
-        private void btnClear_Click(object sender, EventArgs e)
-        {
-            richTextBox1.Clear();
         }
 
         private void btnDebug_Click(object sender, EventArgs e)
@@ -114,7 +109,7 @@ namespace Demo
         {
             try
             {
-                throw new InvalidOperationException("Failed to process payment", 
+                throw new InvalidOperationException("Failed to process payment",
                     new Exception("Gateway timeout"));
             }
             catch (Exception ex)
@@ -131,7 +126,7 @@ namespace Demo
             }
             catch (Exception ex)
             {
-                Log.Fatal(ex, "Critical system failure. Memory usage: {MemoryUsage}MB", 
+                Log.Fatal(ex, "Critical system failure. Memory usage: {MemoryUsage}MB",
                     Process.GetCurrentProcess().WorkingSet64 / 1024 / 1024);
             }
         }
@@ -151,16 +146,14 @@ namespace Demo
 
         private void btnParallelFor_Click(object sender, EventArgs e)
         {
-            for (var stepNumber = 1; stepNumber <= 100; stepNumber++)
+            for (var stepNumber = 1; stepNumber <= 1000; stepNumber++)
             {
-                var stepName = $"Step {stepNumber:000}";
-
-                Log.Verbose("Processing batch item {StepName} - Status: {Status}", stepName, "InProgress");
-                Log.Debug("Batch processing metrics for {StepName} - Duration: {Duration}ms", stepName, 150);
-                Log.Information("Completed processing {StepName} - Items processed: {Count}", stepName, 1000);
-                Log.Warning("Performance warning for {StepName} - Response time: {ResponseTime}ms", stepName, 500);
-                Log.Error("Failed to process {StepName} - Error code: {ErrorCode}", stepName, "E1001");
-                Log.Fatal("Critical failure in {StepName} - System state: {State}", stepName, "Unrecoverable");
+                Log.Verbose("Processing batch item Step {StepNumber:000} - Status: {Status}", stepNumber, "InProgress");
+                Log.Debug("Batch processing metrics for Step {StepNumber:000} - Duration: {Duration}ms", stepNumber, 150);
+                Log.Information("Completed processing Step {StepNumber:000} - Items processed: {Count}", stepNumber, 1000);
+                Log.Warning("Performance warning for Step {StepNumber:000} - Response time: {ResponseTime}ms", stepNumber, 500);
+                Log.Error("Failed to process Step {StepNumber:000} - Error code: {ErrorCode}", stepNumber, "E1001");
+                Log.Fatal("Critical failure in Step {StepNumber:000} - System state: {State}", stepNumber, "Unrecoverable");
             }
         }
 
@@ -168,19 +161,17 @@ namespace Demo
         {
             var tasks = new List<Task>();
 
-            for (var i = 1; i <= 100; i++)
+            for (var i = 1; i <= 1000; i++)
             {
                 var stepNumber = i;
                 var task = Task.Run(() =>
                 {
-                    var stepName = $"Step {stepNumber:000}";
-
-                    Log.Verbose("Background task {StepName} - Status: {Status}", stepName, "Started");
-                    Log.Debug("Background task {StepName} - Thread ID: {ThreadId}", stepName, Environment.CurrentManagedThreadId);
-                    Log.Information("Background task {StepName} - Progress: {Progress}%", stepName, 75);
-                    Log.Warning("Background task {StepName} - Resource usage: {CpuUsage}%", stepName, 85);
-                    Log.Error("Background task {StepName} - Failed with code: {ErrorCode}", stepName, "E2001");
-                    Log.Fatal("Background task {StepName} - System impact: {Impact}", stepName, "Critical");
+                    Log.Verbose("Background task Step {StepNumber:000} - Status: {Status}", stepNumber, "Started");
+                    Log.Debug("Background task Step {StepNumber:000} - Thread ID: {ThreadId}", stepNumber, Environment.CurrentManagedThreadId);
+                    Log.Information("Background task Step {StepNumber:000} - Progress: {Progress}%", stepNumber, 75);
+                    Log.Warning("Background task Step {StepNumber:000} - Resource usage: {CpuUsage}%", stepNumber, 85);
+                    Log.Error("Background task Step {StepNumber:000} - Failed with code: {ErrorCode}", stepNumber, "E2001");
+                    Log.Fatal("Background task Step {StepNumber:000} - System impact: {Impact}", stepNumber, "Critical");
                 });
 
                 tasks.Add(task);
@@ -196,7 +187,7 @@ namespace Demo
 
         private void btnWarning_Click(object sender, EventArgs e)
         {
-            Log.Warning("High memory usage detected: {MemoryUsage}MB (Threshold: {Threshold}MB)", 
+            Log.Warning("High memory usage detected: {MemoryUsage}MB (Threshold: {Threshold}MB)",
                 Process.GetCurrentProcess().WorkingSet64 / 1024 / 1024, 16);
         }
 
@@ -335,19 +326,6 @@ namespace Demo
 
             _options.AutoScroll = !_options.AutoScroll;
             btnAutoScroll.Text = _options.AutoScroll ? "Disable Auto Scroll" : "Enable Auto Scroll";
-        }
-
-        private void btnLogLimit_Click(object sender, EventArgs e)
-        {
-            if (_options == null)
-            {
-                return;
-            }
-
-            var limitEnabled = _options.MaxLogLines != int.MaxValue;
-            _options.MaxLogLines = limitEnabled ? 0 : 35;
-            btnLogLimit.Text = limitEnabled ? "Enable Line Limit" : "Disable Line Limit";
-            Log.Information("Log line limit set to {lineLimit}", _options.MaxLogLines == int.MaxValue ? "Maximum" : _options.MaxLogLines.ToString());
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)

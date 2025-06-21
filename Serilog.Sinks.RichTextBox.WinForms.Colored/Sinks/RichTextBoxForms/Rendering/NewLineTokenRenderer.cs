@@ -1,4 +1,4 @@
-﻿#region Copyright 2022 Simon Vonhoff & Contributors
+﻿#region Copyright 2025 Simon Vonhoff & Contributors
 
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,16 +17,17 @@
 #endregion
 
 using Serilog.Events;
-using System;
-using System.Windows.Forms;
+using Serilog.Sinks.RichTextBoxForms.Rtf;
 
 namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
     public class NewLineTokenRenderer : ITokenRenderer
     {
-        public void Render(LogEvent logEvent, RichTextBox richTextBox)
+        private const string NewLine = "\n\r";
+
+        public void Render(LogEvent logEvent, IRtfCanvas canvas)
         {
-            richTextBox.AppendText(Environment.NewLine);
+            canvas.AppendText(NewLine);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿#region Copyright 2022 Simon Vonhoff & Contributors
+﻿#region Copyright 2025 Simon Vonhoff & Contributors
 
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,35 +25,26 @@ namespace Serilog.Sinks.RichTextBoxForms
     {
         private const string DefaultOutputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
         private int _maxLogLines;
-        private int _messageBatchSize;
-        private int _messagePendingInterval;
 
         /// <summary>
-        ///     Settings for the RichTextBoxSink
+        /// Creates a new collection of options that control the behaviour and appearance of a
+        /// <see cref="RichTextBoxSink"/> instance.
         /// </summary>
-        /// <param name="appliedTheme">The theme to apply.</param>
-        /// <param name="messageBatchSize">Max messages per batch for printing.</param>
-        /// <param name="messagePendingInterval">Duration to hold incoming messages.</param>
-        /// <param name="autoScroll">Auto-scroll to bottom for new messages.</param>
-        /// <param name="maxLogLines">Maximum number of lines to keep.</param>
-        /// <param name="outputTemplate">
-        ///     Message format (default: "[{Timestamp:HH:mm:ss} {Level:u3}]
-        ///     {Message:lj}{NewLine}{Exception}").
-        /// </param>
-        /// <param name="formatProvider">Culture-specific formatting (null for default).</param>
+        /// <param name="theme">The colour theme applied when rendering individual message tokens.</param>
+        /// <param name="autoScroll">When <c>true</c> (default) the target control scrolls automatically to the most recent log line.</param>
+        /// <param name="maxLogLines">Maximum number of log events retained in the in-memory circular buffer and rendered in the control. Must be between 1 and 10,000 (default: 256).</param>
+        /// <param name="flushInterval">Timeout, in milliseconds, after which buffered events are flushed to the control if a batch has not yet been triggered. Must be between 250ms and 30 seconds (default: 500ms).</param>
+        /// <param name="outputTemplate">Serilog output template that controls textual formatting of each log event.</param>
+        /// <param name="formatProvider">Optional culture-specific or custom formatting provider used when rendering scalar values; <c>null</c> for the invariant culture.</param>
         public RichTextBoxSinkOptions(
-            Theme appliedTheme,
-            int messageBatchSize = 200,
-            int messagePendingInterval = 8,
+            Theme theme,
             bool autoScroll = true,
-            int maxLogLines = 0,
+            int maxLogLines = 256,
             string outputTemplate = DefaultOutputTemplate,
             IFormatProvider? formatProvider = null)
         {
-            MessageBatchSize = messageBatchSize;
-            MessagePendingInterval = messagePendingInterval;
             AutoScroll = autoScroll;
-            AppliedTheme = appliedTheme;
+            Theme = theme;
             MaxLogLines = maxLogLines;
             OutputTemplate = outputTemplate;
             FormatProvider = formatProvider;
@@ -61,28 +52,21 @@ namespace Serilog.Sinks.RichTextBoxForms
 
         public bool AutoScroll { get; set; }
 
-        public Theme AppliedTheme { get; set; }
-
-        public int MessageBatchSize
-        {
-            get => _messageBatchSize;
-            set => _messageBatchSize = value > 50 ? value : 50;
-        }
-
-        public int MessagePendingInterval
-        {
-            get => _messagePendingInterval;
-            set => _messagePendingInterval = value > 0 ? value : 1;
-        }
+        public Theme Theme { get; }
 
         public int MaxLogLines
         {
             get => _maxLogLines;
-            set => _maxLogLines = value > 0 ? value : int.MaxValue;
+            private set => _maxLogLines = value switch
+            {
+                < 1 => 1,
+                > 512 => 512,
+                _ => value
+            };
         }
 
-        public string OutputTemplate { get; set; }
+        public string OutputTemplate { get; }
 
-        public IFormatProvider? FormatProvider { get; set; }
+        public IFormatProvider? FormatProvider { get; }
     }
 }

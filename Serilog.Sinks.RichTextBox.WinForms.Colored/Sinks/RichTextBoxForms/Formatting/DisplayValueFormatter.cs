@@ -1,4 +1,4 @@
-﻿#region Copyright 2022 Simon Vonhoff & Contributors
+#region Copyright 2025 Simon Vonhoff & Contributors
 
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,212 +18,206 @@
 
 using Serilog.Events;
 using Serilog.Sinks.RichTextBoxForms.Extensions;
+using Serilog.Sinks.RichTextBoxForms.Rtf;
 using Serilog.Sinks.RichTextBoxForms.Themes;
 using System;
 using System.IO;
-using System.Windows.Forms;
 
 namespace Serilog.Sinks.RichTextBoxForms.Formatting
 {
     public class DisplayValueFormatter : ValueFormatter
     {
         private readonly IFormatProvider? _formatProvider;
+        private JsonValueFormatter? _jsonValueFormatter;
 
         public DisplayValueFormatter(Theme theme, IFormatProvider? formatProvider) : base(theme)
         {
             _formatProvider = formatProvider;
         }
 
-        public void FormatLiteralValue(ScalarValue scalar, RichTextBox richTextBox, string? format, bool isLiteral)
+        public void FormatLiteralValue(ScalarValue scalar, IRtfCanvas canvas, string? format, bool isLiteral)
         {
             var value = scalar.Value;
 
             switch (value)
             {
                 case null:
-                    Theme.Render(richTextBox, StyleToken.Null, "null");
+                    Theme.Render(canvas, StyleToken.Null, "null");
                     return;
                 case string text:
-                    bool effectivelyLiteral = isLiteral || (format != null && format.Contains("l"));
-                    if (effectivelyLiteral)
-                    {
-                        Theme.Render(richTextBox, StyleToken.String, text);
-                    }
-                    else
-                    {
-                        Theme.Render(richTextBox, StyleToken.String, $"\"{text.Replace("\"", "\\\"")}\"");
-                    }
+                    RenderString(text, canvas, format, isLiteral);
                     return;
                 case byte[] bytes:
-                    Theme.Render(richTextBox, StyleToken.String, $"\"{Convert.ToBase64String(bytes)}\"");
+                    Theme.Render(canvas, StyleToken.String, $"\"{Convert.ToBase64String(bytes)}\"");
                     return;
                 case bool b:
-                    Theme.Render(richTextBox, StyleToken.Boolean, b.ToString());
-                    return;
-                case char ch:
-                    Theme.Render(richTextBox, StyleToken.Scalar, ch.ToString());
-                    return;
-                case int i:
-                    Theme.Render(richTextBox, StyleToken.Number, i.ToString(_formatProvider));
-                    return;
-                case uint ui:
-                    Theme.Render(richTextBox, StyleToken.Number, ui.ToString(_formatProvider));
-                    return;
-                case long l:
-                    Theme.Render(richTextBox, StyleToken.Number, l.ToString(_formatProvider));
-                    return;
-                case ulong ul:
-                    Theme.Render(richTextBox, StyleToken.Number, ul.ToString(_formatProvider));
-                    return;
-                case decimal dec:
-                    Theme.Render(richTextBox, StyleToken.Number, dec.ToString(_formatProvider));
-                    return;
-                case byte bValue:
-                    Theme.Render(richTextBox, StyleToken.Number, bValue.ToString(_formatProvider));
-                    return;
-                case sbyte sb:
-                    Theme.Render(richTextBox, StyleToken.Number, sb.ToString(_formatProvider));
-                    return;
-                case short s:
-                    Theme.Render(richTextBox, StyleToken.Number, s.ToString(_formatProvider));
-                    return;
-                case ushort us:
-                    Theme.Render(richTextBox, StyleToken.Number, us.ToString(_formatProvider));
-                    return;
-                case float f:
-                    Theme.Render(richTextBox, StyleToken.Number, f.ToString(_formatProvider));
-                    return;
-                case double d:
-                    Theme.Render(richTextBox, StyleToken.Number, d.ToString(_formatProvider));
-                    return;
-                case DateTime dt:
-                    Theme.Render(richTextBox, StyleToken.Scalar, dt.ToString(format, _formatProvider));
-                    return;
-                case DateTimeOffset dto:
-                    Theme.Render(richTextBox, StyleToken.Scalar, dto.ToString(format, _formatProvider));
-                    return;
-                case TimeSpan ts:
-                    Theme.Render(richTextBox, StyleToken.Scalar, ts.ToString(string.IsNullOrEmpty(format) ? "c" : format, _formatProvider));
-                    return;
-                case Guid guid:
-                    Theme.Render(richTextBox, StyleToken.Scalar, guid.ToString(string.IsNullOrEmpty(format) ? "D" : format, _formatProvider));
+                    Theme.Render(canvas, StyleToken.Boolean, b.ToString());
                     return;
                 case Uri uri:
-                    Theme.Render(richTextBox, StyleToken.Scalar, uri.ToString());
+                    Theme.Render(canvas, StyleToken.Scalar, uri.ToString());
+                    return;
+                case IFormattable formattable:
+                    RenderFormattable(formattable, format, canvas);
                     return;
             }
 
-            var writer = new StringWriter();
-            scalar.Render(writer, null, _formatProvider);
-            Theme.Render(richTextBox, StyleToken.Scalar, writer.ToString());
+            var sb = StringBuilderCache.Acquire();
+
+            using (var writer = new StringWriter(sb))
+            {
+                scalar.Render(writer, null, _formatProvider);
+            }
+
+            Theme.Render(canvas, StyleToken.Scalar, StringBuilderCache.GetStringAndRelease(sb));
+        }
+
+        private void RenderString(string text, IRtfCanvas canvas, string? format, bool isLiteral)
+        {
+            var effectivelyLiteral = isLiteral || (format != null && format.Contains("l"));
+            Theme.Render(canvas, StyleToken.String, effectivelyLiteral ? text : $"\"{text.Replace("\"", "\\\"")}\"");
+        }
+
+        private void RenderFormattable(IFormattable formattable, string? format, IRtfCanvas canvas)
+        {
+            // Use Number style for numbers, Scalar for others (DateTime, Guid, etc.)
+            var type = formattable.GetType();
+            var token =
+                type == typeof(float) || type == typeof(double) || type == typeof(decimal) ||
+                type == typeof(int) || type == typeof(uint) || type == typeof(long) || type == typeof(ulong) ||
+                type == typeof(byte) || type == typeof(sbyte) || type == typeof(short) || type == typeof(ushort)
+                ? StyleToken.Number : StyleToken.Scalar;
+
+            var effectiveFormat = format;
+
+            // Remove sink-specific format specifiers (e.g. "l" for literal, "j" for JSON) that are not
+            // recognised by the underlying IFormattable implementation and would otherwise trigger
+            // a FormatException.
+            if (!string.IsNullOrEmpty(effectiveFormat))
+            {
+                effectiveFormat = effectiveFormat!.Replace("l", string.Empty).Replace("j", string.Empty);
+
+                // If all characters were removed we end up with an empty string – treat this as no format.
+                if (string.IsNullOrWhiteSpace(effectiveFormat))
+                {
+                    effectiveFormat = null;
+                }
+            }
+
+            if (type == typeof(TimeSpan) && string.IsNullOrEmpty(effectiveFormat))
+                effectiveFormat = "c";
+            if (type == typeof(Guid) && string.IsNullOrEmpty(effectiveFormat))
+                effectiveFormat = "D";
+
+            string renderedValue;
+            try
+            {
+                renderedValue = formattable.ToString(effectiveFormat, _formatProvider);
+            }
+            catch (FormatException)
+            {
+                // Fall back to the default formatting if the specified format is not supported by the value.
+                renderedValue = formattable.ToString(null, _formatProvider);
+            }
+
+            Theme.Render(canvas, token, renderedValue);
         }
 
         protected override bool VisitDictionaryValue(ValueFormatterState state, DictionaryValue dictionary)
         {
-            if (state.Format != null && state.Format.Contains("j"))
+            if (state.Format.Contains("j"))
             {
-                var jsonFormatter = new JsonValueFormatter(Theme, _formatProvider);
-                jsonFormatter.Format(dictionary, state.RichTextBox, state.Format, state.IsLiteral);
+                _jsonValueFormatter ??= new JsonValueFormatter(Theme, _formatProvider);
+                _jsonValueFormatter.Format(dictionary, state.Canvas, state.Format, state.IsLiteral);
                 return true;
             }
 
-            Theme.Render(state.RichTextBox, StyleToken.TertiaryText, "{");
+            Theme.Render(state.Canvas, StyleToken.TertiaryText, "{");
 
             var delimiter = string.Empty;
             foreach (var (scalarValue, propertyValue) in dictionary.Elements)
             {
                 if (!string.IsNullOrEmpty(delimiter))
                 {
-                    Theme.Render(state.RichTextBox, StyleToken.TertiaryText, delimiter);
+                    Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
                 }
 
                 delimiter = ", ";
 
-                Theme.Render(state.RichTextBox, StyleToken.TertiaryText, "[");
+                Theme.Render(state.Canvas, StyleToken.TertiaryText, "[");
                 Visit(state.Next(), scalarValue);
-                Theme.Render(state.RichTextBox, StyleToken.TertiaryText, "]=");
+                Theme.Render(state.Canvas, StyleToken.TertiaryText, "]=");
                 Visit(state.Next(), propertyValue);
             }
 
-            Theme.Render(state.RichTextBox, StyleToken.TertiaryText, "}");
+            Theme.Render(state.Canvas, StyleToken.TertiaryText, "}");
             return true;
         }
 
         protected override bool VisitScalarValue(ValueFormatterState state, ScalarValue scalar)
         {
-            if (scalar is null)
-            {
-                throw new ArgumentNullException(nameof(scalar));
-            }
-
-            FormatLiteralValue(scalar, state.RichTextBox, state.Format, state.IsLiteral);
+            FormatLiteralValue(scalar, state.Canvas, state.Format, state.IsLiteral);
             return true;
         }
 
         protected override bool VisitSequenceValue(ValueFormatterState state, SequenceValue sequence)
         {
-            if (sequence is null)
+            if (state.Format.Contains("j"))
             {
-                throw new ArgumentNullException(nameof(sequence));
-            }
-
-            if (state.Format != null && state.Format.Contains("j"))
-            {
-                var jsonFormatter = new JsonValueFormatter(Theme, _formatProvider);
-                jsonFormatter.Format(sequence, state.RichTextBox, state.Format, state.IsLiteral);
+                _jsonValueFormatter ??= new JsonValueFormatter(Theme, _formatProvider);
+                _jsonValueFormatter.Format(sequence, state.Canvas, state.Format, state.IsLiteral);
                 return true;
             }
 
-            Theme.Render(state.RichTextBox, StyleToken.TertiaryText, "[");
+            Theme.Render(state.Canvas, StyleToken.TertiaryText, "[");
 
             var delimiter = string.Empty;
             foreach (var propertyValue in sequence.Elements)
             {
                 if (!string.IsNullOrEmpty(delimiter))
                 {
-                    Theme.Render(state.RichTextBox, StyleToken.TertiaryText, delimiter);
+                    Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
                 }
 
                 delimiter = ", ";
                 Visit(state.Next(), propertyValue);
             }
 
-            Theme.Render(state.RichTextBox, StyleToken.TertiaryText, "]");
+            Theme.Render(state.Canvas, StyleToken.TertiaryText, "]");
             return true;
         }
 
         protected override bool VisitStructureValue(ValueFormatterState state, StructureValue structure)
         {
-            if (state.Format != null && state.Format.Contains("j"))
+            if (state.Format.Contains("j"))
             {
-                var jsonFormatter = new JsonValueFormatter(Theme, _formatProvider);
-                jsonFormatter.Format(structure, state.RichTextBox, state.Format, state.IsLiteral);
+                _jsonValueFormatter ??= new JsonValueFormatter(Theme, _formatProvider);
+                _jsonValueFormatter.Format(structure, state.Canvas, state.Format, state.IsLiteral);
                 return true;
             }
 
             if (structure.TypeTag != null)
             {
-                Theme.Render(state.RichTextBox, StyleToken.Name, structure.TypeTag + " ");
+                Theme.Render(state.Canvas, StyleToken.Name, structure.TypeTag + " ");
             }
 
-            Theme.Render(state.RichTextBox, StyleToken.TertiaryText, "{");
+            Theme.Render(state.Canvas, StyleToken.TertiaryText, "{");
 
             var delimiter = string.Empty;
             foreach (var eventProperty in structure.Properties)
             {
                 if (!string.IsNullOrEmpty(delimiter))
                 {
-                    Theme.Render(state.RichTextBox, StyleToken.TertiaryText, delimiter);
+                    Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
                 }
 
                 delimiter = ", ";
 
-                Theme.Render(state.RichTextBox, StyleToken.Name, eventProperty.Name);
-                Theme.Render(state.RichTextBox, StyleToken.TertiaryText, "=");
+                Theme.Render(state.Canvas, StyleToken.Name, eventProperty.Name);
+                Theme.Render(state.Canvas, StyleToken.TertiaryText, "=");
                 Visit(state.Next(), eventProperty.Value);
             }
 
-            Theme.Render(state.RichTextBox, StyleToken.TertiaryText, "}");
+            Theme.Render(state.Canvas, StyleToken.TertiaryText, "}");
             return true;
         }
     }

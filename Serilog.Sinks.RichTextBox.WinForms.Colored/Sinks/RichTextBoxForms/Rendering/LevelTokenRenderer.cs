@@ -1,4 +1,4 @@
-﻿#region Copyright 2022 Simon Vonhoff & Contributors
+﻿#region Copyright 2025 Simon Vonhoff & Contributors
 
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,25 +18,23 @@
 
 using Serilog.Events;
 using Serilog.Parsing;
-using Serilog.Sinks.RichTextBoxForms.Common;
+using Serilog.Sinks.RichTextBoxForms.Formatting;
+using Serilog.Sinks.RichTextBoxForms.Rtf;
 using Serilog.Sinks.RichTextBoxForms.Themes;
-using System.Collections.Generic;
-using System.Windows.Forms;
 
 namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
     public class LevelTokenRenderer : ITokenRenderer
     {
-        private static readonly IReadOnlyDictionary<LogEventLevel, StyleToken> Levels =
-            new Dictionary<LogEventLevel, StyleToken>
-            {
-                { LogEventLevel.Verbose, StyleToken.LevelVerbose },
-                { LogEventLevel.Debug, StyleToken.LevelDebug },
-                { LogEventLevel.Information, StyleToken.LevelInformation },
-                { LogEventLevel.Warning, StyleToken.LevelWarning },
-                { LogEventLevel.Error, StyleToken.LevelError },
-                { LogEventLevel.Fatal, StyleToken.LevelFatal }
-            };
+        private static readonly StyleToken[] LevelStyles =
+        {
+            StyleToken.LevelVerbose,
+            StyleToken.LevelDebug,
+            StyleToken.LevelInformation,
+            StyleToken.LevelWarning,
+            StyleToken.LevelError,
+            StyleToken.LevelFatal
+        };
 
         private static readonly string[][] LowercaseLevelMap =
         {
@@ -68,35 +66,34 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
             new[] { "F", "FA", "FTL", "FATL" }
         };
 
-        private readonly PropertyToken _levelToken;
         private readonly Theme _theme;
+        private readonly string[] _monikers = new string[LevelStyles.Length];
 
         public LevelTokenRenderer(Theme theme, PropertyToken levelToken)
         {
             _theme = theme;
-            _levelToken = levelToken;
-        }
-
-        public void Render(LogEvent logEvent, RichTextBox richTextBox)
-        {
-            var moniker = GetLevelMoniker(logEvent.Level, _levelToken.Format ?? "");
-            if (!Levels.TryGetValue(logEvent.Level, out var levelStyle))
+            var format = levelToken.Format ?? string.Empty;
+            for (var i = 0; i < _monikers.Length; i++)
             {
-                levelStyle = StyleToken.Invalid;
+                _monikers[i] = GetLevelMoniker((LogEventLevel)i, format);
             }
-
-            _theme.Render(richTextBox, levelStyle, moniker);
         }
 
-        public static string GetLevelMoniker(LogEventLevel value, string format = "")
+        public void Render(LogEvent logEvent, IRtfCanvas canvas)
+        {
+            var levelIndex = (int)logEvent.Level;
+            var moniker = _monikers[levelIndex];
+            var levelStyle = LevelStyles[levelIndex];
+            _theme.Render(canvas, levelStyle, moniker);
+        }
+
+        private static string GetLevelMoniker(LogEventLevel value, string format = "")
         {
             if (format.Length != 2 && format.Length != 3)
             {
-                return TextCasing.Format(value.ToString(), format);
+                return TextFormatter.Format(value.ToString(), format);
             }
 
-            // Using int.Parse() here requires allocating a string to exclude the first character prefix.
-            // Junk like "wxy" will be accepted but produce benign results.
             var width = format[1] - '0';
             if (format.Length == 3)
             {
@@ -104,26 +101,26 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
                 width += format[2] - '0';
             }
 
-            if (width < 1)
+            switch (width)
             {
-                return string.Empty;
-            }
+                case < 1:
+                    return string.Empty;
+                case > 4:
+                    {
+                        var stringValue = value.ToString();
+                        if (stringValue.Length > width)
+                        {
+                            stringValue = stringValue.Substring(0, width);
+                        }
 
-            if (width > 4)
-            {
-                var stringValue = value.ToString();
-                if (stringValue.Length > width)
-                {
-                    stringValue = stringValue.Substring(0, width);
-                }
-
-                return TextCasing.Format(stringValue, format);
+                        return TextFormatter.Format(stringValue, format);
+                    }
             }
 
             var index = (int)value;
-            if (index < 0 || index > (int)LogEventLevel.Fatal)
+            if (index is < 0 or > (int)LogEventLevel.Fatal)
             {
-                return TextCasing.Format(value.ToString(), format);
+                return TextFormatter.Format(value.ToString(), format);
             }
 
             return format[0] switch
@@ -131,7 +128,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
                 'w' => LowercaseLevelMap[index][width - 1],
                 'u' => UppercaseLevelMap[index][width - 1],
                 't' => TitleCaseLevelMap[index][width - 1],
-                _ => TextCasing.Format(value.ToString(), format),
+                _ => TextFormatter.Format(value.ToString(), format),
             };
         }
     }
