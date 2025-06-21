@@ -38,6 +38,7 @@ namespace Serilog.Sinks.RichTextBoxForms
         private readonly RichTextBox _richTextBox;
         private readonly CancellationTokenSource _tokenSource;
         private readonly Task _processingTask;
+        private bool _disposed;
 
         public RichTextBoxSink(RichTextBox richTextBox, RichTextBoxSinkOptions options, ITokenRenderer? renderer = null)
         {
@@ -58,15 +59,37 @@ namespace Serilog.Sinks.RichTextBoxForms
 
         public void Dispose()
         {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _disposed = true;
             _messageQueue.CompleteAdding();
-            _processingTask.Wait();
             _tokenSource.Cancel();
+
+            try
+            {
+                _processingTask.Wait(TimeSpan.FromSeconds(5));
+            }
+            catch (OperationCanceledException)
+            {
+            }
+            catch (AggregateException ex) when (ex.InnerExceptions.Count == 1 && ex.InnerExceptions[0] is TaskCanceledException)
+            {
+            }
+
             _tokenSource.Dispose();
             GC.SuppressFinalize(this);
         }
 
         public void Emit(LogEvent logEvent)
         {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(nameof(RichTextBoxSink));
+            }
+
             while (!_messageQueue.TryAdd(logEvent))
             {
                 _messageQueue.TryTake(out _);

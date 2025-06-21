@@ -60,13 +60,13 @@ namespace Demo
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            SelfLog.Enable(message => 
+            SelfLog.Enable(message =>
             {
                 Trace.WriteLine($"INTERNAL ERROR: {message}");
             });
             Initialize();
 
-            Log.Information("Application started. Environment: {Environment}, Version: {Version}", 
+            Log.Information("Application started. Environment: {Environment}, Version: {Version}",
                 Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development",
                 typeof(Form1).Assembly.GetName().Version);
 
@@ -84,7 +84,7 @@ namespace Demo
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Database operation failed. Connection string: {ConnectionString}", 
+                Log.Error(ex, "Database operation failed. Connection string: {ConnectionString}",
                     "Server=localhost;Trusted_Connection=True;");
             }
         }
@@ -115,7 +115,7 @@ namespace Demo
         {
             try
             {
-                throw new InvalidOperationException("Failed to process payment", 
+                throw new InvalidOperationException("Failed to process payment",
                     new Exception("Gateway timeout"));
             }
             catch (Exception ex)
@@ -132,7 +132,7 @@ namespace Demo
             }
             catch (Exception ex)
             {
-                Log.Fatal(ex, "Critical system failure. Memory usage: {MemoryUsage}MB", 
+                Log.Fatal(ex, "Critical system failure. Memory usage: {MemoryUsage}MB",
                     Process.GetCurrentProcess().WorkingSet64 / 1024 / 1024);
             }
         }
@@ -193,7 +193,7 @@ namespace Demo
 
         private void btnWarning_Click(object sender, EventArgs e)
         {
-            Log.Warning("High memory usage detected: {MemoryUsage}MB (Threshold: {Threshold}MB)", 
+            Log.Warning("High memory usage detected: {MemoryUsage}MB (Threshold: {Threshold}MB)",
                 Process.GetCurrentProcess().WorkingSet64 / 1024 / 1024, 16);
         }
 

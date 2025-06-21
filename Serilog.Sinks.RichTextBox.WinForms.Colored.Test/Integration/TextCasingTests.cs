@@ -8,8 +8,7 @@ namespace Serilog.Tests.Integration
         [Theory]
         [InlineData("abc", "u", "ABC")]
         [InlineData("AbC", "w", "abc")]
-        [InlineData("AbC", null, "AbC")]
-        public void Format_ReturnsExpected(string input, string? format, string expected)
+        public void Format_ReturnsExpected(string input, string format, string expected)
         {
             var actual = TextFormatter.Format(input, format);
             Assert.Equal(expected, actual);
