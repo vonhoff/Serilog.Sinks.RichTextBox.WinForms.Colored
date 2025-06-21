@@ -13,12 +13,9 @@ A [Serilog](https://github.com/serilog/serilog) sink that writes log events to a
 
 - Colored log events in a WinForms RichTextBox control
 - Multiple theme presets with customization options
-- Auto-scrolling to latest messages
-- Line limiting to control memory usage
 - High-performance asynchronous processing
+- Line limit to control memory usage
 - WCAG compliant color schemes based on the [Serilog WPF RichTextBox](https://github.com/serilog-contrib/serilog-sinks-richtextbox) sink.
-
-This RichTextBox sink is ideal for real-time, in-memory display. For persistent logging, pair this sink with a Serilog file sink.
 
 ## Get Started
 
@@ -37,7 +34,7 @@ private void InitializeComponent()
 {
     this.richTextBox1.BackColor = System.Drawing.SystemColors.Window;
     this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-    this.richTextBox1.Font = new System.Drawing.Font("Consolas", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+    this.richTextBox1.Font = new System.Drawing.Font("Cascadia Mono", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
     this.richTextBox1.Location = new System.Drawing.Point(0, 0);
     this.richTextBox1.Name = "richTextBox1";
 }
@@ -70,6 +67,16 @@ The themes based on the original sinks are slightly adjusted to be [WCAG complia
 
 You can create your own custom themes by creating a new instance of the [Theme](Serilog.Sinks.RichTextBox.WinForms.Colored/Sinks/RichTextBoxForms/Themes/Theme.cs) class and passing it to the `RichTextBox` extension method. Look at the [existing themes](Serilog.Sinks.RichTextBox.WinForms.Colored/Sinks/RichTextBoxForms/Themes/ThemePresets.cs) for examples.
 
+## Frequently Asked Questions
+
+### Why is the package name so long?
+
+Shorter alternatives were already reserved in the NuGet registry, so a more descriptive name was needed for this implementation. The name is a bit long, but it makes it easier to find the package in the NuGet registry.
+
+### Why use a WinForms RichTextBox instead of a WPF RichTextBox?
+
+This sink is specifically designed for WinForms applications to avoid the WPF framework. Using a WPF-based logging component would require adding the entire WPF framework with all its dependencies, greatly increasing the size of the application.
+
 ## Support and Contribute
 
 If you find value in this project, there are several ways you can contribute:
@@ -77,16 +84,6 @@ If you find value in this project, there are several ways you can contribute:
 - Give the [project](https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored) a star on GitHub ⭐
 - Support the project through [GitHub Sponsors](https://github.com/sponsors/vonhoff)
 - Improve documentation, report bugs, or submit pull requests
-
-## Frequently Asked Questions
-
-### Why is the package name so long?
-
-Shorter alternatives were already reserved in the NuGet registry, so a more descriptive name was needed for this implementation.
-
-### Why use a WinForms RichTextBox instead of a WPF RichTextBox?
-
-This sink is specifically designed for WinForms applications to avoid the WPF framework. Using a WPF-based logging component would require adding the entire WPF framework with all its dependencies, greatly increasing the size of the application.
 
 ## License
 
