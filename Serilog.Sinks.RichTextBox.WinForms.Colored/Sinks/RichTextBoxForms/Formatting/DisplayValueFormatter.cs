@@ -71,18 +71,13 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             }
 
             var sb = StringBuilderCache.Acquire(256);
-            try
+
+            using (var writer = new StringWriter(sb))
             {
-                using (var writer = new StringWriter(sb))
-                {
-                    scalar.Render(writer, null, _formatProvider);
-                }
-                Theme.Render(canvas, StyleToken.Scalar, sb.ToString());
+                scalar.Render(writer, null, _formatProvider);
             }
-            finally
-            {
-                StringBuilderCache.Release(sb);
-            }
+
+            Theme.Render(canvas, StyleToken.Scalar, StringBuilderCache.GetStringAndRelease(sb));
         }
 
         private void RenderString(string text, IRtfCanvas canvas, string? format, bool isLiteral)

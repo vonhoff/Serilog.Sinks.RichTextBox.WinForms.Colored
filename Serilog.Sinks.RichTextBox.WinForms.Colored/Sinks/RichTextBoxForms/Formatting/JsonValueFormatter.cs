@@ -37,22 +37,12 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 
         protected override bool VisitScalarValue(ValueFormatterState state, ScalarValue scalar)
         {
-            if (scalar is null)
-            {
-                throw new ArgumentNullException(nameof(scalar));
-            }
-
             FormatLiteralValue(scalar, state.Canvas);
             return true;
         }
 
         protected override bool VisitSequenceValue(ValueFormatterState state, SequenceValue sequence)
         {
-            if (sequence is null)
-            {
-                throw new ArgumentNullException(nameof(sequence));
-            }
-
             Theme.Render(state.Canvas, StyleToken.TertiaryText, "[");
 
             var delimiter = string.Empty;
@@ -179,30 +169,26 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                 case Uri:
                     {
                         var sb = StringBuilderCache.Acquire(64);
-                        try
+
+                        using (var writer = new StringWriter(sb))
                         {
-                            using (var writer = new StringWriter(sb))
+                            // For dates in JSON, always use ISO 8601 format (O)
+                            if (value is DateTime dt)
                             {
-                                // For dates in JSON, always use ISO 8601 format (O)
-                                if (value is DateTime dt)
-                                {
-                                    writer.Write(dt.ToString("O", CultureInfo.InvariantCulture));
-                                }
-                                else if (value is DateTimeOffset dto)
-                                {
-                                    writer.Write(dto.ToString("O", CultureInfo.InvariantCulture));
-                                }
-                                else
-                                {
-                                    scalar.Render(writer, null, _formatProvider);
-                                }
+                                writer.Write(dt.ToString("O", CultureInfo.InvariantCulture));
                             }
-                            Theme.Render(canvas, StyleToken.Scalar, GetQuotedJsonString(sb.ToString()));
+                            else if (value is DateTimeOffset dto)
+                            {
+                                writer.Write(dto.ToString("O", CultureInfo.InvariantCulture));
+                            }
+                            else
+                            {
+                                scalar.Render(writer, null, _formatProvider);
+                            }
                         }
-                        finally
-                        {
-                            StringBuilderCache.Release(sb);
-                        }
+
+                        Theme.Render(canvas, StyleToken.Scalar, GetQuotedJsonString(sb.ToString()));
+                        StringBuilderCache.Release(sb);
                         return;
                     }
                 default:
@@ -214,18 +200,14 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                         }
 
                         var sb = StringBuilderCache.Acquire(256);
-                        try
+
+                        using (var writer = new StringWriter(sb))
                         {
-                            using (var writer = new StringWriter(sb))
-                            {
-                                scalar.Render(writer, null, _formatProvider);
-                            }
-                            Theme.Render(canvas, StyleToken.Scalar, sb.ToString());
+                            scalar.Render(writer, null, _formatProvider);
                         }
-                        finally
-                        {
-                            StringBuilderCache.Release(sb);
-                        }
+
+                        Theme.Render(canvas, StyleToken.Scalar, sb.ToString());
+                        StringBuilderCache.Release(sb);
                         return;
                     }
             }
@@ -276,11 +258,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             Theme.Render(canvas, token, renderedValue);
         }
 
-        /// <summary>
-        ///     Write a valid JSON string literal, escaping as necessary.
-        /// </summary>
-        /// <param name="str">The string value to write.</param>
-        /// <param name="output">The output.</param>
         public static void WriteQuotedJsonString(string str, TextWriter output)
         {
             output.Write('\"');
@@ -323,18 +300,12 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
         public static string GetQuotedJsonString(string str)
         {
             var sb = StringBuilderCache.Acquire(str.Length + 2);
-            try
+            using (var writer = new StringWriter(sb))
             {
-                using (var writer = new StringWriter(sb))
-                {
-                    WriteQuotedJsonString(str, writer);
-                    return sb.ToString();
-                }
+                WriteQuotedJsonString(str, writer);
             }
-            finally
-            {
-                StringBuilderCache.Release(sb);
-            }
+
+            return StringBuilderCache.GetStringAndRelease(sb);
         }
     }
 }

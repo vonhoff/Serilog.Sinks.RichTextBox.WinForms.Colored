@@ -25,15 +25,11 @@ namespace Serilog.Sinks.RichTextBoxForms
     {
         private const string DefaultOutputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
         private int _maxLogLines;
-        private int _batchSize;
-        private int _queueCapacity;
 
         public RichTextBoxSinkOptions(
             Theme theme,
             bool autoScroll = true,
-            int maxLogLines = 512,
-            int batchSize = 256,
-            int queueCapacity = 5000,
+            int maxLogLines = 256,
             string outputTemplate = DefaultOutputTemplate,
             IFormatProvider? formatProvider = null)
         {
@@ -42,8 +38,6 @@ namespace Serilog.Sinks.RichTextBoxForms
             MaxLogLines = maxLogLines;
             OutputTemplate = outputTemplate;
             FormatProvider = formatProvider;
-            BatchSize = batchSize;
-            QueueCapacity = queueCapacity;
         }
 
         public bool AutoScroll { get; set; }
@@ -53,19 +47,7 @@ namespace Serilog.Sinks.RichTextBoxForms
         public int MaxLogLines
         {
             get => _maxLogLines;
-            set => _maxLogLines = value > 1 ? value : 512;
-        }
-
-        public int BatchSize
-        {
-            get => _batchSize;
-            set => _batchSize = value > 50 ? value : 256;
-        }
-
-        public int QueueCapacity
-        {
-            get => _queueCapacity;
-            set => _queueCapacity = value > 50 ? value : 1000;
+            set => _maxLogLines = value > 0 ? value : 256;
         }
 
         public string OutputTemplate { get; set; }

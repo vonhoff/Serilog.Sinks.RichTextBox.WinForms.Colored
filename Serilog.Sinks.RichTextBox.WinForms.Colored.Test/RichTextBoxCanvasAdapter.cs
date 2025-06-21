@@ -39,4 +39,4 @@ namespace Serilog.Tests
 
         public void AppendText(string text) => _richTextBox.AppendText(text);
     }
-} 
+}

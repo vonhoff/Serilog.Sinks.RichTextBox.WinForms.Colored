@@ -45,17 +45,13 @@ namespace Serilog
         /// <param name="theme">Output theme (default: Literate).</param>
         /// <param name="autoScroll">Auto-scroll to bottom for new messages.</param>
         /// <param name="maxLogLines">Maximum number of lines to keep.</param>
-        /// <param name="batchSize">Number of log events to process in a batch (default: 256).</param>
-        /// <param name="queueCapacity">Maximum number of log events in the queue (default: 5000).</param>
         /// <returns>Config object for chaining.</returns>
         public static LoggerConfiguration RichTextBox(
             this LoggerSinkConfiguration sinkConfiguration,
             RichTextBox richTextBoxControl,
             Theme? theme = null,
             bool autoScroll = true,
-            int maxLogLines = 512,
-            int batchSize = 256,
-            int queueCapacity = 5000,
+            int maxLogLines = 256,
             string outputTemplate = OutputTemplate,
             IFormatProvider? formatProvider = null,
             LogEventLevel minimumLogEventLevel = LogEventLevel.Verbose,
@@ -67,8 +63,6 @@ namespace Serilog
                 appliedTheme,
                 autoScroll,
                 maxLogLines,
-                batchSize,
-                queueCapacity,
                 outputTemplate,
                 formatProvider);
             var sink = new RichTextBoxSink(richTextBoxControl, options, renderer);

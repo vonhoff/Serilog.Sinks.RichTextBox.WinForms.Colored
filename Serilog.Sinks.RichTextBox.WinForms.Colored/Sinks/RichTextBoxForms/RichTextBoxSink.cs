@@ -45,7 +45,7 @@ namespace Serilog.Sinks.RichTextBoxForms
             _richTextBox = richTextBox;
             _renderer = renderer ?? new TemplateRenderer(options.Theme, options.OutputTemplate, options.FormatProvider);
             _tokenSource = new CancellationTokenSource();
-            _messageQueue = new BlockingCollection<LogEvent>(_options.QueueCapacity);
+            _messageQueue = new BlockingCollection<LogEvent>(_options.MaxLogLines);
 
             richTextBox.Clear();
             richTextBox.ReadOnly = true;
@@ -67,40 +67,42 @@ namespace Serilog.Sinks.RichTextBoxForms
 
         public void Emit(LogEvent logEvent)
         {
-            _messageQueue.Add(logEvent, _tokenSource.Token);
+            while (!_messageQueue.TryAdd(logEvent))
+            {
+                _messageQueue.TryTake(out _);
+            }
         }
 
         private void ProcessMessages(CancellationToken token)
         {
-            var logEvents = new List<LogEvent>(_options.BatchSize);
+            var logEvents = new List<LogEvent>(_options.MaxLogLines);
             var builder = new RtfBuilder(_options.Theme);
 
-            while (true)
+            while (!token.IsCancellationRequested)
             {
-                LogEvent? nextEvent;
-
-                if (_messageQueue.TryTake(out nextEvent!, -1, token))
+                if (_messageQueue.TryTake(out var logEvent, -1, token))
                 {
-                    logEvents.Add(nextEvent);
-                    while (logEvents.Count < _options.BatchSize && _messageQueue.TryTake(out nextEvent))
+                    logEvents.Add(logEvent);
+                    while (_messageQueue.TryTake(out logEvent))
                     {
-                        logEvents.Add(nextEvent);
+                        logEvents.Add(logEvent);
                     }
+
+                    var startIndex = Math.Max(0, logEvents.Count - _options.MaxLogLines);
+                    for (var i = startIndex; i < logEvents.Count; i++)
+                    {
+                        _renderer.Render(logEvents[i], builder);
+                    }
+
+                    _richTextBox.AppendRtf(builder.Rtf, _options.AutoScroll, _options.MaxLogLines);
+                    builder.Clear();
+                    logEvents.Clear();
                 }
 
                 if (_messageQueue.IsCompleted)
                 {
                     break;
                 }
-
-                foreach (var @event in logEvents)
-                {
-                    _renderer.Render(@event, builder);
-                }
-
-                _richTextBox.AppendRtf(builder.Rtf, _options.AutoScroll, _options.MaxLogLines);
-                builder.Clear();
-                logEvents.Clear();
             }
         }
     }

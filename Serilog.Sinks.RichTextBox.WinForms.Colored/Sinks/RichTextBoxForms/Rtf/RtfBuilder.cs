@@ -162,23 +162,23 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
 
         private string BuildDocument()
         {
-            var document = StringBuilderCache.Acquire(_body.Length + 256);
-            document.Append(@"{\rtf1\ansi\deff0");
-            document.Append("{\\colortbl ;");
+            var sb = StringBuilderCache.Acquire(_body.Length + 256);
+
+            sb.Append(@"{\rtf1\ansi\deff0");
+            sb.Append("{\\colortbl ;");
 
             foreach (var key in _colorTable.Keys)
             {
-                document.Append("\\red").Append(key.R)
-                         .Append("\\green").Append(key.G)
-                         .Append("\\blue").Append(key.B).Append(';');
+                sb.Append("\\red").Append(key.R)
+                  .Append("\\green").Append(key.G)
+                  .Append("\\blue").Append(key.B).Append(';');
             }
 
-            document.Append('}');
-            document.Append(_body);
-            document.Append('}');
-            var result = document.ToString();
-            StringBuilderCache.Release(document);
-            return result;
+            sb.Append('}');
+            sb.Append(_body);
+            sb.Append('}');
+
+            return StringBuilderCache.GetStringAndRelease(sb);
         }
 
         public void Dispose()

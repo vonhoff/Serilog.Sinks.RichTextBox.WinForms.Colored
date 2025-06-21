@@ -4,7 +4,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
     {
         public static string Format(string value, string? format)
         {
-            if (string.IsNullOrEmpty(format) || string.IsNullOrEmpty(value))
+            if (string.IsNullOrEmpty(value))
             {
                 return value;
             }
