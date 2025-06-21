@@ -10,12 +10,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Serilog" Version="4.2.0"/>
-        <PackageReference Include="System.Resources.Extensions" Version="7.0.0"/>
+        <PackageReference Include="Serilog" Version="4.2.0" />
+        <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Serilog.Sinks.RichTextBox.WinForms.Colored\Serilog.Sinks.RichTextBox.WinForms.Colored.csproj"/>
+        <ProjectReference Include="..\Serilog.Sinks.RichTextBox.WinForms.Colored\Serilog.Sinks.RichTextBox.WinForms.Colored.csproj" />
     </ItemGroup>
 
 </Project>

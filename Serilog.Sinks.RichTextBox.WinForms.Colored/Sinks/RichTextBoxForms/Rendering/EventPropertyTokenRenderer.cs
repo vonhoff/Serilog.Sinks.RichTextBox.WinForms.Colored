@@ -1,4 +1,4 @@
-﻿#region Copyright 2022 Simon Vonhoff & Contributors
+﻿#region Copyright 2025 Simon Vonhoff & Contributors
 
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,11 +18,11 @@
 
 using Serilog.Events;
 using Serilog.Parsing;
-using Serilog.Sinks.RichTextBoxForms.Common;
+using Serilog.Sinks.RichTextBoxForms.Formatting;
+using Serilog.Sinks.RichTextBoxForms.Rtf;
 using Serilog.Sinks.RichTextBoxForms.Themes;
 using System;
 using System.IO;
-using System.Windows.Forms;
 
 namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
@@ -39,26 +39,31 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
             _formatProvider = formatProvider;
         }
 
-        public void Render(LogEvent logEvent, RichTextBox richTextBox)
+        public void Render(LogEvent logEvent, IRtfCanvas canvas)
         {
             if (!logEvent.Properties.TryGetValue(_token.PropertyName, out var propertyValue))
             {
                 return;
             }
 
-            var writer = new StringWriter();
-
             if (propertyValue is ScalarValue { Value: string literalString })
             {
-                var cased = TextCasing.Format(literalString, _token.Format);
-                writer.Write(cased);
+                var cased = TextFormatter.Format(literalString, _token.Format);
+                _theme.Render(canvas, StyleToken.SecondaryText, cased);
             }
             else
             {
-                propertyValue.Render(writer, _token.Format, _formatProvider);
-            }
+                var sb = StringBuilderCache.Acquire();
 
-            _theme.Render(richTextBox, StyleToken.SecondaryText, writer.ToString());
+                using (var writer = new StringWriter(sb))
+                {
+                    propertyValue.Render(writer, _token.Format, _formatProvider);
+                }
+
+                _theme.Render(canvas, StyleToken.SecondaryText, sb);
+
+                StringBuilderCache.Release(sb);
+            }
         }
     }
 }

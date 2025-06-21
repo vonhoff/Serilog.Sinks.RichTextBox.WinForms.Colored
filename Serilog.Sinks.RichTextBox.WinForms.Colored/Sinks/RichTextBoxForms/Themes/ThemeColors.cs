@@ -1,4 +1,4 @@
-#region Copyright 2022 Simon Vonhoff & Contributors
+#region Copyright 2025 Simon Vonhoff & Contributors
 
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,32 +22,21 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
 {
     public static class ThemeColors
     {
-        // Error and warning colors
-        public static readonly Color CrimsonRed = ColorTranslator.FromHtml("#FF1A1A");
-        public static readonly Color CardinalRed = ColorTranslator.FromHtml("#FF3333");
-        public static readonly Color DarkCardinalRed = ColorTranslator.FromHtml("#CC0000");
-        public static readonly Color ButtercupYellow = ColorTranslator.FromHtml("#FFD700");
-        public static readonly Color DarkButtercupYellow = ColorTranslator.FromHtml("#B8860B");
-
-        // Success and info colors
-        public static readonly Color ForestGreen = ColorTranslator.FromHtml("#00E676");
-        public static readonly Color DarkForestGreen = ColorTranslator.FromHtml("#006400");
-        public static readonly Color AppleGreen = ColorTranslator.FromHtml("#B8E986");
-        public static readonly Color FunBlue = ColorTranslator.FromHtml("#2196F3");
-        public static readonly Color DarkFunBlue = ColorTranslator.FromHtml("#1565C0");
-        public static readonly Color CeruleanBlue = ColorTranslator.FromHtml("#00B0FF");
-
-        // Accent colors
-        public static readonly Color EminencePurple = ColorTranslator.FromHtml("#EA88FC");
-        public static readonly Color DarkEminencePurple = ColorTranslator.FromHtml("#9C27B0");
-        public static readonly Color HollywoodPink = ColorTranslator.FromHtml("#FF4081");
-
-        // Grayscale colors
-        public static readonly Color ThunderGray = ColorTranslator.FromHtml("#1A1A1A");
-        public static readonly Color ShipGray = ColorTranslator.FromHtml("#424242");
-        public static readonly Color AbbeyGray = ColorTranslator.FromHtml("#616161");
-        public static readonly Color OsloGray = ColorTranslator.FromHtml("#9E9E9E");
-        public static readonly Color SilverSand = ColorTranslator.FromHtml("#BDBDBD");
-        public static readonly Color IronGray = ColorTranslator.FromHtml("#F5F5F5");
+        public static readonly Color Black = ColorTranslator.FromHtml("#000000");
+        public static readonly Color DarkBlue = ColorTranslator.FromHtml("#000070");
+        public static readonly Color DarkGreen = ColorTranslator.FromHtml("#004D00");
+        public static readonly Color DarkCyan = ColorTranslator.FromHtml("#005252");
+        public static readonly Color DarkMagenta = ColorTranslator.FromHtml("#800080");
+        public static readonly Color DarkYellow = ColorTranslator.FromHtml("#575700");
+        public static readonly Color Gray = ColorTranslator.FromHtml("#C2C2C2");
+        public static readonly Color DarkGray = ColorTranslator.FromHtml("#333333");
+        public static readonly Color Blue = ColorTranslator.FromHtml("#0000ff");
+        public static readonly Color LightBlue = ColorTranslator.FromHtml("#8A8AFF");
+        public static readonly Color Green = ColorTranslator.FromHtml("#00E600");
+        public static readonly Color Cyan = ColorTranslator.FromHtml("#00F5F5");
+        public static readonly Color Red = ColorTranslator.FromHtml("#B30000");
+        public static readonly Color Magenta = ColorTranslator.FromHtml("#FF75FF");
+        public static readonly Color Yellow = ColorTranslator.FromHtml("#F5F500");
+        public static readonly Color White = ColorTranslator.FromHtml("#ffffff");
     }
 }

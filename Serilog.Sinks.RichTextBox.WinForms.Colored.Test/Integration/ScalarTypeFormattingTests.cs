@@ -2,7 +2,7 @@ using Serilog.Events;
 using System.Globalization;
 using Xunit;
 
-namespace Serilog.Tests
+namespace Serilog.Tests.Integration
 {
     public class ScalarTypeFormattingTests : RichTextBoxSinkTestBase
     {
@@ -26,7 +26,7 @@ namespace Serilog.Tests
             var prop = new LogEventProperty("Scalar", new ScalarValue(scalarValue));
             var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{Scalar}"), new[] { prop });
 
-            string actual = RenderAndGetText(logEvent, "{Message}", CultureInfo.InvariantCulture);
+            var actual = RenderAndGetText(logEvent, "{Message}", CultureInfo.InvariantCulture);
 
             if (scalarValue is float || scalarValue is double || scalarValue is decimal)
             {
@@ -60,7 +60,7 @@ namespace Serilog.Tests
             var prop = new LogEventProperty("Scalar", new ScalarValue(scalarValue));
             var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{Scalar}"), new[] { prop });
 
-            string actual = RenderAndGetText(logEvent, "{Message:j}", CultureInfo.InvariantCulture);
+            var actual = RenderAndGetText(logEvent, "{Message:j}", CultureInfo.InvariantCulture);
 
             if (scalarValue is decimal decVal)
             {
@@ -101,7 +101,7 @@ namespace Serilog.Tests
             var prop = new LogEventProperty("DateTime", new ScalarValue(dateTime));
             var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{DateTime}"), new[] { prop });
 
-            string actual = RenderAndGetText(logEvent, "{Message}", new CultureInfo("en-US"));
+            var actual = RenderAndGetText(logEvent, "{Message}", new CultureInfo("en-US"));
             Assert.Equal("6/6/2025 12:09:55 PM", actual);
         }
 
@@ -112,7 +112,7 @@ namespace Serilog.Tests
             var prop = new LogEventProperty("DateTime", new ScalarValue(dateTime));
             var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{DateTime}"), new[] { prop });
 
-            string actual = RenderAndGetText(logEvent, "{Message}", new CultureInfo("de-DE"));
+            var actual = RenderAndGetText(logEvent, "{Message}", new CultureInfo("de-DE"));
             Assert.Equal("06.06.2025 12:09:55", actual);
         }
 
@@ -123,7 +123,7 @@ namespace Serilog.Tests
             var prop = new LogEventProperty("DateTimeOffset", new ScalarValue(dateTimeOffset));
             var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{DateTimeOffset}"), new[] { prop });
 
-            string actual = RenderAndGetText(logEvent, "{Message}", new CultureInfo("en-US"));
+            var actual = RenderAndGetText(logEvent, "{Message}", new CultureInfo("en-US"));
             Assert.Equal("6/6/2025 12:09:55 PM +02:00", actual);
         }
 
@@ -134,7 +134,7 @@ namespace Serilog.Tests
             var prop = new LogEventProperty("DateTimeOffset", new ScalarValue(dateTimeOffset));
             var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{DateTimeOffset}"), new[] { prop });
 
-            string actual = RenderAndGetText(logEvent, "{Message}", new CultureInfo("de-DE"));
+            var actual = RenderAndGetText(logEvent, "{Message}", new CultureInfo("de-DE"));
             Assert.Equal("06.06.2025 12:09:55 +02:00", actual);
         }
     }

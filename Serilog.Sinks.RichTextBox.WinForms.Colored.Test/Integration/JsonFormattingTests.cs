@@ -1,7 +1,7 @@
 using Serilog.Events;
 using Xunit;
 
-namespace Serilog.Tests
+namespace Serilog.Tests.Integration
 {
     public class JsonFormattingTests : RichTextBoxSinkTestBase
     {

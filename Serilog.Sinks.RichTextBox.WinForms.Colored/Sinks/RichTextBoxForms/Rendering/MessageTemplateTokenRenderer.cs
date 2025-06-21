@@ -1,4 +1,4 @@
-﻿#region Copyright 2022 Simon Vonhoff & Contributors
+﻿#region Copyright 2025 Simon Vonhoff & Contributors
 
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,9 +19,9 @@
 using Serilog.Events;
 using Serilog.Parsing;
 using Serilog.Sinks.RichTextBoxForms.Formatting;
+using Serilog.Sinks.RichTextBoxForms.Rtf;
 using Serilog.Sinks.RichTextBoxForms.Themes;
 using System;
-using System.Windows.Forms;
 
 namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
@@ -31,29 +31,8 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
 
         public MessageTemplateTokenRenderer(Theme theme, PropertyToken token, IFormatProvider? formatProvider)
         {
-            var isLiteral = false;
-            var isJson = false;
-
-            if (token.Format != null)
-            {
-                foreach (var format in token.Format)
-                {
-                    switch (format)
-                    {
-                        case 'l':
-                            {
-                                isLiteral = true;
-                                break;
-                            }
-
-                        case 'j':
-                            {
-                                isJson = true;
-                                break;
-                            }
-                    }
-                }
-            }
+            var isLiteral = token.Format?.Contains("l") == true;
+            var isJson = token.Format?.Contains("j") == true;
 
             ValueFormatter valueFormatter = isJson
                 ? new JsonValueFormatter(theme, formatProvider)
@@ -62,9 +41,9 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
             _renderer = new MessageTemplateRenderer(theme, valueFormatter, isLiteral);
         }
 
-        public void Render(LogEvent logEvent, RichTextBox richTextBox)
+        public void Render(LogEvent logEvent, IRtfCanvas canvas)
         {
-            _renderer.Render(logEvent.MessageTemplate, logEvent.Properties, richTextBox);
+            _renderer.Render(logEvent.MessageTemplate, logEvent.Properties, canvas);
         }
     }
 }

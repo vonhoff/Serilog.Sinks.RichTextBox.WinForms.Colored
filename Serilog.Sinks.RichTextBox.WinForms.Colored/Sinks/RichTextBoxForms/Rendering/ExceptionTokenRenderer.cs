@@ -1,4 +1,4 @@
-﻿#region Copyright 2022 Simon Vonhoff & Contributors
+﻿#region Copyright 2025 Simon Vonhoff & Contributors
 
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,10 +17,10 @@
 #endregion
 
 using Serilog.Events;
+using Serilog.Sinks.RichTextBoxForms.Rtf;
 using Serilog.Sinks.RichTextBoxForms.Themes;
 using System;
 using System.IO;
-using System.Windows.Forms;
 
 namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
@@ -34,9 +34,9 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
             _theme = theme;
         }
 
-        public void Render(LogEvent logEvent, RichTextBox richTextBox)
+        public void Render(LogEvent logEvent, IRtfCanvas canvas)
         {
-            if (logEvent.Exception is null)
+            if (logEvent.Exception == null)
             {
                 return;
             }
@@ -46,8 +46,8 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
             while (lines.ReadLine() is { } nextLine)
             {
                 var style = nextLine.StartsWith(StackFrameLinePrefix) ? StyleToken.SecondaryText : StyleToken.Text;
-                _theme.Render(richTextBox, style, nextLine);
-                richTextBox.AppendText(Environment.NewLine);
+                _theme.Render(canvas, style, nextLine);
+                canvas.AppendText(Environment.NewLine);
             }
         }
     }
