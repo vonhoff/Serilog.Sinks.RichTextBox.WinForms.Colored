@@ -16,19 +16,15 @@ A [Serilog](https://github.com/serilog/serilog) sink that writes log events to a
 - Auto-scrolling to latest messages
 - Line limiting to control memory usage
 - High-performance asynchronous processing
-- [WCAG compliant](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum) color schemes based on the [Serilog WPF RichTextBox](https://github.com/serilog-contrib/serilog-sinks-richtextbox) sink.
+- WCAG compliant color schemes based on the [Serilog WPF RichTextBox](https://github.com/serilog-contrib/serilog-sinks-richtextbox) sink.
 
-## Installation
+## Getting Started
 
 Install the package from NuGet:
 
 ```powershell
 Install-Package Serilog.Sinks.RichTextBox.WinForms.Colored
 ```
-
-## Usage
-
-### Basic Setup
 
 Declare your RichTextBox control:
 
@@ -45,7 +41,7 @@ private void InitializeComponent()
 }
 ```
 
-Configure the logger:
+Configure the logger to use the sink:
 
 ```csharp
 Log.Logger = new LoggerConfiguration()
@@ -55,27 +51,7 @@ Log.Logger = new LoggerConfiguration()
 Log.Information("Hello, world!");
 ```
 
-### Advanced Configuration
-
-You can customize the sink using various parameters from the RichTextBox extension method:
-
-```csharp
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.RichTextBox(
-        richTextBoxControl: richTextBox1,
-        theme: ThemePresets.Literate,
-        autoScroll: true,
-        maxLogLines: 250,
-        batchSize: 500,
-        flushInterval: 16,
-        queueCapacity: 1000,
-        outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}",
-        formatProvider: null,
-        minimumLogEventLevel: LogEventLevel.Verbose)
-    .CreateLogger();
-```
-
-### Themes
+## Themes
 
 Available built-in themes:
 
@@ -86,19 +62,9 @@ Available built-in themes:
 | `ThemePresets.Colored`      | A theme based on the original Serilog.Sinks.ColoredConsole sink              |
 | `ThemePresets.Luminous`     | A light theme with high contrast for accessibility                           |
 
-The themes based on the original sinks are slightly adjusted to be WCAG compliant, ensuring that the contrast ratio between text and background colors is at least 4.5:1.
-
-### Custom Themes
+The themes based on the original sinks are slightly adjusted to be [WCAG compliant](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum), ensuring that the contrast ratio between text and background colors is at least 4.5:1.
 
 You can create your own custom themes by creating a new instance of the [Theme](Serilog.Sinks.RichTextBox.WinForms.Colored/Sinks/RichTextBoxForms/Themes/Theme.cs) class and passing it to the `RichTextBox` extension method. Look at the [existing themes](Serilog.Sinks.RichTextBox.WinForms.Colored/Sinks/RichTextBoxForms/Themes/ThemePresets.cs) for examples.
-
-## Support and Contribute
-
-If you find value in this project, there are several ways you can contribute:
-
-- Give the [project](https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored) a star on GitHub ⭐
-- Support the project through [GitHub Sponsors](https://github.com/sponsors/vonhoff)
-- Improve documentation, report bugs, or submit pull requests
 
 ## Frequently Asked Questions
 
@@ -108,7 +74,15 @@ Shorter alternatives were already reserved in the NuGet registry, so a more desc
 
 ### Why use a WinForms RichTextBox instead of a WPF RichTextBox?
 
-This sink is specifically designed for WinForms applications to avoid unnecessary dependencies by avoiding the WPF framework. Using a WPF-based logging component would require adding the entire WPF framework with all its dependencies, greatly increasing the size of the application for a small logging feature.
+This sink is specifically designed for WinForms applications to avoid the WPF framework. Using a WPF-based logging component would require adding the entire WPF framework with all its dependencies, greatly increasing the size of the application.
+
+## Support and Contribute
+
+If you find value in this project, there are several ways you can contribute:
+
+- Give the [project](https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored) a star on GitHub ⭐
+- Support the project through [GitHub Sponsors](https://github.com/sponsors/vonhoff)
+- Improve documentation, report bugs, or submit pull requests
 
 ## License
 
