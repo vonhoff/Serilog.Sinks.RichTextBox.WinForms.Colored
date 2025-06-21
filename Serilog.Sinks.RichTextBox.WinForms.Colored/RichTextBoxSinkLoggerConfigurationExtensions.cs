@@ -39,8 +39,7 @@ namespace Serilog
         /// <param name="richTextBoxControl">The target <see cref="RichTextBox"/> instance that will display the log output.</param>
         /// <param name="theme">Optional theme controlling colours of individual message tokens. When <c>null</c>, <see cref="Serilog.Sinks.RichTextBoxForms.Themes.ThemePresets.Literate"/> is used.</param>
         /// <param name="autoScroll">When <c>true</c> (default) the control automatically scrolls to the newest log entry.</param>
-        /// <param name="maxLogLines">Maximum number of log events retained in the circular buffer and rendered in the control.</param>
-        /// <param name="flushInterval">Time in milliseconds after which buffered messages are flushed if the batch size is not reached.</param>
+        /// <param name="maxLogLines">Maximum number of log events retained in the circular buffer and rendered in the control. Must be between 1 and 1,024 (default: 256).</param>
         /// <param name="outputTemplate">Message template that controls the textual representation of each log event.</param>
         /// <param name="formatProvider">Culture-specific or custom formatting provider, or <c>null</c> to use the invariant culture.</param>
         /// <param name="minimumLogEventLevel">Minimum level below which events are ignored by this sink.</param>
@@ -52,7 +51,6 @@ namespace Serilog
             Theme? theme = null,
             bool autoScroll = true,
             int maxLogLines = 256,
-            double flushInterval = 500,
             string outputTemplate = OutputTemplate,
             IFormatProvider? formatProvider = null,
             LogEventLevel minimumLogEventLevel = LogEventLevel.Verbose,
@@ -60,7 +58,7 @@ namespace Serilog
         {
             var appliedTheme = theme ?? ThemePresets.Literate;
             var renderer = new TemplateRenderer(appliedTheme, outputTemplate, formatProvider);
-            var options = new RichTextBoxSinkOptions(appliedTheme, autoScroll, maxLogLines, flushInterval, outputTemplate, formatProvider);
+            var options = new RichTextBoxSinkOptions(appliedTheme, autoScroll, maxLogLines, outputTemplate, formatProvider);
             var sink = new RichTextBoxSink(richTextBoxControl, options, renderer);
             return sinkConfiguration.Sink(sink, minimumLogEventLevel, levelSwitch);
         }

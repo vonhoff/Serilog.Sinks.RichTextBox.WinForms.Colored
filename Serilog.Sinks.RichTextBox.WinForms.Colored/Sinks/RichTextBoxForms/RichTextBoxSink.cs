@@ -31,6 +31,7 @@ namespace Serilog.Sinks.RichTextBoxForms
 {
     public class RichTextBoxSink : ILogEventSink, IDisposable
     {
+        private const int FlushIntervalMs = 125;
         private readonly ConcurrentCircularBuffer<LogEvent> _buffer;
         private readonly AutoResetEvent _signal;
         private readonly RichTextBoxSinkOptions _options;
@@ -77,10 +78,10 @@ namespace Serilog.Sinks.RichTextBoxForms
         public void Emit(LogEvent logEvent)
         {
             _buffer.Add(logEvent);
-            if (Interlocked.Exchange(ref _hasNewMessages, 1) == 0)
-            {
-                _signal.Set();
-            }
+            Interlocked.Exchange(ref _hasNewMessages, 1);
+
+            // Signal the processing task that there are new messages to process
+            _signal.Set();
         }
 
         private void ProcessMessages(CancellationToken token)
@@ -88,10 +89,11 @@ namespace Serilog.Sinks.RichTextBoxForms
             var builder = new RtfBuilder(_options.Theme);
             var snapshot = new System.Collections.Generic.List<LogEvent>(_options.MaxLogLines);
             var lastFlush = DateTime.UtcNow;
+            var flushInterval = TimeSpan.FromMilliseconds(FlushIntervalMs);
 
             while (!token.IsCancellationRequested)
             {
-                _signal.WaitOne(_options.FlushInterval);
+                _signal.WaitOne(flushInterval);
                 if (Interlocked.CompareExchange(ref _hasNewMessages, 1, 1) == 0)
                 {
                     continue;
@@ -99,12 +101,11 @@ namespace Serilog.Sinks.RichTextBoxForms
 
                 var now = DateTime.UtcNow;
                 var elapsed = now - lastFlush;
-                if (elapsed < _options.FlushInterval)
+                if (elapsed < flushInterval)
                 {
                     continue;
                 }
 
-                Interlocked.Exchange(ref _hasNewMessages, 0);
                 _buffer.TakeSnapshot(snapshot);
                 builder.Clear();
                 foreach (var evt in snapshot)
@@ -113,6 +114,8 @@ namespace Serilog.Sinks.RichTextBoxForms
                 }
 
                 _richTextBox.SetRtf(builder.Rtf, _options.AutoScroll);
+                Interlocked.Exchange(ref _hasNewMessages, 0);
+
                 lastFlush = now;
             }
         }
