@@ -54,69 +54,39 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
         private static extern IntPtr SendMessage(IntPtr hWnd, int wMsg, int wParam, ref Point lParam);
 #endif
 
-        public static void AppendRtf(this RichTextBox richTextBox, string rtf, bool autoScroll, int maxLogLines)
+        public static void SetRtf(this RichTextBox richTextBox, string rtf, bool autoScroll)
         {
             if (richTextBox.InvokeRequired)
             {
-                richTextBox.BeginInvoke(new Action(() => AppendRtfInternal(richTextBox, rtf, autoScroll, maxLogLines)));
+                richTextBox.BeginInvoke(new Action(() => SetRtfInternal(richTextBox, rtf, autoScroll)));
                 return;
             }
 
-            AppendRtfInternal(richTextBox, rtf, autoScroll, maxLogLines);
+            SetRtfInternal(richTextBox, rtf, autoScroll);
         }
 
-        private static void AppendRtfInternal(RichTextBox richTextBox, string rtf, bool autoScroll, int maxLogLines)
+        private static void SetRtfInternal(RichTextBox richTextBox, string rtf, bool autoScroll)
         {
             richTextBox.Suspend();
-            richTextBox.ReadOnly = false;
 
             var scrollPoint = new Point();
-            var previousStart = richTextBox.SelectionStart;
-            var previousLength = richTextBox.SelectionLength;
 
             if (!autoScroll)
             {
                 SendMessage(richTextBox.Handle, EM_GETSCROLLPOS, 0, ref scrollPoint);
             }
 
-            richTextBox.SelectionStart = richTextBox.TextLength;
-            richTextBox.SelectedRtf = rtf;
-
-            // Avoid using the richTextBox.Lines property on every append as it allocates
-            // a new string array for the entire document and leads to excessive GC pressure
-            // under heavy logging. Instead, rely on WinForms helpers that do not allocate.
-            var currentLineCount = richTextBox.GetLineFromCharIndex(richTextBox.TextLength) + 1;
-            if (currentLineCount > maxLogLines)
-            {
-                var linesToRemove = currentLineCount - maxLogLines;
-
-                // `GetFirstCharIndexFromLine` returns the character index for the first character
-                // in the specified line. By asking for the first line after the removal range
-                // we get the exact character offset to trim.
-                var charsToRemove = richTextBox.GetFirstCharIndexFromLine(linesToRemove);
-                if (charsToRemove > 0)
-                {
-                    richTextBox.SelectionStart = 0;
-                    richTextBox.SelectionLength = charsToRemove;
-                    richTextBox.SelectedText = string.Empty;
-                    previousStart = 0;
-                    previousLength = 0;
-                }
-            }
+            richTextBox.Rtf = rtf;
 
             if (!autoScroll)
             {
-                richTextBox.SelectionStart = previousStart;
-                richTextBox.SelectionLength = previousLength;
                 SendMessage(richTextBox.Handle, EM_SETSCROLLPOS, 0, ref scrollPoint);
             }
             else
             {
                 SendMessage(richTextBox.Handle, WM_VSCROLL, (IntPtr)SB_PAGEBOTTOM, IntPtr.Zero);
-                richTextBox.SelectionStart = richTextBox.Text.Length;
             }
 
-            richTextBox.ReadOnly = true;
             richTextBox.Resume();
         }
     }

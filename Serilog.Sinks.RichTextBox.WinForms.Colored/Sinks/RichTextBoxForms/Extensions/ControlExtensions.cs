@@ -30,18 +30,14 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
 
         public static void Resume(this Control control)
         {
-            var resumeUpdateMessage = Message.Create(control.Handle, WM_SETREDRAW, new IntPtr(1),
-                IntPtr.Zero);
-
+            var resumeUpdateMessage = Message.Create(control.Handle, WM_SETREDRAW, new IntPtr(1), IntPtr.Zero);
             InvokeWindowProcedure(control, ref resumeUpdateMessage);
             control.Refresh();
         }
 
         public static void Suspend(this Control control)
         {
-            var suspendUpdateMessage = Message.Create(control.Handle, WM_SETREDRAW, IntPtr.Zero,
-                IntPtr.Zero);
-
+            var suspendUpdateMessage = Message.Create(control.Handle, WM_SETREDRAW, IntPtr.Zero, IntPtr.Zero);
             InvokeWindowProcedure(control, ref suspendUpdateMessage);
         }
 

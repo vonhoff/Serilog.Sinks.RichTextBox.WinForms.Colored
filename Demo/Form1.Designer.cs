@@ -29,8 +29,6 @@
         private void InitializeComponent()
         {
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.btnClear = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.btnVerbose = new System.Windows.Forms.ToolStripButton();
             this.btnDebug = new System.Windows.Forms.ToolStripButton();
             this.btnInformation = new System.Windows.Forms.ToolStripButton();
@@ -53,9 +51,6 @@
             this.btnReset = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.btnAutoScroll = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
-            this.lblMaxLines = new System.Windows.Forms.ToolStripLabel();
-            this.txtMaxLines = new System.Windows.Forms.ToolStripTextBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.toolStrip1.SuspendLayout();
@@ -67,8 +62,6 @@
             // 
             this.toolStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnClear,
-            this.toolStripSeparator3,
             this.btnVerbose,
             this.btnDebug,
             this.btnInformation,
@@ -84,20 +77,6 @@
             this.toolStrip1.Size = new System.Drawing.Size(1035, 25);
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
-            // 
-            // btnClear
-            // 
-            this.btnClear.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(38, 22);
-            this.btnClear.Text = "Clear";
-            this.btnClear.ToolTipText = "Clear the log output";
-            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
-            // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
             // 
             // btnVerbose
             // 
@@ -162,18 +141,18 @@
             // 
             this.btnParallelFor.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.btnParallelFor.Name = "btnParallelFor";
-            this.btnParallelFor.Size = new System.Drawing.Size(106, 22);
-            this.btnParallelFor.Text = "Parallel.For(100*6)";
-            this.btnParallelFor.ToolTipText = "Demonstrate parallel logging with 600 messages";
+            this.btnParallelFor.Size = new System.Drawing.Size(112, 22);
+            this.btnParallelFor.Text = "Parallel.For(1000*6)";
+            this.btnParallelFor.ToolTipText = "Demonstrate parallel logging with 6000 messages";
             this.btnParallelFor.Click += new System.EventHandler(this.btnParallelFor_Click);
             // 
             // btnTaskRun
             // 
             this.btnTaskRun.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.btnTaskRun.Name = "btnTaskRun";
-            this.btnTaskRun.Size = new System.Drawing.Size(95, 22);
-            this.btnTaskRun.Text = "Task.Run(100*6)";
-            this.btnTaskRun.ToolTipText = "Demonstrate async logging with 600 messages";
+            this.btnTaskRun.Size = new System.Drawing.Size(101, 22);
+            this.btnTaskRun.Text = "Task.Run(1000*6)";
+            this.btnTaskRun.ToolTipText = "Demonstrate async logging with 6000 messages";
             this.btnTaskRun.Click += new System.EventHandler(this.btnTaskRun_Click);
             // 
             // toolStrip2
@@ -191,10 +170,7 @@
             this.toolStripSeparator5,
             this.btnReset,
             this.toolStripSeparator6,
-            this.btnAutoScroll,
-            this.toolStripSeparator7,
-            this.lblMaxLines,
-            this.txtMaxLines});
+            this.btnAutoScroll});
             this.toolStrip2.Location = new System.Drawing.Point(0, 25);
             this.toolStrip2.Name = "toolStrip2";
             this.toolStrip2.Padding = new System.Windows.Forms.Padding(3, 0, 3, 0);
@@ -294,27 +270,6 @@
             this.btnAutoScroll.ToolTipText = "Toggle auto-scroll behavior";
             this.btnAutoScroll.Click += new System.EventHandler(this.btnAutoScroll_Click);
             // 
-            // toolStripSeparator7
-            // 
-            this.toolStripSeparator7.Name = "toolStripSeparator7";
-            this.toolStripSeparator7.Size = new System.Drawing.Size(6, 25);
-            // 
-            // lblMaxLines
-            // 
-            this.lblMaxLines.Name = "lblMaxLines";
-            this.lblMaxLines.Size = new System.Drawing.Size(62, 22);
-            this.lblMaxLines.Text = "Max Lines:";
-            // 
-            // txtMaxLines
-            // 
-            this.txtMaxLines.AutoSize = false;
-            this.txtMaxLines.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.txtMaxLines.Name = "txtMaxLines";
-            this.txtMaxLines.Size = new System.Drawing.Size(43, 23);
-            this.txtMaxLines.Text = "250";
-            this.txtMaxLines.ToolTipText = "Set maximum number of log lines (1-1000)";
-            this.txtMaxLines.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtMaxLines_KeyDown);
-            // 
             // panel1
             // 
             this.panel1.Controls.Add(this.richTextBox1);
@@ -366,7 +321,6 @@
         private System.Windows.Forms.ToolStrip toolStrip2;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.RichTextBox richTextBox1;
-        private System.Windows.Forms.ToolStripButton btnClear;
         private System.Windows.Forms.ToolStripButton btnVerbose;
         private System.Windows.Forms.ToolStripButton btnDebug;
         private System.Windows.Forms.ToolStripButton btnInformation;
@@ -388,9 +342,5 @@
         private System.Windows.Forms.ToolStripButton btnReset;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripButton btnAutoScroll;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
-        private System.Windows.Forms.ToolStripLabel lblMaxLines;
-        private System.Windows.Forms.ToolStripTextBox txtMaxLines;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
     }
 }

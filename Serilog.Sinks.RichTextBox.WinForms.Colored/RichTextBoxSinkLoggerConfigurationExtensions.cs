@@ -32,26 +32,27 @@ namespace Serilog
         private const string OutputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
 
         /// <summary>
-        ///     Writes log events to a RichTextBox control.
+        /// Adds a sink that writes log events to the specified Windows Forms <see cref="RichTextBox"/>
+        /// using colour-coded rich-text formatting.
         /// </summary>
-        /// <param name="sinkConfiguration">Logger sink config.</param>
-        /// <param name="richTextBoxControl">The RichTextBox to write to.</param>
-        /// <param name="minimumLogEventLevel">Minimum event level (ignored if levelSwitch is set).</param>
-        /// <param name="outputTemplate">
-        ///     Message format (default: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}").
-        /// </param>
-        /// <param name="formatProvider">Culture-specific formatting (null for default).</param>
-        /// <param name="levelSwitch">Allows runtime level change.</param>
-        /// <param name="theme">Output theme (default: Literate).</param>
-        /// <param name="autoScroll">Auto-scroll to bottom for new messages.</param>
-        /// <param name="maxLogLines">Maximum number of lines to keep.</param>
-        /// <returns>Config object for chaining.</returns>
+        /// <param name="sinkConfiguration">The logger sink configuration this extension method operates on.</param>
+        /// <param name="richTextBoxControl">The target <see cref="RichTextBox"/> instance that will display the log output.</param>
+        /// <param name="theme">Optional theme controlling colours of individual message tokens. When <c>null</c>, <see cref="Serilog.Sinks.RichTextBoxForms.Themes.ThemePresets.Literate"/> is used.</param>
+        /// <param name="autoScroll">When <c>true</c> (default) the control automatically scrolls to the newest log entry.</param>
+        /// <param name="maxLogLines">Maximum number of log events retained in the circular buffer and rendered in the control.</param>
+        /// <param name="flushInterval">Time in milliseconds after which buffered messages are flushed if the batch size is not reached.</param>
+        /// <param name="outputTemplate">Message template that controls the textual representation of each log event.</param>
+        /// <param name="formatProvider">Culture-specific or custom formatting provider, or <c>null</c> to use the invariant culture.</param>
+        /// <param name="minimumLogEventLevel">Minimum level below which events are ignored by this sink.</param>
+        /// <param name="levelSwitch">Optional switch allowing the minimum log level to be changed at runtime.</param>
+        /// <returns>A <see cref="LoggerConfiguration"/> object that can be further configured.</returns>
         public static LoggerConfiguration RichTextBox(
             this LoggerSinkConfiguration sinkConfiguration,
             RichTextBox richTextBoxControl,
             Theme? theme = null,
             bool autoScroll = true,
             int maxLogLines = 256,
+            double flushInterval = 83.34,
             string outputTemplate = OutputTemplate,
             IFormatProvider? formatProvider = null,
             LogEventLevel minimumLogEventLevel = LogEventLevel.Verbose,
@@ -59,12 +60,7 @@ namespace Serilog
         {
             var appliedTheme = theme ?? ThemePresets.Literate;
             var renderer = new TemplateRenderer(appliedTheme, outputTemplate, formatProvider);
-            var options = new RichTextBoxSinkOptions(
-                appliedTheme,
-                autoScroll,
-                maxLogLines,
-                outputTemplate,
-                formatProvider);
+            var options = new RichTextBoxSinkOptions(appliedTheme, autoScroll, maxLogLines, flushInterval, outputTemplate, formatProvider);
             var sink = new RichTextBoxSink(richTextBoxControl, options, renderer);
             return sinkConfiguration.Sink(sink, minimumLogEventLevel, levelSwitch);
         }

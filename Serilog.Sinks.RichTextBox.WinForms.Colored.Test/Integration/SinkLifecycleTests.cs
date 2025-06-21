@@ -15,7 +15,7 @@ namespace Serilog.Tests.Integration
             var testOptions = new RichTextBoxSinkOptions(
                 theme: ThemePresets.Literate,
                 autoScroll: true,
-                maxLogLines: 1000
+                maxLogLines: 100
             );
 
             var testSink = new RichTextBoxSink(testRichTextBox, testOptions);

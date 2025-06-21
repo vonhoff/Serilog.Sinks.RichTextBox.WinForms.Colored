@@ -18,6 +18,8 @@ A [Serilog](https://github.com/serilog/serilog) sink that writes log events to a
 - High-performance asynchronous processing
 - WCAG compliant color schemes based on the [Serilog WPF RichTextBox](https://github.com/serilog-contrib/serilog-sinks-richtextbox) sink.
 
+This RichTextBox sink is ideal for real-time, in-memory display. For persistent logging, pair this sink with a Serilog file sink.
+
 ## Get Started
 
 Install the package from NuGet:
@@ -68,6 +70,14 @@ The themes based on the original sinks are slightly adjusted to be [WCAG complia
 
 You can create your own custom themes by creating a new instance of the [Theme](Serilog.Sinks.RichTextBox.WinForms.Colored/Sinks/RichTextBoxForms/Themes/Theme.cs) class and passing it to the `RichTextBox` extension method. Look at the [existing themes](Serilog.Sinks.RichTextBox.WinForms.Colored/Sinks/RichTextBoxForms/Themes/ThemePresets.cs) for examples.
 
+## Support and Contribute
+
+If you find value in this project, there are several ways you can contribute:
+
+- Give the [project](https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored) a star on GitHub ⭐
+- Support the project through [GitHub Sponsors](https://github.com/sponsors/vonhoff)
+- Improve documentation, report bugs, or submit pull requests
+
 ## Frequently Asked Questions
 
 ### Why is the package name so long?
@@ -77,14 +87,6 @@ Shorter alternatives were already reserved in the NuGet registry, so a more desc
 ### Why use a WinForms RichTextBox instead of a WPF RichTextBox?
 
 This sink is specifically designed for WinForms applications to avoid the WPF framework. Using a WPF-based logging component would require adding the entire WPF framework with all its dependencies, greatly increasing the size of the application.
-
-## Support and Contribute
-
-If you find value in this project, there are several ways you can contribute:
-
-- Give the [project](https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored) a star on GitHub ⭐
-- Support the project through [GitHub Sponsors](https://github.com/sponsors/vonhoff)
-- Improve documentation, report bugs, or submit pull requests
 
 ## License
 

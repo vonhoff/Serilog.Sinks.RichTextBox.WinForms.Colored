@@ -22,12 +22,9 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
         {
             _selectionColor = theme.DefaultStyle.Foreground;
             _selectionBackColor = theme.DefaultStyle.Background;
-
-            // Register default colours first so that they get low palette indexes (1 and 2).
             _currentFgIndex = RegisterColor(_selectionColor);
             _currentBgIndex = RegisterColor(_selectionBackColor);
 
-            // Pre-register every colour referenced by the theme
             foreach (var colour in theme.Colors)
             {
                 RegisterColor(colour);
@@ -111,43 +108,28 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
                 return;
             }
 
-            int segmentStart = 0;
-            for (int i = 0; i < value.Length; i++)
+            var segmentStart = 0;
+            for (var i = 0; i < value.Length; i++)
             {
-                char ch = value[i];
-                string? replacement = ch switch
-                {
-                    '\\' => "\\\\",
-                    '{' => "\\{",
-                    '}' => "\\}",
-                    '\n' => "\\par\r\n",
-                    '\r' => string.Empty,
-                    _ => null
-                };
-
-                // Non-ASCII characters need to be escaped using their UTF-16 code unit.
-                if (replacement is null && ch > 0x7f)
+                var ch = value[i];
+                if (ch > 0x7f || ch == '\\' || ch == '{' || ch == '}' || ch == '\n' || ch == '\r')
                 {
                     if (i > segmentStart)
                     {
                         _body.Append(value, segmentStart, i - segmentStart);
                     }
 
-                    _body.Append("\\u").Append((int)ch).Append('?');
-                    segmentStart = i + 1;
-                    continue;
-                }
-
-                if (replacement is not null)
-                {
-                    if (i > segmentStart)
+                    if (ch > 0x7f)
                     {
-                        _body.Append(value, segmentStart, i - segmentStart);
+                        _body.Append("\\u").Append((int)ch).Append('?');
                     }
-
-                    if (replacement.Length > 0)
+                    else if (ch == '\\' || ch == '{' || ch == '}')
                     {
-                        _body.Append(replacement);
+                        _body.Append('\\').Append(ch);
+                    }
+                    else if (ch == '\n')
+                    {
+                        _body.Append("\\par\r\n");
                     }
 
                     segmentStart = i + 1;
@@ -190,6 +172,19 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
         public void Clear()
         {
             _body.Clear();
+
+            // Prevent unbounded memory retention by the underlying StringBuilder.
+            // When very large log batches have been rendered, the StringBuilder can
+            // grow to hundreds of kilobytes or even megabytes. Although Clear()
+            // resets its length, the backing buffer (Capacity) is retained which
+            // keeps the memory alive until the next Gen-2 GC collection, causing
+            // memory bloat and noticeable GC pauses.
+            const int MaxRetainedBuilderSize = 64 * 1024;
+            if (_body.Capacity > MaxRetainedBuilderSize)
+            {
+                _body.Capacity = MaxRetainedBuilderSize;
+            }
+
             _textLength = 0;
         }
     }

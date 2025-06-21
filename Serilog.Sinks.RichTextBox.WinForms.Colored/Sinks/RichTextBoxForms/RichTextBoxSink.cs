@@ -18,12 +18,11 @@
 
 using Serilog.Core;
 using Serilog.Events;
+using Serilog.Sinks.RichTextBoxForms.Collections;
 using Serilog.Sinks.RichTextBoxForms.Extensions;
 using Serilog.Sinks.RichTextBoxForms.Rendering;
 using Serilog.Sinks.RichTextBoxForms.Rtf;
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -32,13 +31,15 @@ namespace Serilog.Sinks.RichTextBoxForms
 {
     public class RichTextBoxSink : ILogEventSink, IDisposable
     {
-        private readonly BlockingCollection<LogEvent> _messageQueue;
+        private readonly ConcurrentCircularBuffer<LogEvent> _buffer;
+        private readonly AutoResetEvent _signal;
         private readonly RichTextBoxSinkOptions _options;
         private readonly ITokenRenderer _renderer;
         private readonly RichTextBox _richTextBox;
         private readonly CancellationTokenSource _tokenSource;
         private readonly Task _processingTask;
         private bool _disposed;
+        private int _hasNewMessages;
 
         public RichTextBoxSink(RichTextBox richTextBox, RichTextBoxSinkOptions options, ITokenRenderer? renderer = null)
         {
@@ -46,7 +47,10 @@ namespace Serilog.Sinks.RichTextBoxForms
             _richTextBox = richTextBox;
             _renderer = renderer ?? new TemplateRenderer(options.Theme, options.OutputTemplate, options.FormatProvider);
             _tokenSource = new CancellationTokenSource();
-            _messageQueue = new BlockingCollection<LogEvent>(_options.MaxLogLines);
+
+            _buffer = new ConcurrentCircularBuffer<LogEvent>(options.MaxLogLines);
+            _signal = new AutoResetEvent(false);
+            _hasNewMessages = 0;
 
             richTextBox.Clear();
             richTextBox.ReadOnly = true;
@@ -54,78 +58,51 @@ namespace Serilog.Sinks.RichTextBoxForms
             richTextBox.ForeColor = options.Theme.DefaultStyle.Foreground;
             richTextBox.BackColor = options.Theme.DefaultStyle.Background;
 
-            _processingTask = Task.Run(() => ProcessMessages(_tokenSource.Token), _tokenSource.Token);
+            _processingTask = Task.Run(() => ProcessMessages(_tokenSource.Token));
         }
 
         public void Dispose()
         {
-            if (_disposed)
-            {
-                return;
-            }
+            if (_disposed) return;
 
             _disposed = true;
-            _messageQueue.CompleteAdding();
             _tokenSource.Cancel();
-
-            try
-            {
-                _processingTask.Wait(TimeSpan.FromSeconds(5));
-            }
-            catch (OperationCanceledException)
-            {
-            }
-            catch (AggregateException ex) when (ex.InnerExceptions.Count == 1 && ex.InnerExceptions[0] is TaskCanceledException)
-            {
-            }
-
+            _signal.Set();
+            _processingTask.Wait();
+            _signal.Dispose();
             _tokenSource.Dispose();
             GC.SuppressFinalize(this);
         }
 
         public void Emit(LogEvent logEvent)
         {
-            if (_disposed)
-            {
-                throw new ObjectDisposedException(nameof(RichTextBoxSink));
-            }
-
-            while (!_messageQueue.TryAdd(logEvent))
-            {
-                _messageQueue.TryTake(out _);
-            }
+            _buffer.Add(logEvent);
+            Interlocked.Exchange(ref _hasNewMessages, 1);
+            _signal.Set();
         }
 
         private void ProcessMessages(CancellationToken token)
         {
-            var logEvents = new List<LogEvent>(_options.MaxLogLines);
             var builder = new RtfBuilder(_options.Theme);
+            var snapshot = new System.Collections.Generic.List<LogEvent>(_options.MaxLogLines);
 
             while (!token.IsCancellationRequested)
             {
-                if (_messageQueue.TryTake(out var logEvent, -1, token))
+                _signal.WaitOne(_options.FlushInterval);
+
+                if (Interlocked.Exchange(ref _hasNewMessages, 0) == 0)
                 {
-                    logEvents.Add(logEvent);
-                    while (_messageQueue.TryTake(out logEvent))
-                    {
-                        logEvents.Add(logEvent);
-                    }
-
-                    var startIndex = Math.Max(0, logEvents.Count - _options.MaxLogLines);
-                    for (var i = startIndex; i < logEvents.Count; i++)
-                    {
-                        _renderer.Render(logEvents[i], builder);
-                    }
-
-                    _richTextBox.AppendRtf(builder.Rtf, _options.AutoScroll, _options.MaxLogLines);
-                    builder.Clear();
-                    logEvents.Clear();
+                    continue;
                 }
 
-                if (_messageQueue.IsCompleted)
+                _buffer.TakeSnapshot(snapshot);
+                builder.Clear();
+                foreach (var evt in snapshot)
                 {
-                    break;
+                    _renderer.Render(evt, builder);
                 }
+
+                _richTextBox.SetRtf(builder.Rtf, _options.AutoScroll);
             }
         }
     }

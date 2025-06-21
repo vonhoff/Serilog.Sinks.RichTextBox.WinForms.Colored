@@ -25,17 +25,30 @@ namespace Serilog.Sinks.RichTextBoxForms
     {
         private const string DefaultOutputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
         private int _maxLogLines;
+        private TimeSpan _flushInterval;
 
+        /// <summary>
+        /// Creates a new collection of options that control the behaviour and appearance of a
+        /// <see cref="RichTextBoxSink"/> instance.
+        /// </summary>
+        /// <param name="theme">The colour theme applied when rendering individual message tokens.</param>
+        /// <param name="autoScroll">When <c>true</c> (default) the target control scrolls automatically to the most recent log line.</param>
+        /// <param name="maxLogLines">Maximum number of log events retained in the in-memory circular buffer and rendered in the control.</param>
+        /// <param name="flushInterval">Timeout, in milliseconds, after which buffered events are flushed to the control if a batch has not yet been triggered.</param>
+        /// <param name="outputTemplate">Serilog output template that controls textual formatting of each log event.</param>
+        /// <param name="formatProvider">Optional culture-specific or custom formatting provider used when rendering scalar values; <c>null</c> for the invariant culture.</param>
         public RichTextBoxSinkOptions(
             Theme theme,
             bool autoScroll = true,
             int maxLogLines = 256,
+            double flushInterval = 83.34,
             string outputTemplate = DefaultOutputTemplate,
             IFormatProvider? formatProvider = null)
         {
             AutoScroll = autoScroll;
             Theme = theme;
             MaxLogLines = maxLogLines;
+            FlushInterval = TimeSpan.FromMilliseconds(flushInterval);
             OutputTemplate = outputTemplate;
             FormatProvider = formatProvider;
         }
@@ -47,7 +60,13 @@ namespace Serilog.Sinks.RichTextBoxForms
         public int MaxLogLines
         {
             get => _maxLogLines;
-            set => _maxLogLines = value > 0 ? value : 256;
+            set => _maxLogLines = value > 3 ? value : 128;
+        }
+
+        public TimeSpan FlushInterval
+        {
+            get => _flushInterval;
+            set => _flushInterval = value > TimeSpan.FromMilliseconds(8.34) ? value : TimeSpan.FromMilliseconds(83.34);
         }
 
         public string OutputTemplate { get; set; }

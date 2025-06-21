@@ -55,7 +55,6 @@ namespace Demo
 
             Log.Debug("Started logger.");
             btnDispose.Enabled = true;
-            txtMaxLines.Text = _options.MaxLogLines.ToString();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -93,11 +92,6 @@ namespace Demo
         {
             Log.Debug("Dispose requested.");
             Log.CloseAndFlush();
-        }
-
-        private void btnClear_Click(object sender, EventArgs e)
-        {
-            richTextBox1.Clear();
         }
 
         private void btnDebug_Click(object sender, EventArgs e)
@@ -152,7 +146,7 @@ namespace Demo
 
         private void btnParallelFor_Click(object sender, EventArgs e)
         {
-            for (var stepNumber = 1; stepNumber <= 100; stepNumber++)
+            for (var stepNumber = 1; stepNumber <= 1000; stepNumber++)
             {
                 Log.Verbose("Processing batch item Step {StepNumber:000} - Status: {Status}", stepNumber, "InProgress");
                 Log.Debug("Batch processing metrics for Step {StepNumber:000} - Duration: {Duration}ms", stepNumber, 150);
@@ -167,7 +161,7 @@ namespace Demo
         {
             var tasks = new List<Task>();
 
-            for (var i = 1; i <= 100; i++)
+            for (var i = 1; i <= 1000; i++)
             {
                 var stepNumber = i;
                 var task = Task.Run(() =>
@@ -332,31 +326,6 @@ namespace Demo
 
             _options.AutoScroll = !_options.AutoScroll;
             btnAutoScroll.Text = _options.AutoScroll ? "Disable Auto Scroll" : "Enable Auto Scroll";
-        }
-
-        private void txtMaxLines_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode != Keys.Enter)
-            {
-                return;
-            }
-
-            if (!int.TryParse(txtMaxLines.Text, out var newLimit))
-            {
-                return;
-            }
-
-            newLimit = Math.Max(1, Math.Min(1000, newLimit));
-
-            if (_options != null)
-            {
-                _options.MaxLogLines = newLimit;
-                Log.Information("Log line limit set to {lineLimit}", newLimit);
-            }
-
-            txtMaxLines.Text = newLimit.ToString();
-
-            e.SuppressKeyPress = true; // prevent ding sound
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
