@@ -60,7 +60,7 @@ namespace Serilog.Sinks.RichTextBoxForms
             private set => _maxLogLines = value switch
             {
                 < 1 => 1,
-                > 512 => 512,
+                > 2048 => 2048,
                 _ => value
             };
         }
