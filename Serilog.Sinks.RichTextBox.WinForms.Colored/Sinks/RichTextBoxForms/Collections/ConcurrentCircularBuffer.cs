@@ -4,12 +4,11 @@ namespace Serilog.Sinks.RichTextBoxForms.Collections
 {
     internal sealed class ConcurrentCircularBuffer<T>
     {
+        private readonly object _sync = new();
         private readonly T[] _buffer;
         private readonly int _capacity;
         private int _head;
         private int _count;
-
-        private readonly object _sync = new();
 
         public ConcurrentCircularBuffer(int capacity)
         {
@@ -21,7 +20,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Collections
         {
             lock (_sync)
             {
-                int tail = _head + _count;
+                var tail = _head + _count;
                 if (tail >= _capacity) 
                 {
                     tail -= _capacity;
@@ -49,9 +48,9 @@ namespace Serilog.Sinks.RichTextBoxForms.Collections
             {
                 target.Clear();
 
-                for (int i = 0; i < _count; ++i)
+                for (var i = 0; i < _count; ++i)
                 {
-                    int index = _head + i;
+                    var index = _head + i;
                     if (index >= _capacity) 
                     {
                         index -= _capacity;
