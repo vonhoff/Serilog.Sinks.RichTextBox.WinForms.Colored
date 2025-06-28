@@ -7,6 +7,7 @@ This minor release focuses on config improvements and performance optimization.
 ### What Changed
 
 - Adjusted MaxLogLines limit From 512 to 2048 lines.
+- Fixed a bug where the RichTextBox would not persist the zoom factor.
 - Optimized the Concurrent Circular Buffer
 
 ### Resources

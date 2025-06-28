@@ -25,6 +25,7 @@
 		<Version>3.0.1</Version>
 		<PackageReleaseNotes>
 			- Adjusted MaxLogLines constraint from 512 to 2048 lines.
+			- Fixed bug where the RTB control would not persist the zoom factor.
 			- Minor improvements to the concurrent circular buffer.
 
 			See repository for more information:
