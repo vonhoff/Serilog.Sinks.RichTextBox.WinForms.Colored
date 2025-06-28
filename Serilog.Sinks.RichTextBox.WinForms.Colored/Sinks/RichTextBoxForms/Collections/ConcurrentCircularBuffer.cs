@@ -21,7 +21,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Collections
             lock (_sync)
             {
                 var tail = _head + _count;
-                if (tail >= _capacity) 
+                if (tail >= _capacity)
                 {
                     tail -= _capacity;
                 }
@@ -29,15 +29,14 @@ namespace Serilog.Sinks.RichTextBoxForms.Collections
                 _buffer[tail] = item;
                 if (_count == _capacity)
                 {
-                    _head++;
-                    if (_head == _capacity) 
+                    if (++_head == _capacity)
                     {
                         _head = 0;
                     }
                 }
                 else
                 {
-                    _count++;
+                    ++_count;
                 }
             }
         }
@@ -51,7 +50,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Collections
                 for (var i = 0; i < _count; ++i)
                 {
                     var index = _head + i;
-                    if (index >= _capacity) 
+                    if (index >= _capacity)
                     {
                         index -= _capacity;
                     }
