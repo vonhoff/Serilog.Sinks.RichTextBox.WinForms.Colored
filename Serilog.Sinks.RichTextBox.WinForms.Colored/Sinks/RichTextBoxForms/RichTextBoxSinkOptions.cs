@@ -32,8 +32,7 @@ namespace Serilog.Sinks.RichTextBoxForms
         /// </summary>
         /// <param name="theme">The colour theme applied when rendering individual message tokens.</param>
         /// <param name="autoScroll">When <c>true</c> (default) the target control scrolls automatically to the most recent log line.</param>
-        /// <param name="maxLogLines">Maximum number of log events retained in the in-memory circular buffer and rendered in the control. Must be between 1 and 2048 (default: 256).</param>
-        /// <param name="flushInterval">Timeout, in milliseconds, after which buffered events are flushed to the control if a batch has not yet been triggered. Must be between 250ms and 30 seconds (default: 500ms).</param>
+        /// <param name="maxLogLines">Maximum number of log events retained in the in-memory circular buffer and rendered in the control.</param>
         /// <param name="outputTemplate">Serilog output template that controls textual formatting of each log event.</param>
         /// <param name="formatProvider">Optional culture-specific or custom formatting provider used when rendering scalar values; <c>null</c> for the invariant culture.</param>
         public RichTextBoxSinkOptions(
