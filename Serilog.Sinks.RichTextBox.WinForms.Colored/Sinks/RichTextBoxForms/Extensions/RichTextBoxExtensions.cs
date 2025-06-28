@@ -68,7 +68,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
         private static void SetRtfInternal(RichTextBox richTextBox, string rtf, bool autoScroll)
         {
             richTextBox.Suspend();
-
+            var originalZoomFactor = richTextBox.ZoomFactor;
             var scrollPoint = new Point();
 
             if (!autoScroll)
@@ -77,6 +77,12 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
             }
 
             richTextBox.Rtf = rtf;
+
+            // Re-apply the zoom level, as assigning to the Rtf property resets it back to 1.0.
+            if (Math.Abs(richTextBox.ZoomFactor - originalZoomFactor) > float.Epsilon)
+            {
+                richTextBox.ZoomFactor = originalZoomFactor;
+            }
 
             if (!autoScroll)
             {
