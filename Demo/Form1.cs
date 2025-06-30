@@ -43,6 +43,7 @@ namespace Demo
 
         private void Initialize()
         {
+            // This is one way to configure the sink:
             _options = new RichTextBoxSinkOptions(
                 theme: ThemePresets.Literate,
                 outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:l}{NewLine}{Exception}",
@@ -50,9 +51,27 @@ namespace Demo
 
             _sink = new RichTextBoxSink(richTextBox1, _options);
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .WriteTo.Sink(_sink, LogEventLevel.Verbose)
-                .CreateLogger();
+                    .MinimumLevel.Verbose()
+                    .WriteTo.Sink(_sink, LogEventLevel.Verbose)
+                    .CreateLogger();
+
+            // Intentional dead code for demonstration purposes.
+            if (false) 
+            {
+                // You can also use fluent syntax to configure the sink like this:
+                Log.Logger = new LoggerConfiguration()
+                    .MinimumLevel.Verbose()
+                    .WriteTo.RichTextBox(richTextBox1, out _sink, formatProvider: new CultureInfo("en-US"))
+                    .CreateLogger();
+
+                // The out _sink is optional, but it allows you to access the sink instance.
+                // This is useful if you need to access the sink's methods, such as Clear() or Restore().
+                // If you don't need to access the sink, you can omit the out parameter like this:
+                Log.Logger = new LoggerConfiguration()
+                    .MinimumLevel.Verbose()
+                    .WriteTo.RichTextBox(richTextBox1, formatProvider: new CultureInfo("en-US"))
+                    .CreateLogger();
+            }
 
             Log.Debug("Started logger.");
             btnDispose.Enabled = true;

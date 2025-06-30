@@ -51,6 +51,6 @@ jobs:
         $coveragePercent = [math]::Round([double]$coverage * 100, 2)
         Write-Host "Current line coverage: $coveragePercent%"
         if ($coveragePercent -lt 75) {
-          Write-Error "Code coverage ($coveragePercent%) is below the required threshold of 70%"
+          Write-Error "Code coverage ($coveragePercent%) is below the required threshold of 75%"
           exit 1
         }

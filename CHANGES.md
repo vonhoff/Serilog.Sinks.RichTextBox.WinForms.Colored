@@ -1,14 +1,12 @@
-## Release Notes - Serilog.Sinks.RichTextBox.WinForms.Colored v3.0.1
+## Release Notes - Serilog.Sinks.RichTextBox.WinForms.Colored v3.1.0
 
-### Minor Release
+### Feature Release
 
-This minor release focuses on config improvements and performance optimization.
+This feature release introduces the ability to clear and restore the RichTextBox sink output.
 
 ### What Changed
 
-- Adjusted MaxLogLines limit From 512 to 2048 lines.
-- Fixed a bug where the RichTextBox would not persist the zoom factor.
-- Optimized the Concurrent Circular Buffer
+- Added `Clear()` and `Restore()` operations to the circular buffer/RichTextBox sink.
 
 ### Resources
 

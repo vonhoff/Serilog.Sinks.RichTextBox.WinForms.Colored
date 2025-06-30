@@ -22,11 +22,9 @@
 		<TargetFrameworks>net462;net471;net6.0-windows;net8.0-windows;net9.0-windows;netcoreapp3.0-windows;netcoreapp3.1-windows</TargetFrameworks>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<UseWindowsForms>true</UseWindowsForms>
-		<Version>3.0.1</Version>
+		<Version>3.1.0</Version>
 		<PackageReleaseNotes>
-			- Adjusted MaxLogLines constraint from 512 to 2048 lines.
-			- Fixed bug where the RTB control would not persist the zoom factor.
-			- Minor improvements to the concurrent circular buffer.
+			- Added ability to clear and restore the RichTextBox sink output.
 
 			See repository for more information:
 			https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored
