@@ -33,6 +33,7 @@ namespace Demo
     public partial class Form1 : Form
     {
         private RichTextBoxSinkOptions? _options;
+        private RichTextBoxSink? _sink;
         private bool _toolbarsVisible = true;
 
         public Form1()
@@ -47,10 +48,10 @@ namespace Demo
                 outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:l}{NewLine}{Exception}",
                 formatProvider: new CultureInfo("en-US"));
 
-            var sink = new RichTextBoxSink(richTextBox1, _options);
+            _sink = new RichTextBoxSink(richTextBox1, _options);
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
-                .WriteTo.Sink(sink, LogEventLevel.Verbose)
+                .WriteTo.Sink(_sink, LogEventLevel.Verbose)
                 .CreateLogger();
 
             Log.Debug("Started logger.");
@@ -336,6 +337,26 @@ namespace Demo
                 toolStrip1.Visible = _toolbarsVisible;
                 toolStrip2.Visible = _toolbarsVisible;
             }
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            if (_sink == null)
+            {
+                return;
+            }
+
+            _sink.Clear();
+        }
+
+        private void btnRestore_Click(object sender, EventArgs e)
+        {
+            if (_sink == null)
+            {
+                return;
+            }
+
+            _sink.Restore();
         }
     }
 }
