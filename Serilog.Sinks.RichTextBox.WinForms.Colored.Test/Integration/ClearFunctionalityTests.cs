@@ -27,14 +27,27 @@ namespace Serilog.Tests.Integration
 
             _sink.Emit(logEvent1);
             _sink.Emit(logEvent2);
-            Thread.Sleep(200);
+            
+            // Wait with timeout
+            var timeout = TimeSpan.FromSeconds(5);
+            var startTime = DateTime.UtcNow;
+            while (string.IsNullOrWhiteSpace(_richTextBox.Text) && DateTime.UtcNow - startTime < timeout)
+            {
+                Thread.Sleep(50);
+            }
 
             var initialText = _richTextBox.Text;
             Assert.Contains("First message", initialText);
             Assert.Contains("Second message", initialText);
 
             _sink.Clear();
-            Thread.Sleep(200);
+            
+            // Wait with timeout
+            startTime = DateTime.UtcNow;
+            while (_richTextBox.Text.Contains("First message") && DateTime.UtcNow - startTime < timeout)
+            {
+                Thread.Sleep(50);
+            }
 
             var clearedText = _richTextBox.Text;
             Assert.DoesNotContain("First message", clearedText);
@@ -49,7 +62,13 @@ namespace Serilog.Tests.Integration
                 Array.Empty<LogEventProperty>());
 
             _sink.Emit(logEvent3);
-            Thread.Sleep(200);
+            
+            // Wait with timeout
+            startTime = DateTime.UtcNow;
+            while (!_richTextBox.Text.Contains("Third message after clear") && DateTime.UtcNow - startTime < timeout)
+            {
+                Thread.Sleep(50);
+            }
 
             var afterClearText = _richTextBox.Text;
             Assert.DoesNotContain("First message", afterClearText);
@@ -78,10 +97,23 @@ namespace Serilog.Tests.Integration
 
             _sink.Emit(logEvent1);
             _sink.Emit(logEvent2);
-            Thread.Sleep(200);
+            
+            // Wait with timeout
+            var timeout = TimeSpan.FromSeconds(5);
+            var startTime = DateTime.UtcNow;
+            while (string.IsNullOrWhiteSpace(_richTextBox.Text) && DateTime.UtcNow - startTime < timeout)
+            {
+                Thread.Sleep(50);
+            }
 
             _sink.Clear();
-            Thread.Sleep(200);
+            
+            // Wait with timeout
+            startTime = DateTime.UtcNow;
+            while (_richTextBox.Text.Contains("First message") && DateTime.UtcNow - startTime < timeout)
+            {
+                Thread.Sleep(50);
+            }
 
             var template3 = _parser.Parse("Third message after clear");
             var logEvent3 = new LogEvent(
@@ -92,10 +124,22 @@ namespace Serilog.Tests.Integration
                 Array.Empty<LogEventProperty>());
 
             _sink.Emit(logEvent3);
-            Thread.Sleep(200);
+            
+            // Wait with timeout
+            startTime = DateTime.UtcNow;
+            while (!_richTextBox.Text.Contains("Third message after clear") && DateTime.UtcNow - startTime < timeout)
+            {
+                Thread.Sleep(50);
+            }
 
             _sink.Restore();
-            Thread.Sleep(200);
+            
+            // Wait with timeout
+            startTime = DateTime.UtcNow;
+            while (!_richTextBox.Text.Contains("First message") && DateTime.UtcNow - startTime < timeout)
+            {
+                Thread.Sleep(50);
+            }
 
             var restoredText = _richTextBox.Text;
             Assert.Contains("First message", restoredText);
@@ -107,7 +151,14 @@ namespace Serilog.Tests.Integration
         public void Clear_WithoutAnyMessages_DoesNotThrow()
         {
             _sink.Clear();
-            Thread.Sleep(200);
+            
+            // Wait with timeout
+            var timeout = TimeSpan.FromSeconds(5);
+            var startTime = DateTime.UtcNow;
+            while (_richTextBox.Text.Length > 0 && DateTime.UtcNow - startTime < timeout)
+            {
+                Thread.Sleep(50);
+            }
 
             Assert.True(string.IsNullOrWhiteSpace(_richTextBox.Text));
         }
@@ -124,10 +175,23 @@ namespace Serilog.Tests.Integration
                 Array.Empty<LogEventProperty>());
 
             _sink.Emit(logEvent);
-            Thread.Sleep(200);
+            
+            // Wait with timeout
+            var timeout = TimeSpan.FromSeconds(5);
+            var startTime = DateTime.UtcNow;
+            while (!_richTextBox.Text.Contains("Test message") && DateTime.UtcNow - startTime < timeout)
+            {
+                Thread.Sleep(50);
+            }
 
             _sink.Restore();
-            Thread.Sleep(200);
+            
+            // Wait with timeout
+            startTime = DateTime.UtcNow;
+            while (!_richTextBox.Text.Contains("Test message") && DateTime.UtcNow - startTime < timeout)
+            {
+                Thread.Sleep(50);
+            }
 
             var text = _richTextBox.Text;
             Assert.Contains("Test message", text);

@@ -58,7 +58,21 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
         {
             if (richTextBox.InvokeRequired)
             {
-                richTextBox.BeginInvoke(new Action(() => SetRtfInternal(richTextBox, rtf, autoScroll)));
+                try
+                {
+                    // Use a timeout to prevent deadlocks
+                    var asyncResult = richTextBox.BeginInvoke(new Action(() => SetRtfInternal(richTextBox, rtf, autoScroll)));
+                    
+                    // Wait for the invoke to complete with a timeout
+                    if (!asyncResult.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(10)))
+                    {
+                        System.Diagnostics.Debug.WriteLine("Warning: SetRtf BeginInvoke timed out");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error in SetRtf BeginInvoke: {ex}");
+                }
                 return;
             }
 

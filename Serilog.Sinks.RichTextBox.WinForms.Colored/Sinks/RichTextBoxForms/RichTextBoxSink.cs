@@ -66,10 +66,22 @@ namespace Serilog.Sinks.RichTextBoxForms
         {
             if (_disposed) return;
 
-            _disposed = true;
+            lock (this)
+            {
+                if (_disposed) return;
+                _disposed = true;
+            }
+
             _tokenSource.Cancel();
             _signal.Set();
-            _processingTask.Wait();
+            
+            // Add timeout to prevent indefinite blocking
+            if (!_processingTask.Wait(TimeSpan.FromSeconds(5)))
+            {
+                // If the task doesn't complete within 5 seconds, log a warning
+                System.Diagnostics.Debug.WriteLine("Warning: Processing task did not complete within timeout during disposal");
+            }
+            
             _signal.Dispose();
             _tokenSource.Dispose();
             GC.SuppressFinalize(this);
@@ -105,31 +117,41 @@ namespace Serilog.Sinks.RichTextBoxForms
 
             while (!token.IsCancellationRequested)
             {
-                _signal.WaitOne();
-
-                if (Interlocked.CompareExchange(ref _hasNewMessages, 0, 1) == 1)
+                try
                 {
-                    var now = DateTime.UtcNow;
-                    var elapsed = now - lastFlush;
-                    if (elapsed < flushInterval)
+                    _signal.WaitOne();
+
+                    if (Interlocked.CompareExchange(ref _hasNewMessages, 0, 1) == 1)
                     {
-                        var remaining = flushInterval - elapsed;
-                        if (remaining > TimeSpan.Zero)
+                        var now = DateTime.UtcNow;
+                        var elapsed = now - lastFlush;
+                        if (elapsed < flushInterval)
                         {
-                            Thread.Sleep(remaining);
+                            var remaining = flushInterval - elapsed;
+                            if (remaining > TimeSpan.Zero)
+                            {
+                                Thread.Sleep(remaining);
+                            }
                         }
-                    }
 
+                        _buffer.TakeSnapshot(snapshot);
+                        builder.Clear();
+                        foreach (var evt in snapshot)
+                        {
+                            _renderer.Render(evt, builder);
+                        }
+                        _richTextBox.SetRtf(builder.Rtf, _options.AutoScroll);
+                        lastFlush = DateTime.UtcNow;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception but don't let it crash the processing thread
+                    // In a production environment, you might want to use a proper logging mechanism
+                    System.Diagnostics.Debug.WriteLine($"Error in ProcessMessages: {ex}");
+                    
+                    // Reset the flag to prevent infinite loops
                     Interlocked.Exchange(ref _hasNewMessages, 0);
-
-                    _buffer.TakeSnapshot(snapshot);
-                    builder.Clear();
-                    foreach (var evt in snapshot)
-                    {
-                        _renderer.Render(evt, builder);
-                    }
-                    _richTextBox.SetRtf(builder.Rtf, _options.AutoScroll);
-                    lastFlush = DateTime.UtcNow;
                 }
             }
         }

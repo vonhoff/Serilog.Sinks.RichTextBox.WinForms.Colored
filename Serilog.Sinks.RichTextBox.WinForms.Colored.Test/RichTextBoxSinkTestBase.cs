@@ -47,13 +47,27 @@ namespace Serilog.Tests
 
         public virtual void Dispose()
         {
-            GC.SuppressFinalize(this);
-            if (!_disposed)
+            if (_disposed) return;
+
+            _disposed = true;
+            
+            try
             {
+                // Dispose sink first to stop background processing
                 _sink?.Dispose();
-                _richTextBox?.Dispose();
-                _disposed = true;
+                
+                // Then dispose the RichTextBox
+                if (_richTextBox != null && !_richTextBox.IsDisposed)
+                {
+                    _richTextBox.Dispose();
+                }
             }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error during test cleanup: {ex}");
+            }
+            
+            GC.SuppressFinalize(this);
         }
     }
 }

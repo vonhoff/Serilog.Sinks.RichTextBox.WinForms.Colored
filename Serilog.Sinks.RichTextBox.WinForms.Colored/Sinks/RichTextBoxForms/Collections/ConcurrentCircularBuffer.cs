@@ -52,6 +52,11 @@ namespace Serilog.Sinks.RichTextBoxForms.Collections
                 var startIndex = _clearIndex;
                 var itemsToShow = _count - startIndex;
                 
+                if (startIndex >= _count)
+                {
+                    return;
+                }
+                
                 for (var i = startIndex; i < _count; ++i)
                 {
                     var index = _head + i;
@@ -70,12 +75,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Collections
             lock (_sync)
             {
                 _clearIndex = _count;
-                if (_count == _capacity)
-                {
-                    _head  = 0;
-                    _count = 0;
-                    _clearIndex = 0;
-                }
             }
         }
 
