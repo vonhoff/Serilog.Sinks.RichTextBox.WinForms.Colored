@@ -56,6 +56,7 @@ namespace Demo
                     .CreateLogger();
 
             // Intentional dead code for demonstration purposes.
+#pragma warning disable CS0162
             if (false) 
             {
                 // You can also use fluent syntax to configure the sink like this:
@@ -72,6 +73,7 @@ namespace Demo
                     .WriteTo.RichTextBox(richTextBox1, formatProvider: new CultureInfo("en-US"))
                     .CreateLogger();
             }
+#pragma warning restore CS0162
 
             Log.Debug("Started logger.");
             btnDispose.Enabled = true;
