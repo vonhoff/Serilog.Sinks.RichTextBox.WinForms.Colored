@@ -18,6 +18,7 @@
 
 using Serilog.Sinks.RichTextBoxForms.Themes;
 using System;
+using System.Globalization;
 
 namespace Serilog.Sinks.RichTextBoxForms
 {
@@ -46,7 +47,7 @@ namespace Serilog.Sinks.RichTextBoxForms
             Theme = theme;
             MaxLogLines = maxLogLines;
             OutputTemplate = outputTemplate;
-            FormatProvider = formatProvider;
+            FormatProvider = formatProvider ?? CultureInfo.InvariantCulture;
         }
 
         public bool AutoScroll { get; set; }

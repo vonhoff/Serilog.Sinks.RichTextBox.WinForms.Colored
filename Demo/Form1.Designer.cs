@@ -47,12 +47,14 @@
             this.btnComplex = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.btnDispose = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.btnReset = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.btnAutoScroll = new System.Windows.Forms.ToolStripButton();
             this.panel1 = new System.Windows.Forms.Panel();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.btnRestore = new System.Windows.Forms.ToolStripButton();
+            this.btnClear = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStrip1.SuspendLayout();
             this.toolStrip2.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -166,8 +168,10 @@
             this.btnStructure,
             this.btnComplex,
             this.toolStripSeparator8,
+            this.btnClear,
+            this.btnRestore,
+            this.toolStripSeparator2,
             this.btnDispose,
-            this.toolStripSeparator5,
             this.btnReset,
             this.toolStripSeparator6,
             this.btnAutoScroll});
@@ -242,11 +246,6 @@
             this.btnDispose.ToolTipText = "Dispose the logger";
             this.btnDispose.Click += new System.EventHandler(this.btnDispose_Click);
             // 
-            // toolStripSeparator5
-            // 
-            this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 25);
-            // 
             // btnReset
             // 
             this.btnReset.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
@@ -290,6 +289,29 @@
             this.richTextBox1.Size = new System.Drawing.Size(1029, 451);
             this.richTextBox1.TabIndex = 0;
             this.richTextBox1.Text = "";
+            // 
+            // btnRestore
+            // 
+            this.btnRestore.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnRestore.Name = "btnRestore";
+            this.btnRestore.Size = new System.Drawing.Size(50, 22);
+            this.btnRestore.Text = "Restore";
+            this.btnRestore.ToolTipText = "Restore the logger";
+            this.btnRestore.Click += new System.EventHandler(this.btnRestore_Click);
+            // 
+            // btnClear
+            // 
+            this.btnClear.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(38, 22);
+            this.btnClear.Text = "Clear";
+            this.btnClear.ToolTipText = "Clear the logger";
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
             // Form1
             // 
@@ -338,9 +360,11 @@
         private System.Windows.Forms.ToolStripButton btnComplex;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
         private System.Windows.Forms.ToolStripButton btnDispose;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripButton btnReset;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripButton btnAutoScroll;
+        private System.Windows.Forms.ToolStripButton btnRestore;
+        private System.Windows.Forms.ToolStripButton btnClear;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
     }
 }

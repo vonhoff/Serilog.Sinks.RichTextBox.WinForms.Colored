@@ -78,6 +78,23 @@ namespace Serilog.Sinks.RichTextBoxForms
         public void Emit(LogEvent logEvent)
         {
             _buffer.Add(logEvent);
+            Update();
+        }
+
+        public void Clear()
+        {
+            _buffer.Clear();
+            Update();
+        }
+
+        public void Restore()
+        {
+            _buffer.Restore();
+            Update();
+        }
+
+        private void Update()
+        {
             Interlocked.Exchange(ref _hasNewMessages, 1);
             _signal.Set();
         }
@@ -107,8 +124,6 @@ namespace Serilog.Sinks.RichTextBoxForms
                     }
 
                     Interlocked.Exchange(ref _hasNewMessages, 0);
-
-                    // Take a snapshot of the current buffer
                     _buffer.TakeSnapshot(snapshot);
                     builder.Clear();
                     foreach (var evt in snapshot)

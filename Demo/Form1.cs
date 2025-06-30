@@ -33,6 +33,7 @@ namespace Demo
     public partial class Form1 : Form
     {
         private RichTextBoxSinkOptions? _options;
+        private RichTextBoxSink? _sink;
         private bool _toolbarsVisible = true;
 
         public Form1()
@@ -42,16 +43,37 @@ namespace Demo
 
         private void Initialize()
         {
+            // This is one way to configure the sink:
             _options = new RichTextBoxSinkOptions(
                 theme: ThemePresets.Literate,
                 outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:l}{NewLine}{Exception}",
                 formatProvider: new CultureInfo("en-US"));
 
-            var sink = new RichTextBoxSink(richTextBox1, _options);
+            _sink = new RichTextBoxSink(richTextBox1, _options);
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .WriteTo.Sink(sink, LogEventLevel.Verbose)
-                .CreateLogger();
+                    .MinimumLevel.Verbose()
+                    .WriteTo.Sink(_sink, LogEventLevel.Verbose)
+                    .CreateLogger();
+
+            // Intentional dead code for demonstration purposes.
+#pragma warning disable CS0162
+            if (false) 
+            {
+                // You can also use fluent syntax to configure the sink like this:
+                Log.Logger = new LoggerConfiguration()
+                    .MinimumLevel.Verbose()
+                    .WriteTo.RichTextBox(richTextBox1, out _sink, formatProvider: new CultureInfo("en-US"))
+                    .CreateLogger();
+
+                // The out _sink is optional, but it allows you to access the sink instance.
+                // This is useful if you need to access the sink's methods, such as Clear() or Restore().
+                // If you don't need to access the sink, you can omit the out parameter like this:
+                Log.Logger = new LoggerConfiguration()
+                    .MinimumLevel.Verbose()
+                    .WriteTo.RichTextBox(richTextBox1, formatProvider: new CultureInfo("en-US"))
+                    .CreateLogger();
+            }
+#pragma warning restore CS0162
 
             Log.Debug("Started logger.");
             btnDispose.Enabled = true;
@@ -336,6 +358,26 @@ namespace Demo
                 toolStrip1.Visible = _toolbarsVisible;
                 toolStrip2.Visible = _toolbarsVisible;
             }
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            if (_sink == null)
+            {
+                return;
+            }
+
+            _sink.Clear();
+        }
+
+        private void btnRestore_Click(object sender, EventArgs e)
+        {
+            if (_sink == null)
+            {
+                return;
+            }
+
+            _sink.Restore();
         }
     }
 }

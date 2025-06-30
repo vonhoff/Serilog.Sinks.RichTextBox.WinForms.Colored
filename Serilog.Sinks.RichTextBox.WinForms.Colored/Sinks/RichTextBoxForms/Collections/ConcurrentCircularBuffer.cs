@@ -2,18 +2,20 @@ using System.Collections.Generic;
 
 namespace Serilog.Sinks.RichTextBoxForms.Collections
 {
-    internal sealed class ConcurrentCircularBuffer<T>
+    public sealed class ConcurrentCircularBuffer<T>
     {
         private readonly object _sync = new();
         private readonly T[] _buffer;
         private readonly int _capacity;
         private int _head;
         private int _count;
+        private int _itemsToSkip;
 
         public ConcurrentCircularBuffer(int capacity)
         {
             _capacity = capacity > 0 ? capacity : 1;
             _buffer = new T[_capacity];
+            _itemsToSkip = 0;
         }
 
         public void Add(T item)
@@ -33,6 +35,11 @@ namespace Serilog.Sinks.RichTextBoxForms.Collections
                     {
                         _head = 0;
                     }
+
+                    if (_itemsToSkip > 0)
+                    {
+                        _itemsToSkip--;
+                    }
                 }
                 else
                 {
@@ -47,9 +54,15 @@ namespace Serilog.Sinks.RichTextBoxForms.Collections
             {
                 target.Clear();
 
-                for (var i = 0; i < _count; ++i)
+                var itemsToTake = _count - _itemsToSkip;
+                if (itemsToTake <= 0)
                 {
-                    var index = _head + i;
+                    return;
+                }
+
+                for (var i = 0; i < itemsToTake; ++i)
+                {
+                    var index = _head + _itemsToSkip + i;
                     if (index >= _capacity)
                     {
                         index -= _capacity;
@@ -57,6 +70,22 @@ namespace Serilog.Sinks.RichTextBoxForms.Collections
 
                     target.Add(_buffer[index]);
                 }
+            }
+        }
+
+        public void Clear()
+        {
+            lock (_sync)
+            {
+                _itemsToSkip = _count;
+            }
+        }
+
+        public void Restore()
+        {
+            lock (_sync)
+            {
+                _itemsToSkip = 0;
             }
         }
     }
