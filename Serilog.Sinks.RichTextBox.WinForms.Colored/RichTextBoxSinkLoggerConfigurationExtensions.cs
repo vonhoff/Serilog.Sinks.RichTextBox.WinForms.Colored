@@ -23,6 +23,7 @@ using Serilog.Sinks.RichTextBoxForms;
 using Serilog.Sinks.RichTextBoxForms.Rendering;
 using Serilog.Sinks.RichTextBoxForms.Themes;
 using System;
+using System.Globalization;
 using System.Windows.Forms;
 
 namespace Serilog
@@ -58,8 +59,9 @@ namespace Serilog
             LoggingLevelSwitch? levelSwitch = null)
         {
             var appliedTheme = theme ?? ThemePresets.Literate;
-            var renderer = new TemplateRenderer(appliedTheme, outputTemplate, formatProvider);
-            var options = new RichTextBoxSinkOptions(appliedTheme, autoScroll, maxLogLines, outputTemplate, formatProvider);
+            var appliedFormatProvider = formatProvider ?? CultureInfo.InvariantCulture;
+            var renderer = new TemplateRenderer(appliedTheme, outputTemplate, appliedFormatProvider);
+            var options = new RichTextBoxSinkOptions(appliedTheme, autoScroll, maxLogLines, outputTemplate, appliedFormatProvider);
             richTextBoxSink = new RichTextBoxSink(richTextBoxControl, options, renderer);
             return sinkConfiguration.Sink(richTextBoxSink, minimumLogEventLevel, levelSwitch);
         }
