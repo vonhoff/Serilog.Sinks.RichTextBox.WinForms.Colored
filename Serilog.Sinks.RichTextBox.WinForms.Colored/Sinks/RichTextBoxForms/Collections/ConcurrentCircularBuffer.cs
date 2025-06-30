@@ -70,6 +70,12 @@ namespace Serilog.Sinks.RichTextBoxForms.Collections
             lock (_sync)
             {
                 _clearIndex = _count;
+                if (_count == _capacity)
+                {
+                    _head  = 0;
+                    _count = 0;
+                    _clearIndex = 0;
+                }
             }
         }
 
