@@ -1,14 +1,15 @@
-## Release Notes - Serilog.Sinks.RichTextBox.WinForms.Colored v3.0.1
+## Release Notes - Serilog.Sinks.RichTextBox.WinForms.Colored v3.1.0
 
-### Minor Release
+### Feature Release
 
-This minor release focuses on config improvements and performance optimization.
+This release introduces the ability to clear and restore the log view in a non-destructive way.
 
 ### What Changed
 
-- Adjusted MaxLogLines limit From 512 to 2048 lines.
-- Fixed a bug where the RichTextBox would not persist the zoom factor.
-- Optimized the Concurrent Circular Buffer
+- Added `Clear()` and `Restore()` methods to the sink, allowing you to hide all current log entries from the view without deleting them from memory. New log events after clearing are still shown. You can restore the view to show all buffered events at any time (unless overwritten by new logs).
+- You can now use `.WriteTo.RichTextBox(richTextBox, out sink, ...)` to capture the sink instance and call `Clear()`/`Restore()` directly.
+
+**Note:** The buffer is still a fixed size (default up to 2048 lines). If you clear and then log enough new events to fill the buffer, the oldest (hidden) events will be overwritten and cannot be restored.
 
 ### Resources
 

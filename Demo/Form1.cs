@@ -33,6 +33,7 @@ namespace Demo
     public partial class Form1 : Form
     {
         private RichTextBoxSinkOptions? _options;
+        private RichTextBoxSink? _sink;
         private bool _toolbarsVisible = true;
 
         public Form1()
@@ -47,10 +48,11 @@ namespace Demo
                 outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:l}{NewLine}{Exception}",
                 formatProvider: new CultureInfo("en-US"));
 
-            var sink = new RichTextBoxSink(richTextBox1, _options);
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
-                .WriteTo.Sink(sink, LogEventLevel.Verbose)
+                .WriteTo.RichTextBox(richTextBox1, out _sink, theme: ThemePresets.Literate, 
+                    outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:l}{NewLine}{Exception}",
+                    formatProvider: new CultureInfo("en-US"))
                 .CreateLogger();
 
             Log.Debug("Started logger.");
@@ -317,6 +319,16 @@ namespace Demo
             Initialize();
         }
 
+        private void ClearLog()
+        {
+            _sink?.Clear();
+        }
+
+        private void RestoreLog()
+        {
+            _sink?.Restore();
+        }
+
         private void btnAutoScroll_Click(object sender, EventArgs e)
         {
             if (_options == null)
@@ -335,6 +347,18 @@ namespace Demo
                 _toolbarsVisible = !_toolbarsVisible;
                 toolStrip1.Visible = _toolbarsVisible;
                 toolStrip2.Visible = _toolbarsVisible;
+            }
+            else if (e.Control && e.KeyCode == Keys.L)
+            {
+                // Ctrl+L: Clear the log display
+                ClearLog();
+                Log.Information("Log display cleared (Ctrl+L). Use Ctrl+R to restore.");
+            }
+            else if (e.Control && e.KeyCode == Keys.R)
+            {
+                // Ctrl+R: Restore the log display
+                RestoreLog();
+                Log.Information("Log display restored (Ctrl+R).");
             }
         }
     }

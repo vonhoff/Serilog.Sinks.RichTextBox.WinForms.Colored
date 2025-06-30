@@ -9,11 +9,13 @@ namespace Serilog.Sinks.RichTextBoxForms.Collections
         private readonly int _capacity;
         private int _head;
         private int _count;
+        private int _clearIndex;
 
         public ConcurrentCircularBuffer(int capacity)
         {
             _capacity = capacity > 0 ? capacity : 1;
             _buffer = new T[_capacity];
+            _clearIndex = 0;
         }
 
         public void Add(T item)
@@ -47,7 +49,10 @@ namespace Serilog.Sinks.RichTextBoxForms.Collections
             {
                 target.Clear();
 
-                for (var i = 0; i < _count; ++i)
+                var startIndex = _clearIndex;
+                var itemsToShow = _count - startIndex;
+                
+                for (var i = startIndex; i < _count; ++i)
                 {
                     var index = _head + i;
                     if (index >= _capacity)
@@ -57,6 +62,22 @@ namespace Serilog.Sinks.RichTextBoxForms.Collections
 
                     target.Add(_buffer[index]);
                 }
+            }
+        }
+
+        public void Clear()
+        {
+            lock (_sync)
+            {
+                _clearIndex = _count;
+            }
+        }
+
+        public void Restore()
+        {
+            lock (_sync)
+            {
+                _clearIndex = 0;
             }
         }
     }

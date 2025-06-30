@@ -82,6 +82,20 @@ namespace Serilog.Sinks.RichTextBoxForms
             _signal.Set();
         }
 
+        public void Clear()
+        {
+            _buffer.Clear();
+            Interlocked.Exchange(ref _hasNewMessages, 1);
+            _signal.Set();
+        }
+
+        public void Restore()
+        {
+            _buffer.Restore();
+            Interlocked.Exchange(ref _hasNewMessages, 1);
+            _signal.Set();
+        }
+
         private void ProcessMessages(CancellationToken token)
         {
             var builder = new RtfBuilder(_options.Theme);
@@ -108,7 +122,6 @@ namespace Serilog.Sinks.RichTextBoxForms
 
                     Interlocked.Exchange(ref _hasNewMessages, 0);
 
-                    // Take a snapshot of the current buffer
                     _buffer.TakeSnapshot(snapshot);
                     builder.Clear();
                     foreach (var evt in snapshot)

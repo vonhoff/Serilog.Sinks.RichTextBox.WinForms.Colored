@@ -22,11 +22,12 @@
 		<TargetFrameworks>net462;net471;net6.0-windows;net8.0-windows;net9.0-windows;netcoreapp3.0-windows;netcoreapp3.1-windows</TargetFrameworks>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<UseWindowsForms>true</UseWindowsForms>
-		<Version>3.0.1</Version>
+		<Version>3.1.0</Version>
 		<PackageReleaseNotes>
-			- Adjusted MaxLogLines constraint from 512 to 2048 lines.
-			- Fixed bug where the RTB control would not persist the zoom factor.
-			- Minor improvements to the concurrent circular buffer.
+			- Added `Clear()` and `Restore()` methods to hide or show buffered log entries in the view without deleting them.
+			- You can now access the sink instance via `.WriteTo.RichTextBox(richTextBox, out sink, ...)` to call these methods.
+
+			**Note:** The buffer is fixed size; old entries may be lost if overwritten after clearing.
 
 			See repository for more information:
 			https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored
