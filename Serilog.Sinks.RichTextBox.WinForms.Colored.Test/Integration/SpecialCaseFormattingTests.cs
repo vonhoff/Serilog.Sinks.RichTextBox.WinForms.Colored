@@ -1,4 +1,5 @@
 using Serilog.Events;
+using Serilog.Sinks.RichTextBoxForms.Formatting;
 using System.Globalization;
 using Xunit;
 
@@ -116,6 +117,71 @@ namespace Serilog.Tests.Integration
 
             // Act & Assert
             Assert.Equal(decVal.ToString(CultureInfo.InvariantCulture), RenderAndGetText(logEvent, "{Message:j}", CultureInfo.InvariantCulture));
+        }
+
+        [Fact]
+        public void OutputTemplate_WithSourceContextWithoutFormat_DoesNotCrash()
+        {
+            // Arrange - Test for bug fix where {SourceContext} without format would cause exception
+            var sourceContextProp = new LogEventProperty("SourceContext", new ScalarValue("MyApp.Services.UserService"));
+            var template = _parser.Parse("User created successfully");
+            var logEvent = new LogEvent(
+                DateTimeOffset.Now,
+                LogEventLevel.Information,
+                null,
+                template,
+                new[] { sourceContextProp });
+
+            var outputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] [{SourceContext}] {Message:lj}{NewLine}{Exception}";
+
+            // Act & Assert - Should not throw an exception
+            var result = RenderAndGetText(logEvent, outputTemplate);
+
+            // Verify the output contains expected parts
+            Assert.Contains("[MyApp.Services.UserService]", result);
+            Assert.Contains("User created successfully", result);
+            Assert.Contains("INF", result); // Level:u3 formatting
+        }
+
+        [Fact]
+        public void OutputTemplate_WithSourceContextWithFormat_WorksCorrectly()
+        {
+            // Arrange - Test that format specifiers on SourceContext work correctly
+            var sourceContextProp = new LogEventProperty("SourceContext", new ScalarValue("MyApp.Services.UserService"));
+            var template = _parser.Parse("User login attempt");
+            var logEvent = new LogEvent(
+                DateTimeOffset.Now,
+                LogEventLevel.Warning,
+                null,
+                template,
+                new[] { sourceContextProp });
+
+            var outputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] [{SourceContext:u}] {Message:lj}{NewLine}{Exception}";
+
+            // Act & Assert - Should not throw an exception
+            var result = RenderAndGetText(logEvent, outputTemplate);
+
+            // Verify the output contains expected parts with uppercase SourceContext
+            Assert.Contains("[MYAPP.SERVICES.USERSERVICE]", result);
+            Assert.Contains("User login attempt", result);
+            Assert.Contains("WRN", result); // Level:u3 formatting
+        }
+
+        [Theory]
+        [InlineData("", "u", "")]
+        [InlineData("hello", "u", "HELLO")]
+        [InlineData("", "w", "")]
+        [InlineData("HELLO", "w", "hello")]
+        [InlineData("", "t", "")]
+        [InlineData("hello", "t", "Hello")]
+        [InlineData("h", "t", "H")]
+        [InlineData("", null, "")]
+        [InlineData("hello", null, "hello")]
+        public void TextFormatter_WithEmptyValues_DoesNotCrash(string value, string? format, string expected)
+        {
+            // Act & Assert - Should not throw an exception for empty values
+            var result = TextFormatter.Format(value, format);
+            Assert.Equal(expected, result);
         }
     }
 }
