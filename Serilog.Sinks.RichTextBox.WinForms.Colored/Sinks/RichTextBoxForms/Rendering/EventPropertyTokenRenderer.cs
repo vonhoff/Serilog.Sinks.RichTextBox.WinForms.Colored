@@ -23,6 +23,7 @@ using Serilog.Sinks.RichTextBoxForms.Rtf;
 using Serilog.Sinks.RichTextBoxForms.Themes;
 using System;
 using System.IO;
+using System.Text;
 
 namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
@@ -53,16 +54,14 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
             }
             else
             {
-                var sb = StringBuilderCache.Acquire();
+                var sb = new StringBuilder();
 
                 using (var writer = new StringWriter(sb))
                 {
                     propertyValue.Render(writer, _token.Format, _formatProvider);
                 }
 
-                _theme.Render(canvas, StyleToken.SecondaryText, sb);
-
-                StringBuilderCache.Release(sb);
+                _theme.Render(canvas, StyleToken.SecondaryText, sb.ToString());
             }
         }
     }

@@ -23,6 +23,7 @@ using Serilog.Sinks.RichTextBoxForms.Themes;
 using System;
 using System.Globalization;
 using System.IO;
+using System.Text;
 
 namespace Serilog.Sinks.RichTextBoxForms.Formatting
 {
@@ -168,7 +169,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                 case Guid:
                 case Uri:
                     {
-                        var sb = StringBuilderCache.Acquire(64);
+                        var sb = new StringBuilder(64);
 
                         using (var writer = new StringWriter(sb))
                         {
@@ -188,7 +189,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                         }
 
                         Theme.Render(canvas, StyleToken.Scalar, GetQuotedJsonString(sb.ToString()));
-                        StringBuilderCache.Release(sb);
                         return;
                     }
                 default:
@@ -199,7 +199,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                             return;
                         }
 
-                        var sb = StringBuilderCache.Acquire();
+                        var sb = new StringBuilder();
 
                         using (var writer = new StringWriter(sb))
                         {
@@ -207,7 +207,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                         }
 
                         Theme.Render(canvas, StyleToken.Scalar, sb.ToString());
-                        StringBuilderCache.Release(sb);
                         return;
                     }
             }
@@ -298,13 +297,13 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 
         private static string GetQuotedJsonString(string str)
         {
-            var sb = StringBuilderCache.Acquire(str.Length + 2);
+            var sb = new StringBuilder(str.Length + 2);
             using (var writer = new StringWriter(sb))
             {
                 WriteQuotedJsonString(str, writer);
             }
 
-            return StringBuilderCache.GetStringAndRelease(sb);
+            return sb.ToString();
         }
     }
 }

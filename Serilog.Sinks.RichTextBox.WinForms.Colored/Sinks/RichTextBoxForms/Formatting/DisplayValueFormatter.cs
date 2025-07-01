@@ -22,6 +22,7 @@ using Serilog.Sinks.RichTextBoxForms.Rtf;
 using Serilog.Sinks.RichTextBoxForms.Themes;
 using System;
 using System.IO;
+using System.Text;
 
 namespace Serilog.Sinks.RichTextBoxForms.Formatting
 {
@@ -61,14 +62,14 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                     return;
             }
 
-            var sb = StringBuilderCache.Acquire();
+            var sb = new StringBuilder();
 
             using (var writer = new StringWriter(sb))
             {
                 scalar.Render(writer, null, _formatProvider);
             }
 
-            Theme.Render(canvas, StyleToken.Scalar, StringBuilderCache.GetStringAndRelease(sb));
+            Theme.Render(canvas, StyleToken.Scalar, sb.ToString());
         }
 
         private void RenderString(string text, IRtfCanvas canvas, string? format, bool isLiteral)
