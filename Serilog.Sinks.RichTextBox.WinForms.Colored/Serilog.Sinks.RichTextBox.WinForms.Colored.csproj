@@ -22,9 +22,9 @@
 		<TargetFrameworks>net462;net471;net6.0-windows;net8.0-windows;net9.0-windows;netcoreapp3.0-windows;netcoreapp3.1-windows</TargetFrameworks>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<UseWindowsForms>true</UseWindowsForms>
-		<Version>3.1.0</Version>
+		<Version>3.1.1</Version>
 		<PackageReleaseNotes>
-			- Added ability to clear and restore the RichTextBox sink output.
+			- Fixed a bug where the TextFormatter would crash when the value or format was null or empty.
 
 			See repository for more information:
 			https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored

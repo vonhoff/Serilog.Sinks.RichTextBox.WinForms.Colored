@@ -1,12 +1,8 @@
-## Release Notes - Serilog.Sinks.RichTextBox.WinForms.Colored v3.1.0
-
-### Feature Release
-
-This feature release introduces the ability to clear and restore the RichTextBox sink output.
+## Release Notes - Serilog.Sinks.RichTextBox.WinForms.Colored v3.1.1
 
 ### What Changed
 
-- Added `Clear()` and `Restore()` operations to the circular buffer/RichTextBox sink.
+- Fixed a bug where the TextFormatter would crash when the value or format was null or empty.
 
 ### Resources
 
