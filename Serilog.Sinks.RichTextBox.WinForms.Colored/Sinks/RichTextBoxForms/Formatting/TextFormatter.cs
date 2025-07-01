@@ -16,10 +16,14 @@
 
 #endregion
 
+using System.Text;
+
 namespace Serilog.Sinks.RichTextBoxForms.Formatting
 {
     public static class TextFormatter
     {
+        private static readonly StringBuilder FormatterBuilder = new();
+
         public static string Format(string value, string? format)
         {
             if (string.IsNullOrEmpty(format) || string.IsNullOrEmpty(value))
@@ -32,9 +36,22 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             {
                 'u' => value.ToUpperInvariant(),
                 'w' => value.ToLowerInvariant(),
-                't' => char.ToUpperInvariant(value[0]) + value.Substring(1).ToLowerInvariant(),
+                't' => FormatTitleCase(value),
                 _ => value
             };
+        }
+
+        private static string FormatTitleCase(string value)
+        {
+            FormatterBuilder.Clear();
+            FormatterBuilder.Append(char.ToUpperInvariant(value[0]));
+
+            if (value.Length > 1)
+            {
+                FormatterBuilder.Append(value.Substring(1).ToLowerInvariant());
+            }
+
+            return FormatterBuilder.ToString();
         }
     }
 }

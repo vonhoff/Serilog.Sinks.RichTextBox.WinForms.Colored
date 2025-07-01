@@ -29,6 +29,8 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
     public class DisplayValueFormatter : ValueFormatter
     {
         private readonly IFormatProvider? _formatProvider;
+        private readonly StringBuilder _scalarBuilder = new();
+        private readonly StringBuilder _stringBuilder = new();
         private JsonValueFormatter? _jsonValueFormatter;
 
         public DisplayValueFormatter(Theme theme, IFormatProvider? formatProvider) : base(theme)
@@ -36,7 +38,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             _formatProvider = formatProvider;
         }
 
-        public void FormatLiteralValue(ScalarValue scalar, IRtfCanvas canvas, string? format, bool isLiteral)
+        private void FormatLiteralValue(ScalarValue scalar, IRtfCanvas canvas, string? format, bool isLiteral)
         {
             var value = scalar.Value;
 
@@ -49,7 +51,9 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                     RenderString(text, canvas, format, isLiteral);
                     return;
                 case byte[] bytes:
-                    Theme.Render(canvas, StyleToken.String, $"\"{Convert.ToBase64String(bytes)}\"");
+                    _stringBuilder.Clear();
+                    _stringBuilder.Append('"').Append(Convert.ToBase64String(bytes)).Append('"');
+                    Theme.Render(canvas, StyleToken.String, _stringBuilder.ToString());
                     return;
                 case bool b:
                     Theme.Render(canvas, StyleToken.Boolean, b.ToString());
@@ -62,20 +66,29 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                     return;
             }
 
-            var sb = new StringBuilder();
+            _scalarBuilder.Clear();
 
-            using (var writer = new StringWriter(sb))
+            using (var writer = new StringWriter(_scalarBuilder))
             {
                 scalar.Render(writer, null, _formatProvider);
             }
 
-            Theme.Render(canvas, StyleToken.Scalar, sb.ToString());
+            Theme.Render(canvas, StyleToken.Scalar, _scalarBuilder.ToString());
         }
 
         private void RenderString(string text, IRtfCanvas canvas, string? format, bool isLiteral)
         {
-            var effectivelyLiteral = isLiteral || (format != null && format.Contains("l"));
-            Theme.Render(canvas, StyleToken.String, effectivelyLiteral ? text : $"\"{text.Replace("\"", "\\\"")}\"");
+            var effectivelyLiteral = isLiteral || format != null && format.Contains("l");
+            if (effectivelyLiteral)
+            {
+                Theme.Render(canvas, StyleToken.String, text);
+            }
+            else
+            {
+                _stringBuilder.Clear();
+                _stringBuilder.Append('"').Append(text.Replace("\"", "\\\"")).Append('"');
+                Theme.Render(canvas, StyleToken.String, _stringBuilder.ToString());
+            }
         }
 
         private void RenderFormattable(IFormattable formattable, string? format, IRtfCanvas canvas)
@@ -86,7 +99,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                 type == typeof(float) || type == typeof(double) || type == typeof(decimal) ||
                 type == typeof(int) || type == typeof(uint) || type == typeof(long) || type == typeof(ulong) ||
                 type == typeof(byte) || type == typeof(sbyte) || type == typeof(short) || type == typeof(ushort)
-                ? StyleToken.Number : StyleToken.Scalar;
+                    ? StyleToken.Number : StyleToken.Scalar;
 
             var effectiveFormat = format;
 
@@ -95,9 +108,12 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             // a FormatException.
             if (!string.IsNullOrEmpty(effectiveFormat))
             {
-                effectiveFormat = effectiveFormat!.Replace("l", string.Empty).Replace("j", string.Empty);
+                _stringBuilder.Clear();
+                _stringBuilder.Append(effectiveFormat);
+                _stringBuilder.Replace("l", string.Empty);
+                _stringBuilder.Replace("j", string.Empty);
+                effectiveFormat = _stringBuilder.ToString();
 
-                // If all characters were removed we end up with an empty string – treat this as no format.
                 if (string.IsNullOrWhiteSpace(effectiveFormat))
                 {
                     effectiveFormat = null;
@@ -105,9 +121,14 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             }
 
             if (type == typeof(TimeSpan) && string.IsNullOrEmpty(effectiveFormat))
+            {
                 effectiveFormat = "c";
+            }
+
             if (type == typeof(Guid) && string.IsNullOrEmpty(effectiveFormat))
+            {
                 effectiveFormat = "D";
+            }
 
             string renderedValue;
             try
@@ -143,7 +164,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                 }
 
                 delimiter = ", ";
-
                 Theme.Render(state.Canvas, StyleToken.TertiaryText, "[");
                 Visit(state.Next(), scalarValue);
                 Theme.Render(state.Canvas, StyleToken.TertiaryText, "]=");
@@ -212,7 +232,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                 }
 
                 delimiter = ", ";
-
                 Theme.Render(state.Canvas, StyleToken.Name, eventProperty.Name);
                 Theme.Render(state.Canvas, StyleToken.TertiaryText, "=");
                 Visit(state.Next(), eventProperty.Value);

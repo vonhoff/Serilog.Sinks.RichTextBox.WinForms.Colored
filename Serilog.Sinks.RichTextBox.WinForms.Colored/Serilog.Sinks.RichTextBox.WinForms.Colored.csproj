@@ -1,59 +1,59 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<Authors>Simon Vonhoff</Authors>
-		<Company>github.com/vonhoff</Company>
-		<Copyright>Copyright © 2025 Simon Vonhoff - Provided under the Apache License, Version 2.0.</Copyright>
-		<Description>A Serilog sink that writes log events to a WinForms RichTextBox control with colors and theme support.</Description>
-		<EmbedUntrackedSources>true</EmbedUntrackedSources>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<IncludeSymbols>true</IncludeSymbols>
-		<Nullable>enable</Nullable>
-		<OutputType>Library</OutputType>
-		<PackageIcon>serilog-sink-nuget.png</PackageIcon>
-		<PackageId>Serilog.Sinks.RichTextBox.WinForms.Colored</PackageId>
-		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-		<PackageProjectUrl>https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored</PackageProjectUrl>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<PackageTags>serilog;sinks;richtextbox;winforms;windows;sink;colors;theme;themes;serilog-sink;vonhoff;rich;textbox;logging;</PackageTags>
-		<RepositoryUrl>https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored.git</RepositoryUrl>
-		<RootNamespace>Serilog</RootNamespace>
-		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-		<TargetFrameworks>net462;net471;net6.0-windows;net8.0-windows;net9.0-windows;netcoreapp3.0-windows;netcoreapp3.1-windows</TargetFrameworks>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<UseWindowsForms>true</UseWindowsForms>
-		<Version>3.1.1</Version>
-		<PackageReleaseNotes>
-			- Fixed a bug where the TextFormatter would crash when the value or format was null or empty.
+    <PropertyGroup>
+        <Authors>Simon Vonhoff</Authors>
+        <Company>github.com/vonhoff</Company>
+        <Copyright>Copyright © 2025 Simon Vonhoff - Provided under the Apache License, Version 2.0.</Copyright>
+        <Description>A Serilog sink that writes log events to a WinForms RichTextBox control with colors and theme support.</Description>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <IncludeSymbols>true</IncludeSymbols>
+        <Nullable>enable</Nullable>
+        <OutputType>Library</OutputType>
+        <PackageIcon>serilog-sink-nuget.png</PackageIcon>
+        <PackageId>Serilog.Sinks.RichTextBox.WinForms.Colored</PackageId>
+        <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored</PackageProjectUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>serilog;sinks;richtextbox;winforms;windows;sink;colors;theme;themes;serilog-sink;vonhoff;rich;textbox;logging;</PackageTags>
+        <RepositoryUrl>https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored.git</RepositoryUrl>
+        <RootNamespace>Serilog</RootNamespace>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <TargetFrameworks>net462;net471;net6.0-windows;net8.0-windows;net9.0-windows;netcoreapp3.0-windows;netcoreapp3.1-windows</TargetFrameworks>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <UseWindowsForms>true</UseWindowsForms>
+        <Version>3.1.1</Version>
+        <PackageReleaseNotes>
+            - Fixed a bug where the TextFormatter would crash when the value or format was null or empty.
 
-			See repository for more information:
-			https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored
-		</PackageReleaseNotes>
-		<SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
-		<SupportedOSPlatform>windows</SupportedOSPlatform>
-		<NeutralLanguage>en-US</NeutralLanguage>
-		<LangVersion>9.0</LangVersion>
-		<WarningLevel>6</WarningLevel>
-	</PropertyGroup>
+            See repository for more information:
+            https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored
+        </PackageReleaseNotes>
+        <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatform>windows</SupportedOSPlatform>
+        <NeutralLanguage>en-US</NeutralLanguage>
+        <LangVersion>9.0</LangVersion>
+        <WarningLevel>6</WarningLevel>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<None Include="..\Resources\serilog-sink-nuget.png">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
-		<None Include="..\README.md">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
-	</ItemGroup>
+    <ItemGroup>
+        <None Include="..\Resources\serilog-sink-nuget.png">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+        <None Include="..\README.md">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+    </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Serilog" Version="[2.12.0,)" />
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Serilog" Version="[2.12.0,)"/>
+    </ItemGroup>
 
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net462' OR '$(TargetFramework)' == 'net471' ">
-		<Reference Include="System.Drawing" />
-		<Reference Include="System.Windows.Forms" />
-	</ItemGroup>
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net462' OR '$(TargetFramework)' == 'net471' ">
+        <Reference Include="System.Drawing"/>
+        <Reference Include="System.Windows.Forms"/>
+    </ItemGroup>
 
 </Project>

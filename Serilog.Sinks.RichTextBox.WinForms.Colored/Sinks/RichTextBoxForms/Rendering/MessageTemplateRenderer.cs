@@ -49,8 +49,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
                 }
                 else
                 {
-                    var propertyToken = (PropertyToken)token;
-                    RenderPropertyToken(propertyToken, properties, canvas);
+                    RenderPropertyToken((PropertyToken)token, properties, canvas);
                 }
             }
         }

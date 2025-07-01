@@ -39,8 +39,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
 
         public void Render(LogEvent logEvent, IRtfCanvas canvas)
         {
-            var s = logEvent.Timestamp.ToString(_token.Format, _formatProvider);
-            _theme.Render(canvas, StyleToken.SecondaryText, s);
+            _theme.Render(canvas, StyleToken.SecondaryText, logEvent.Timestamp.ToString(_token.Format, _formatProvider));
         }
     }
 }

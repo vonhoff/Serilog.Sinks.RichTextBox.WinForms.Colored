@@ -110,29 +110,31 @@ namespace Serilog.Sinks.RichTextBoxForms
             {
                 _signal.WaitOne();
 
-                if (Interlocked.CompareExchange(ref _hasNewMessages, 0, 1) == 1)
+                if (Interlocked.CompareExchange(ref _hasNewMessages, 0, 1) != 1)
                 {
-                    var now = DateTime.UtcNow;
-                    var elapsed = now - lastFlush;
-                    if (elapsed < flushInterval)
-                    {
-                        var remaining = flushInterval - elapsed;
-                        if (remaining > TimeSpan.Zero)
-                        {
-                            Thread.Sleep(remaining);
-                        }
-                    }
-
-                    Interlocked.Exchange(ref _hasNewMessages, 0);
-                    _buffer.TakeSnapshot(snapshot);
-                    builder.Clear();
-                    foreach (var evt in snapshot)
-                    {
-                        _renderer.Render(evt, builder);
-                    }
-                    _richTextBox.SetRtf(builder.Rtf, _options.AutoScroll);
-                    lastFlush = DateTime.UtcNow;
+                    continue;
                 }
+
+                var now = DateTime.UtcNow;
+                var elapsed = now - lastFlush;
+                if (elapsed < flushInterval)
+                {
+                    var remaining = flushInterval - elapsed;
+                    if (remaining > TimeSpan.Zero)
+                    {
+                        Thread.Sleep(remaining);
+                    }
+                }
+
+                Interlocked.Exchange(ref _hasNewMessages, 0);
+                _buffer.TakeSnapshot(snapshot);
+                builder.Clear();
+                foreach (var evt in snapshot)
+                {
+                    _renderer.Render(evt, builder);
+                }
+                _richTextBox.SetRtf(builder.Rtf, _options.AutoScroll);
+                lastFlush = DateTime.UtcNow;
             }
         }
     }

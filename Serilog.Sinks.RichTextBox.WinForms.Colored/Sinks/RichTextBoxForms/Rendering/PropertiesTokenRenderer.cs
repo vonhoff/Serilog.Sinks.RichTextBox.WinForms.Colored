@@ -50,8 +50,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
                     !_outputTemplateProperties.Contains(p.Key))
                 .Select(p => new LogEventProperty(p.Key, p.Value));
 
-            var value = new StructureValue(included);
-            _valueFormatter.Format(value, canvas, string.Empty, false);
+            _valueFormatter.Format(new StructureValue(included), canvas, string.Empty, false);
         }
 
         private static bool TemplateContainsPropertyName(MessageTemplate template, string propertyName)

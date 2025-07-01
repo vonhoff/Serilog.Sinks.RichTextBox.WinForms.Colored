@@ -30,6 +30,9 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
     public class JsonValueFormatter : ValueFormatter
     {
         private readonly IFormatProvider? _formatProvider;
+        private readonly StringBuilder _literalBuilder = new(64);
+        private readonly StringBuilder _scalarBuilder = new();
+        private readonly StringBuilder _jsonStringBuilder = new();
 
         public JsonValueFormatter(Theme theme, IFormatProvider? formatProvider) : base(theme)
         {
@@ -75,7 +78,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                 }
 
                 delimiter = ", ";
-
                 Theme.Render(state.Canvas, StyleToken.Name, GetQuotedJsonString(eventProperty.Name));
                 Theme.Render(state.Canvas, StyleToken.TertiaryText, ": ");
                 Visit(state.Next(), eventProperty.Value);
@@ -106,7 +108,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                 }
 
                 delimiter = ", ";
-
                 var style = scalar.Value switch
                 {
                     null => StyleToken.Null,
@@ -168,47 +169,43 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                 case TimeSpan:
                 case Guid:
                 case Uri:
+                    _literalBuilder.Clear();
+
+                    using (var writer = new StringWriter(_literalBuilder))
                     {
-                        var sb = new StringBuilder(64);
-
-                        using (var writer = new StringWriter(sb))
+                        switch (value)
                         {
-                            switch (value)
-                            {
-                                // For dates in JSON, always use ISO 8601 format (O)
-                                case DateTime dt:
-                                    writer.Write(dt.ToString("O", CultureInfo.InvariantCulture));
-                                    break;
-                                case DateTimeOffset dto:
-                                    writer.Write(dto.ToString("O", CultureInfo.InvariantCulture));
-                                    break;
-                                default:
-                                    scalar.Render(writer, null, _formatProvider);
-                                    break;
-                            }
+                            // For dates in JSON, always use ISO 8601 format (O)
+                            case DateTime dt:
+                                writer.Write(dt.ToString("O", CultureInfo.InvariantCulture));
+                                break;
+                            case DateTimeOffset dto:
+                                writer.Write(dto.ToString("O", CultureInfo.InvariantCulture));
+                                break;
+                            default:
+                                scalar.Render(writer, null, _formatProvider);
+                                break;
                         }
-
-                        Theme.Render(canvas, StyleToken.Scalar, GetQuotedJsonString(sb.ToString()));
-                        return;
                     }
+
+                    Theme.Render(canvas, StyleToken.Scalar, GetQuotedJsonString(_literalBuilder.ToString()));
+                    return;
                 default:
+                    if (value is IFormattable formattable)
                     {
-                        if (value is IFormattable formattable)
-                        {
-                            RenderFormattable(canvas, formattable, null);
-                            return;
-                        }
-
-                        var sb = new StringBuilder();
-
-                        using (var writer = new StringWriter(sb))
-                        {
-                            scalar.Render(writer, null, _formatProvider);
-                        }
-
-                        Theme.Render(canvas, StyleToken.Scalar, sb.ToString());
+                        RenderFormattable(canvas, formattable, null);
                         return;
                     }
+
+                    _scalarBuilder.Clear();
+
+                    using (var writer = new StringWriter(_scalarBuilder))
+                    {
+                        scalar.Render(writer, null, _formatProvider);
+                    }
+
+                    Theme.Render(canvas, StyleToken.Scalar, _scalarBuilder.ToString());
+                    return;
             }
         }
 
@@ -220,7 +217,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                 type == typeof(float) || type == typeof(double) || type == typeof(decimal) ||
                 type == typeof(int) || type == typeof(uint) || type == typeof(long) || type == typeof(ulong) ||
                 type == typeof(byte) || type == typeof(sbyte) || type == typeof(short) || type == typeof(ushort)
-                ? StyleToken.Number : StyleToken.Scalar;
+                    ? StyleToken.Number : StyleToken.Scalar;
 
             var effectiveFormat = format;
 
@@ -229,7 +226,12 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             // a FormatException.
             if (!string.IsNullOrEmpty(effectiveFormat))
             {
-                effectiveFormat = effectiveFormat!.Replace("l", string.Empty).Replace("j", string.Empty);
+                // More efficient than multiple Replace calls
+                _scalarBuilder.Clear();
+                _scalarBuilder.Append(effectiveFormat);
+                _scalarBuilder.Replace("l", string.Empty);
+                _scalarBuilder.Replace("j", string.Empty);
+                effectiveFormat = _scalarBuilder.ToString();
 
                 // If all characters were removed we end up with an empty string – treat this as no format.
                 if (string.IsNullOrWhiteSpace(effectiveFormat))
@@ -239,9 +241,14 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             }
 
             if (type == typeof(TimeSpan) && string.IsNullOrEmpty(effectiveFormat))
+            {
                 effectiveFormat = "c";
+            }
+
             if (type == typeof(Guid) && string.IsNullOrEmpty(effectiveFormat))
+            {
                 effectiveFormat = "D";
+            }
 
             string renderedValue;
             try
@@ -295,15 +302,21 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             output.Write('\"');
         }
 
-        private static string GetQuotedJsonString(string str)
+        private string GetQuotedJsonString(string str)
         {
-            var sb = new StringBuilder(str.Length + 2);
-            using (var writer = new StringWriter(sb))
+            _jsonStringBuilder.Clear();
+            var estimatedCapacity = str.Length + 2;
+            if (_jsonStringBuilder.Capacity < estimatedCapacity)
+            {
+                _jsonStringBuilder.Capacity = estimatedCapacity;
+            }
+
+            using (var writer = new StringWriter(_jsonStringBuilder))
             {
                 WriteQuotedJsonString(str, writer);
             }
 
-            return sb.ToString();
+            return _jsonStringBuilder.ToString();
         }
     }
 }
