@@ -31,7 +31,7 @@ namespace Serilog.Sinks.RichTextBoxForms
 {
     public class RichTextBoxSink : ILogEventSink, IDisposable
     {
-        private const double FlushIntervalMs = 1000.0 / 12.0;
+        private const double FlushIntervalMs = 1000.0 / 16.0;
         private readonly ConcurrentCircularBuffer<LogEvent> _buffer;
         private readonly AutoResetEvent _signal;
         private readonly RichTextBoxSinkOptions _options;
