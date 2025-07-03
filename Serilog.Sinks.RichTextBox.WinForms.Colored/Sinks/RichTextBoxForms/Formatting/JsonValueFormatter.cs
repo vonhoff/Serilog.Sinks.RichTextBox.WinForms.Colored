@@ -23,14 +23,18 @@ using Serilog.Sinks.RichTextBoxForms.Themes;
 using System;
 using System.Globalization;
 using System.IO;
+using System.Text;
 
 namespace Serilog.Sinks.RichTextBoxForms.Formatting
 {
     public class JsonValueFormatter : ValueFormatter
     {
         private readonly IFormatProvider? _formatProvider;
+        private readonly StringBuilder _literalBuilder = new(64);
+        private readonly StringBuilder _scalarBuilder = new();
+        private readonly StringBuilder _jsonStringBuilder = new();
 
-        public JsonValueFormatter(Theme theme, IFormatProvider? formatProvider) : base(theme)
+        public JsonValueFormatter(Theme theme, IFormatProvider? formatProvider) : base(theme, formatProvider)
         {
             _formatProvider = formatProvider;
         }
@@ -74,7 +78,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                 }
 
                 delimiter = ", ";
-
                 Theme.Render(state.Canvas, StyleToken.Name, GetQuotedJsonString(eventProperty.Name));
                 Theme.Render(state.Canvas, StyleToken.TertiaryText, ": ");
                 Visit(state.Next(), eventProperty.Value);
@@ -105,7 +108,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                 }
 
                 delimiter = ", ";
-
                 var style = scalar.Value switch
                 {
                     null => StyleToken.Null,
@@ -132,15 +134,19 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                 case null:
                     Theme.Render(canvas, StyleToken.Null, "null");
                     return;
+
                 case string str:
                     Theme.Render(canvas, StyleToken.String, GetQuotedJsonString(str));
                     return;
+
                 case byte[] bytes:
                     Theme.Render(canvas, StyleToken.String, GetQuotedJsonString(Convert.ToBase64String(bytes)));
                     return;
+
                 case bool b:
                     Theme.Render(canvas, StyleToken.Boolean, b ? "true" : "false");
                     return;
+
                 case double d:
                     if (double.IsNaN(d) || double.IsInfinity(d))
                     {
@@ -151,6 +157,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                         Theme.Render(canvas, StyleToken.Number, d.ToString("R", CultureInfo.InvariantCulture));
                     }
                     return;
+
                 case float f:
                     if (float.IsNaN(f) || float.IsInfinity(f))
                     {
@@ -161,101 +168,54 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                         Theme.Render(canvas, StyleToken.Number, f.ToString("R", CultureInfo.InvariantCulture));
                     }
                     return;
+
                 case char:
                 case DateTime:
                 case DateTimeOffset:
                 case TimeSpan:
                 case Guid:
                 case Uri:
+                    _literalBuilder.Clear();
+
+                    using (var writer = new StringWriter(_literalBuilder))
                     {
-                        var sb = StringBuilderCache.Acquire(64);
-
-                        using (var writer = new StringWriter(sb))
+                        switch (value)
                         {
-                            switch (value)
-                            {
-                                // For dates in JSON, always use ISO 8601 format (O)
-                                case DateTime dt:
-                                    writer.Write(dt.ToString("O", CultureInfo.InvariantCulture));
-                                    break;
-                                case DateTimeOffset dto:
-                                    writer.Write(dto.ToString("O", CultureInfo.InvariantCulture));
-                                    break;
-                                default:
-                                    scalar.Render(writer, null, _formatProvider);
-                                    break;
-                            }
-                        }
+                            // For dates in JSON, always use ISO 8601 format (O)
+                            case DateTime dt:
+                                writer.Write(dt.ToString("O", CultureInfo.InvariantCulture));
+                                break;
 
-                        Theme.Render(canvas, StyleToken.Scalar, GetQuotedJsonString(sb.ToString()));
-                        StringBuilderCache.Release(sb);
-                        return;
+                            case DateTimeOffset dto:
+                                writer.Write(dto.ToString("O", CultureInfo.InvariantCulture));
+                                break;
+
+                            default:
+                                scalar.Render(writer, null, _formatProvider);
+                                break;
+                        }
                     }
+
+                    Theme.Render(canvas, StyleToken.Scalar, GetQuotedJsonString(_literalBuilder.ToString()));
+                    return;
+
                 default:
+                    if (value is IFormattable formattable)
                     {
-                        if (value is IFormattable formattable)
-                        {
-                            RenderFormattable(canvas, formattable, null);
-                            return;
-                        }
-
-                        var sb = StringBuilderCache.Acquire();
-
-                        using (var writer = new StringWriter(sb))
-                        {
-                            scalar.Render(writer, null, _formatProvider);
-                        }
-
-                        Theme.Render(canvas, StyleToken.Scalar, sb.ToString());
-                        StringBuilderCache.Release(sb);
+                        RenderFormattable(canvas, formattable, null);
                         return;
                     }
+
+                    _scalarBuilder.Clear();
+
+                    using (var writer = new StringWriter(_scalarBuilder))
+                    {
+                        scalar.Render(writer, null, _formatProvider);
+                    }
+
+                    Theme.Render(canvas, StyleToken.Scalar, _scalarBuilder.ToString());
+                    return;
             }
-        }
-
-        private void RenderFormattable(IRtfCanvas canvas, IFormattable formattable, string? format)
-        {
-            // Use Number style for numbers, Scalar for others (DateTime, Guid, etc.)
-            var type = formattable.GetType();
-            var token =
-                type == typeof(float) || type == typeof(double) || type == typeof(decimal) ||
-                type == typeof(int) || type == typeof(uint) || type == typeof(long) || type == typeof(ulong) ||
-                type == typeof(byte) || type == typeof(sbyte) || type == typeof(short) || type == typeof(ushort)
-                ? StyleToken.Number : StyleToken.Scalar;
-
-            var effectiveFormat = format;
-
-            // Remove sink-specific format specifiers (e.g. "l" for literal, "j" for JSON) that are not
-            // recognised by the underlying IFormattable implementation and would otherwise trigger
-            // a FormatException.
-            if (!string.IsNullOrEmpty(effectiveFormat))
-            {
-                effectiveFormat = effectiveFormat!.Replace("l", string.Empty).Replace("j", string.Empty);
-
-                // If all characters were removed we end up with an empty string – treat this as no format.
-                if (string.IsNullOrWhiteSpace(effectiveFormat))
-                {
-                    effectiveFormat = null;
-                }
-            }
-
-            if (type == typeof(TimeSpan) && string.IsNullOrEmpty(effectiveFormat))
-                effectiveFormat = "c";
-            if (type == typeof(Guid) && string.IsNullOrEmpty(effectiveFormat))
-                effectiveFormat = "D";
-
-            string renderedValue;
-            try
-            {
-                renderedValue = formattable.ToString(effectiveFormat, _formatProvider);
-            }
-            catch (FormatException)
-            {
-                // Fall back to the default formatting if the specified format is not supported by the value.
-                renderedValue = formattable.ToString(null, _formatProvider);
-            }
-
-            Theme.Render(canvas, token, renderedValue);
         }
 
         private static void WriteQuotedJsonString(string str, TextWriter output)
@@ -269,25 +229,32 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                     case '"':
                         output.Write("\\\"");
                         break;
+
                     case '\\':
                         output.Write(@"\\");
                         break;
+
                     case '\n':
                         output.Write("\\n");
                         break;
+
                     case '\r':
                         output.Write("\\r");
                         break;
+
                     case '\f':
                         output.Write("\\f");
                         break;
+
                     case '\t':
                         output.Write("\\t");
                         break;
+
                     case < (char)32:
                         output.Write("\\u");
                         output.Write(((int)c).ToString("X4"));
                         break;
+
                     default:
                         output.Write(c);
                         break;
@@ -296,15 +263,21 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             output.Write('\"');
         }
 
-        private static string GetQuotedJsonString(string str)
+        private string GetQuotedJsonString(string str)
         {
-            var sb = StringBuilderCache.Acquire(str.Length + 2);
-            using (var writer = new StringWriter(sb))
+            _jsonStringBuilder.Clear();
+            var estimatedCapacity = str.Length + 2;
+            if (_jsonStringBuilder.Capacity < estimatedCapacity)
+            {
+                _jsonStringBuilder.Capacity = estimatedCapacity;
+            }
+
+            using (var writer = new StringWriter(_jsonStringBuilder))
             {
                 WriteQuotedJsonString(str, writer);
             }
 
-            return StringBuilderCache.GetStringAndRelease(sb);
+            return _jsonStringBuilder.ToString();
         }
     }
 }

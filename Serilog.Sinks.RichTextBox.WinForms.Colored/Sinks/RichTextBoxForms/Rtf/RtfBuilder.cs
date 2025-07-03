@@ -1,3 +1,21 @@
+#region Copyright 2025 Simon Vonhoff & Contributors
+
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+#endregion
+
 using Serilog.Sinks.RichTextBoxForms.Themes;
 using System;
 using System.Collections.Generic;
@@ -6,13 +24,13 @@ using System.Text;
 
 namespace Serilog.Sinks.RichTextBoxForms.Rtf
 {
-    internal sealed class RtfBuilder : IRtfCanvas, IDisposable
+    public sealed class RtfBuilder : IRtfCanvas, IDisposable
     {
         private readonly StringBuilder _body = new();
+        private readonly StringBuilder _documentBuilder = new();
         private readonly Dictionary<Color, int> _colorTable = new();
         private int _currentFgIndex;
         private int _currentBgIndex;
-        private int _selectionLength;
 
         public RtfBuilder(Theme theme)
         {
@@ -21,9 +39,9 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
             _currentFgIndex = RegisterColor(SelectionColor);
             _currentBgIndex = RegisterColor(SelectionBackColor);
 
-            foreach (var colour in theme.Colors)
+            foreach (var color in theme.Colors)
             {
-                RegisterColor(colour);
+                RegisterColor(color);
             }
         }
 
@@ -31,11 +49,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
 
         public int SelectionStart { get; set; }
 
-        public int SelectionLength
-        {
-            get => _selectionLength;
-            set => _selectionLength = value;
-        }
+        public int SelectionLength { get; set; }
 
         public Color SelectionColor { get; set; }
 
@@ -43,14 +57,17 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
 
         public void AppendText(string text)
         {
-            EnsureColourSwitch();
+            EnsureColorSwitch();
             EscapeAndAppend(text);
             TextLength += text.Length;
         }
 
-        public string Rtf => BuildDocument();
+        public string Rtf
+        {
+            get => BuildDocument();
+        }
 
-        private void EnsureColourSwitch()
+        private void EnsureColorSwitch()
         {
             var fgIdx = RegisterColor(SelectionColor);
             var bgIdx = RegisterColor(SelectionBackColor);
@@ -110,15 +127,19 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
                 {
                     _body.Append("\\u").Append((int)ch).Append('?');
                 }
-                else switch (ch)
+                else
+                {
+                    switch (ch)
                     {
                         case '\\' or '{' or '}':
                             _body.Append('\\').Append(ch);
                             break;
+
                         case '\n':
                             _body.Append("\\par\r\n");
                             break;
                     }
+                }
 
                 segmentStart = i + 1;
             }
@@ -131,28 +152,27 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
 
         private string BuildDocument()
         {
-            var sb = StringBuilderCache.Acquire(_body.Length + 256);
-
-            sb.Append(@"{\rtf1\ansi\deff0");
-            sb.Append("{\\colortbl ;");
-
+            _documentBuilder.Clear();
+            _documentBuilder.Append(@"{\rtf1\ansi\deff0");
+            _documentBuilder.Append("{\\colortbl ;");
             foreach (var key in _colorTable.Keys)
             {
-                sb.Append("\\red").Append(key.R)
-                  .Append("\\green").Append(key.G)
-                  .Append("\\blue").Append(key.B).Append(';');
+                _documentBuilder.Append("\\red").Append(key.R)
+                    .Append("\\green").Append(key.G)
+                    .Append("\\blue").Append(key.B).Append(';');
             }
 
-            sb.Append('}');
-            sb.Append(_body);
-            sb.Append('}');
+            _documentBuilder.Append('}');
+            _documentBuilder.Append(_body);
+            _documentBuilder.Append('}');
 
-            return StringBuilderCache.GetStringAndRelease(sb);
+            return _documentBuilder.ToString();
         }
 
         public void Dispose()
         {
             _body.Clear();
+            _documentBuilder.Clear();
             _colorTable.Clear();
         }
 
@@ -164,6 +184,11 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
             if (_body.Capacity > maxRetainedBuilderSize)
             {
                 _body.Capacity = maxRetainedBuilderSize;
+            }
+
+            if (_documentBuilder.Capacity > maxRetainedBuilderSize)
+            {
+                _documentBuilder.Capacity = maxRetainedBuilderSize;
             }
 
             TextLength = 0;

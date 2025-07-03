@@ -105,6 +105,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
             {
                 case < 1:
                     return string.Empty;
+
                 case > 4:
                     {
                         var stringValue = value.ToString();
@@ -128,7 +129,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
                 'w' => LowercaseLevelMap[index][width - 1],
                 'u' => UppercaseLevelMap[index][width - 1],
                 't' => TitleCaseLevelMap[index][width - 1],
-                _ => TextFormatter.Format(value.ToString(), format),
+                _ => TextFormatter.Format(value.ToString(), format)
             };
         }
     }

@@ -57,7 +57,7 @@ namespace Demo
 
             // Intentional dead code for demonstration purposes.
 #pragma warning disable CS0162
-            if (false) 
+            if (false)
             {
                 // You can also use fluent syntax to configure the sink like this:
                 Log.Logger = new LoggerConfiguration()

@@ -28,10 +28,10 @@ namespace Serilog.Sinks.RichTextBoxForms
         private int _maxLogLines;
 
         /// <summary>
-        /// Creates a new collection of options that control the behaviour and appearance of a
+        /// Creates a new collection of options that control the behavior and appearance of a
         /// <see cref="RichTextBoxSink"/> instance.
         /// </summary>
-        /// <param name="theme">The colour theme applied when rendering individual message tokens.</param>
+        /// <param name="theme">The color theme applied when rendering individual message tokens.</param>
         /// <param name="autoScroll">When <c>true</c> (default) the target control scrolls automatically to the most recent log line.</param>
         /// <param name="maxLogLines">Maximum number of log events retained in the in-memory circular buffer and rendered in the control.</param>
         /// <param name="outputTemplate">Serilog output template that controls textual formatting of each log event.</param>
