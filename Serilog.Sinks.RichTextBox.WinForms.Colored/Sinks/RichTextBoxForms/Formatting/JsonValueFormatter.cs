@@ -34,7 +34,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
         private readonly StringBuilder _scalarBuilder = new();
         private readonly StringBuilder _jsonStringBuilder = new();
 
-        public JsonValueFormatter(Theme theme, IFormatProvider? formatProvider) : base(theme)
+        public JsonValueFormatter(Theme theme, IFormatProvider? formatProvider) : base(theme, formatProvider)
         {
             _formatProvider = formatProvider;
         }
@@ -209,60 +209,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             }
         }
 
-        private void RenderFormattable(IRtfCanvas canvas, IFormattable formattable, string? format)
-        {
-            // Use Number style for numbers, Scalar for others (DateTime, Guid, etc.)
-            var type = formattable.GetType();
-            var token =
-                type == typeof(float) || type == typeof(double) || type == typeof(decimal) ||
-                type == typeof(int) || type == typeof(uint) || type == typeof(long) || type == typeof(ulong) ||
-                type == typeof(byte) || type == typeof(sbyte) || type == typeof(short) || type == typeof(ushort)
-                    ? StyleToken.Number : StyleToken.Scalar;
-
-            var effectiveFormat = format;
-
-            // Remove sink-specific format specifiers (e.g. "l" for literal, "j" for JSON) that are not
-            // recognised by the underlying IFormattable implementation and would otherwise trigger
-            // a FormatException.
-            if (!string.IsNullOrEmpty(effectiveFormat))
-            {
-                // More efficient than multiple Replace calls
-                _scalarBuilder.Clear();
-                _scalarBuilder.Append(effectiveFormat);
-                _scalarBuilder.Replace("l", string.Empty);
-                _scalarBuilder.Replace("j", string.Empty);
-                effectiveFormat = _scalarBuilder.ToString();
-
-                // If all characters were removed we end up with an empty string – treat this as no format.
-                if (string.IsNullOrWhiteSpace(effectiveFormat))
-                {
-                    effectiveFormat = null;
-                }
-            }
-
-            if (type == typeof(TimeSpan) && string.IsNullOrEmpty(effectiveFormat))
-            {
-                effectiveFormat = "c";
-            }
-
-            if (type == typeof(Guid) && string.IsNullOrEmpty(effectiveFormat))
-            {
-                effectiveFormat = "D";
-            }
-
-            string renderedValue;
-            try
-            {
-                renderedValue = formattable.ToString(effectiveFormat, _formatProvider);
-            }
-            catch (FormatException)
-            {
-                // Fall back to the default formatting if the specified format is not supported by the value.
-                renderedValue = formattable.ToString(null, _formatProvider);
-            }
-
-            Theme.Render(canvas, token, renderedValue);
-        }
 
         private static void WriteQuotedJsonString(string str, TextWriter output)
         {

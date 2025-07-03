@@ -33,7 +33,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
         private readonly StringBuilder _stringBuilder = new();
         private JsonValueFormatter? _jsonValueFormatter;
 
-        public DisplayValueFormatter(Theme theme, IFormatProvider? formatProvider) : base(theme)
+        public DisplayValueFormatter(Theme theme, IFormatProvider? formatProvider) : base(theme, formatProvider)
         {
             _formatProvider = formatProvider;
         }
@@ -62,7 +62,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                     Theme.Render(canvas, StyleToken.Scalar, uri.ToString());
                     return;
                 case IFormattable formattable:
-                    RenderFormattable(formattable, format, canvas);
+                    RenderFormattable(canvas, formattable, format);
                     return;
             }
 
@@ -91,58 +91,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             }
         }
 
-        private void RenderFormattable(IFormattable formattable, string? format, IRtfCanvas canvas)
-        {
-            // Use Number style for numbers, Scalar for others (DateTime, Guid, etc.)
-            var type = formattable.GetType();
-            var token =
-                type == typeof(float) || type == typeof(double) || type == typeof(decimal) ||
-                type == typeof(int) || type == typeof(uint) || type == typeof(long) || type == typeof(ulong) ||
-                type == typeof(byte) || type == typeof(sbyte) || type == typeof(short) || type == typeof(ushort)
-                    ? StyleToken.Number : StyleToken.Scalar;
-
-            var effectiveFormat = format;
-
-            // Remove sink-specific format specifiers (e.g. "l" for literal, "j" for JSON) that are not
-            // recognised by the underlying IFormattable implementation and would otherwise trigger
-            // a FormatException.
-            if (!string.IsNullOrEmpty(effectiveFormat))
-            {
-                _stringBuilder.Clear();
-                _stringBuilder.Append(effectiveFormat);
-                _stringBuilder.Replace("l", string.Empty);
-                _stringBuilder.Replace("j", string.Empty);
-                effectiveFormat = _stringBuilder.ToString();
-
-                if (string.IsNullOrWhiteSpace(effectiveFormat))
-                {
-                    effectiveFormat = null;
-                }
-            }
-
-            if (type == typeof(TimeSpan) && string.IsNullOrEmpty(effectiveFormat))
-            {
-                effectiveFormat = "c";
-            }
-
-            if (type == typeof(Guid) && string.IsNullOrEmpty(effectiveFormat))
-            {
-                effectiveFormat = "D";
-            }
-
-            string renderedValue;
-            try
-            {
-                renderedValue = formattable.ToString(effectiveFormat, _formatProvider);
-            }
-            catch (FormatException)
-            {
-                // Fall back to the default formatting if the specified format is not supported by the value.
-                renderedValue = formattable.ToString(null, _formatProvider);
-            }
-
-            Theme.Render(canvas, token, renderedValue);
-        }
 
         protected override bool VisitDictionaryValue(ValueFormatterState state, DictionaryValue dictionary)
         {
