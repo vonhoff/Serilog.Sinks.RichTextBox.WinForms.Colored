@@ -39,9 +39,9 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
             _currentFgIndex = RegisterColor(SelectionColor);
             _currentBgIndex = RegisterColor(SelectionBackColor);
 
-            foreach (var colour in theme.Colors)
+            foreach (var color in theme.Colors)
             {
-                RegisterColor(colour);
+                RegisterColor(color);
             }
         }
 
@@ -57,7 +57,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
 
         public void AppendText(string text)
         {
-            EnsureColourSwitch();
+            EnsureColorSwitch();
             EscapeAndAppend(text);
             TextLength += text.Length;
         }
@@ -67,7 +67,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
             get => BuildDocument();
         }
 
-        private void EnsureColourSwitch()
+        private void EnsureColorSwitch()
         {
             var fgIdx = RegisterColor(SelectionColor);
             var bgIdx = RegisterColor(SelectionBackColor);
