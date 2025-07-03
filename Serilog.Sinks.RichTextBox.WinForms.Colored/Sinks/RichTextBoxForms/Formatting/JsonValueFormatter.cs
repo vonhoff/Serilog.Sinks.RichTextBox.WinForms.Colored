@@ -134,15 +134,19 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                 case null:
                     Theme.Render(canvas, StyleToken.Null, "null");
                     return;
+
                 case string str:
                     Theme.Render(canvas, StyleToken.String, GetQuotedJsonString(str));
                     return;
+
                 case byte[] bytes:
                     Theme.Render(canvas, StyleToken.String, GetQuotedJsonString(Convert.ToBase64String(bytes)));
                     return;
+
                 case bool b:
                     Theme.Render(canvas, StyleToken.Boolean, b ? "true" : "false");
                     return;
+
                 case double d:
                     if (double.IsNaN(d) || double.IsInfinity(d))
                     {
@@ -153,6 +157,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                         Theme.Render(canvas, StyleToken.Number, d.ToString("R", CultureInfo.InvariantCulture));
                     }
                     return;
+
                 case float f:
                     if (float.IsNaN(f) || float.IsInfinity(f))
                     {
@@ -163,6 +168,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                         Theme.Render(canvas, StyleToken.Number, f.ToString("R", CultureInfo.InvariantCulture));
                     }
                     return;
+
                 case char:
                 case DateTime:
                 case DateTimeOffset:
@@ -179,9 +185,11 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                             case DateTime dt:
                                 writer.Write(dt.ToString("O", CultureInfo.InvariantCulture));
                                 break;
+
                             case DateTimeOffset dto:
                                 writer.Write(dto.ToString("O", CultureInfo.InvariantCulture));
                                 break;
+
                             default:
                                 scalar.Render(writer, null, _formatProvider);
                                 break;
@@ -190,6 +198,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 
                     Theme.Render(canvas, StyleToken.Scalar, GetQuotedJsonString(_literalBuilder.ToString()));
                     return;
+
                 default:
                     if (value is IFormattable formattable)
                     {
@@ -209,7 +218,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             }
         }
 
-
         private static void WriteQuotedJsonString(string str, TextWriter output)
         {
             output.Write('\"');
@@ -221,25 +229,32 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                     case '"':
                         output.Write("\\\"");
                         break;
+
                     case '\\':
                         output.Write(@"\\");
                         break;
+
                     case '\n':
                         output.Write("\\n");
                         break;
+
                     case '\r':
                         output.Write("\\r");
                         break;
+
                     case '\f':
                         output.Write("\\f");
                         break;
+
                     case '\t':
                         output.Write("\\t");
                         break;
+
                     case < (char)32:
                         output.Write("\\u");
                         output.Write(((int)c).ToString("X4"));
                         break;
+
                     default:
                         output.Write(c);
                         break;

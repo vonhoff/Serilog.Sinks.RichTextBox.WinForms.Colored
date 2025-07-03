@@ -134,6 +134,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
                         case '\\' or '{' or '}':
                             _body.Append('\\').Append(ch);
                             break;
+
                         case '\n':
                             _body.Append("\\par\r\n");
                             break;

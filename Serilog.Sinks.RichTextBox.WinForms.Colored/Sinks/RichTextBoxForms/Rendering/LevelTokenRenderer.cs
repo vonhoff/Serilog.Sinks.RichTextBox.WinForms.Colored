@@ -105,6 +105,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
             {
                 case < 1:
                     return string.Empty;
+
                 case > 4:
                     {
                         var stringValue = value.ToString();

@@ -22,12 +22,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Themes
 {
     public readonly struct Style
     {
-        public Style(Color foreground)
-        {
-            Background = Color.Black;
-            Foreground = foreground;
-        }
-
         public Style(Color foreground, Color background)
         {
             Background = background;

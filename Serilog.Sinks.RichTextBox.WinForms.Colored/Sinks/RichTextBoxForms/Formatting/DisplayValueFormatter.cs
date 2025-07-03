@@ -47,20 +47,25 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                 case null:
                     Theme.Render(canvas, StyleToken.Null, "null");
                     return;
+
                 case string text:
                     RenderString(text, canvas, format, isLiteral);
                     return;
+
                 case byte[] bytes:
                     _stringBuilder.Clear();
                     _stringBuilder.Append('"').Append(Convert.ToBase64String(bytes)).Append('"');
                     Theme.Render(canvas, StyleToken.String, _stringBuilder.ToString());
                     return;
+
                 case bool b:
                     Theme.Render(canvas, StyleToken.Boolean, b.ToString());
                     return;
+
                 case Uri uri:
                     Theme.Render(canvas, StyleToken.Scalar, uri.ToString());
                     return;
+
                 case IFormattable formattable:
                     RenderFormattable(canvas, formattable, format);
                     return;
@@ -90,7 +95,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                 Theme.Render(canvas, StyleToken.String, _stringBuilder.ToString());
             }
         }
-
 
         protected override bool VisitDictionaryValue(ValueFormatterState state, DictionaryValue dictionary)
         {
