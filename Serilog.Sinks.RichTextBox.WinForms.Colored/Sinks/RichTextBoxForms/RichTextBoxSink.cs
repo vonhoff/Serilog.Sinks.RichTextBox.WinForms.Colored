@@ -40,7 +40,6 @@ namespace Serilog.Sinks.RichTextBoxForms
         private readonly CancellationTokenSource _tokenSource;
         private readonly Task _processingTask;
         private bool _disposed;
-        private int _hasNewMessages;
 
         public RichTextBoxSink(RichTextBox richTextBox, RichTextBoxSinkOptions options, ITokenRenderer? renderer = null)
         {
@@ -51,7 +50,6 @@ namespace Serilog.Sinks.RichTextBoxForms
 
             _buffer = new ConcurrentCircularBuffer<LogEvent>(options.MaxLogLines);
             _signal = new AutoResetEvent(false);
-            _hasNewMessages = 0;
 
             richTextBox.Clear();
             richTextBox.ReadOnly = true;
@@ -78,24 +76,18 @@ namespace Serilog.Sinks.RichTextBoxForms
         public void Emit(LogEvent logEvent)
         {
             _buffer.Add(logEvent);
-            Update();
+            _signal.Set();
         }
 
         public void Clear()
         {
             _buffer.Clear();
-            Update();
+            _signal.Set();
         }
 
         public void Restore()
         {
             _buffer.Restore();
-            Update();
-        }
-
-        private void Update()
-        {
-            Interlocked.Exchange(ref _hasNewMessages, 1);
             _signal.Set();
         }
 
@@ -104,35 +96,45 @@ namespace Serilog.Sinks.RichTextBoxForms
             var builder = new RtfBuilder(_options.Theme);
             var snapshot = new System.Collections.Generic.List<LogEvent>(_options.MaxLogLines);
             var flushInterval = TimeSpan.FromMilliseconds(FlushIntervalMs);
-            var lastFlush = DateTime.UtcNow;
+            var lastFlush = DateTime.MinValue;
 
             while (!token.IsCancellationRequested)
             {
                 _signal.WaitOne();
 
-                if (Interlocked.CompareExchange(ref _hasNewMessages, 0, 1) != 1)
+                if (token.IsCancellationRequested)
                 {
-                    continue;
+                    break;
                 }
 
                 var now = DateTime.UtcNow;
-                var elapsed = now - lastFlush;
-                if (elapsed < flushInterval)
+                var elapsedSinceLastFlush = now - lastFlush;
+                if (elapsedSinceLastFlush < flushInterval)
                 {
-                    var remaining = flushInterval - elapsed;
-                    if (remaining > TimeSpan.Zero)
+                    var remainingTime = flushInterval - elapsedSinceLastFlush;
+                    if (token.WaitHandle.WaitOne(remainingTime))
                     {
-                        Thread.Sleep(remaining);
+                        break;
                     }
                 }
 
-                Interlocked.Exchange(ref _hasNewMessages, 0);
+                while (_signal.WaitOne(0))
+                {
+                }
+
                 _buffer.TakeSnapshot(snapshot);
+
                 builder.Clear();
                 foreach (var evt in snapshot)
                 {
                     _renderer.Render(evt, builder);
                 }
+
+                if (_richTextBox.IsDisposed || _richTextBox.Disposing)
+                {
+                    continue;
+                }
+
                 _richTextBox.SetRtf(builder.Rtf, _options.AutoScroll, token);
                 lastFlush = DateTime.UtcNow;
             }

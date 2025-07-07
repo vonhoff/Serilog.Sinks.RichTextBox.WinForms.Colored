@@ -30,7 +30,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
     {
         private readonly IFormatProvider? _formatProvider;
         private readonly StringBuilder _scalarBuilder = new();
-        private readonly StringBuilder _stringBuilder = new();
+        private readonly StringBuilder _literalBuilder = new(64);
         private JsonValueFormatter? _jsonValueFormatter;
 
         public DisplayValueFormatter(Theme theme, IFormatProvider? formatProvider) : base(theme, formatProvider)
@@ -53,9 +53,9 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                     return;
 
                 case byte[] bytes:
-                    _stringBuilder.Clear();
-                    _stringBuilder.Append('"').Append(Convert.ToBase64String(bytes)).Append('"');
-                    Theme.Render(canvas, StyleToken.String, _stringBuilder.ToString());
+                    _literalBuilder.Clear();
+                    _literalBuilder.Append('"').Append(Convert.ToBase64String(bytes)).Append('"');
+                    Theme.Render(canvas, StyleToken.String, _literalBuilder.ToString());
                     return;
 
                 case bool b:
@@ -90,9 +90,9 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             }
             else
             {
-                _stringBuilder.Clear();
-                _stringBuilder.Append('"').Append(text.Replace("\"", "\\\"")).Append('"');
-                Theme.Render(canvas, StyleToken.String, _stringBuilder.ToString());
+                _literalBuilder.Clear();
+                _literalBuilder.Append('"').Append(text.Replace("\"", "\\\"")).Append('"');
+                Theme.Render(canvas, StyleToken.String, _literalBuilder.ToString());
             }
         }
 
