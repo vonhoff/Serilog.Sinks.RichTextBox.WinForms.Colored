@@ -1,8 +1,12 @@
-## Release Notes - Serilog.Sinks.RichTextBox.WinForms.Colored v3.1.1
+## Release Notes - Serilog.Sinks.RichTextBox.WinForms.Colored v3.1.2
 
 ### What Changed
 
-- Fixed a bug where the TextFormatter would crash when the value or format was null or empty.
+- Fixed a bug where cross-thread log messages during form construction caused `System.InvalidOperationException` due to premature access of the RichTextBox.
+
+### Contributors
+
+- [Steffen S. Hellestøl](https://github.com/SteffenSH)
 
 ### Resources
 

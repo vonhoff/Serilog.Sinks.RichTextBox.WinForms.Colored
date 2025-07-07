@@ -18,6 +18,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace Serilog.Sinks.RichTextBoxForms.Extensions
@@ -54,8 +55,25 @@ namespace Serilog.Sinks.RichTextBoxForms.Extensions
         private static extern IntPtr SendMessage(IntPtr hWnd, int wMsg, int wParam, ref Point lParam);
 #endif
 
-        public static void SetRtf(this RichTextBox richTextBox, string rtf, bool autoScroll)
+        public static void SetRtf(this RichTextBox richTextBox, string rtf, bool autoScroll, CancellationToken token)
         {
+            //Wait for richTextBox.Handle to be created
+            if (!richTextBox.IsHandleCreated)
+            {
+                var mre = new ManualResetEventSlim();
+                EventHandler eh = (sender, args) => mre.Set();
+                richTextBox.HandleCreated += eh;
+                try
+                {
+                    if (richTextBox.IsHandleCreated) mre.Set();
+                    mre.Wait(token);
+                }
+                finally
+                {
+                    richTextBox.HandleCreated -= eh;
+                }
+            }
+
             if (richTextBox.InvokeRequired)
             {
                 richTextBox.BeginInvoke(new Action(() => SetRtfInternal(richTextBox, rtf, autoScroll)));

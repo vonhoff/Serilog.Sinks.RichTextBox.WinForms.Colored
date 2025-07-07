@@ -133,7 +133,7 @@ namespace Serilog.Sinks.RichTextBoxForms
                 {
                     _renderer.Render(evt, builder);
                 }
-                _richTextBox.SetRtf(builder.Rtf, _options.AutoScroll);
+                _richTextBox.SetRtf(builder.Rtf, _options.AutoScroll, token);
                 lastFlush = DateTime.UtcNow;
             }
         }
