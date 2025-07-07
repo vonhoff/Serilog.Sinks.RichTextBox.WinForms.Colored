@@ -179,6 +179,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rtf
         public void Clear()
         {
             _body.Clear();
+            _documentBuilder.Clear();
 
             const int maxRetainedBuilderSize = 64 * 1024;
             if (_body.Capacity > maxRetainedBuilderSize)
