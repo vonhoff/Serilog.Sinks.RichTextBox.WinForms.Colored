@@ -111,7 +111,6 @@ namespace Serilog.Sinks.RichTextBoxForms
             while (!token.IsCancellationRequested)
             {
                 _signal.WaitOne();
-
                 if (token.IsCancellationRequested)
                 {
                     break;
@@ -128,12 +127,8 @@ namespace Serilog.Sinks.RichTextBoxForms
                     }
                 }
 
-                while (_signal.WaitOne(0))
-                {
-                }
-
+                _signal.Reset();
                 _buffer.TakeSnapshot(snapshot);
-
                 builder.Clear();
                 foreach (var evt in snapshot)
                 {
