@@ -81,12 +81,22 @@ namespace Serilog.Sinks.RichTextBoxForms
 
         public void Clear()
         {
+            if (_disposed)
+            {
+                return;
+            }
+
             _buffer.Clear();
             _signal.Set();
         }
 
         public void Restore()
         {
+            if (_disposed)
+            {
+                return;
+            }
+
             _buffer.Restore();
             _signal.Set();
         }
