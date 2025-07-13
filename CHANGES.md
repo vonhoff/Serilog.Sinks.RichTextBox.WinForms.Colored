@@ -1,12 +1,9 @@
-## Release Notes - Serilog.Sinks.RichTextBox.WinForms.Colored v3.1.2
+## Release Notes - Serilog.Sinks.RichTextBox.WinForms.Colored v3.1.3
 
 ### What Changed
 
-- Fixed a bug where cross-thread log messages during form construction caused `System.InvalidOperationException` due to premature access of the RichTextBox.
-
-### Contributors
-
-- [Steffen S. Hellestøl](https://github.com/SteffenSH)
+- Fixed performance issues when logging large numbers of complex messages that could cause application freezing.
+- Fixed `ArgumentOutOfRangeException` thrown from `RtfBuilder.Clear()`
 
 ### Resources
 

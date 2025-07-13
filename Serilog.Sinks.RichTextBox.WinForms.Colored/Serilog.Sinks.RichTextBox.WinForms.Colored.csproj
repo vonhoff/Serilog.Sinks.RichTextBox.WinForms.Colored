@@ -22,9 +22,10 @@
         <TargetFrameworks>net462;net471;net6.0-windows;net8.0-windows;net9.0-windows;netcoreapp3.0-windows;netcoreapp3.1-windows</TargetFrameworks>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <UseWindowsForms>true</UseWindowsForms>
-        <Version>3.1.2</Version>
+        <Version>3.1.3</Version>
         <PackageReleaseNotes>
-- Fixed a bug where cross-thread log messages during form construction caused `System.InvalidOperationException` due to premature access of the RichTextBox.
+- Fixed performance issues when logging large numbers of complex messages that could cause application freezing.
+- Fixed `ArgumentOutOfRangeException` thrown from `RtfBuilder.Clear()`
 
 See repository for more information:
 https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored
