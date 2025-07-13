@@ -218,65 +218,55 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             }
         }
 
-        private static void WriteQuotedJsonString(string str, TextWriter output)
+        private static void WriteQuotedJsonString(StringBuilder builder, string str)
         {
-            output.Write('\"');
+            builder.Append('\"');
 
             foreach (var c in str)
             {
                 switch (c)
                 {
                     case '"':
-                        output.Write("\\\"");
+                        builder.Append("\\\"");
                         break;
 
                     case '\\':
-                        output.Write(@"\\");
+                        builder.Append(@"\\");
                         break;
 
                     case '\n':
-                        output.Write("\\n");
+                        builder.Append("\\n");
                         break;
 
                     case '\r':
-                        output.Write("\\r");
+                        builder.Append("\\r");
                         break;
 
                     case '\f':
-                        output.Write("\\f");
+                        builder.Append("\\f");
                         break;
 
                     case '\t':
-                        output.Write("\\t");
+                        builder.Append("\\t");
                         break;
 
                     case < (char)32:
-                        output.Write("\\u");
-                        output.Write(((int)c).ToString("X4"));
+                        builder.Append("\\u");
+                        builder.Append(((int)c).ToString("X4"));
                         break;
 
                     default:
-                        output.Write(c);
+                        builder.Append(c);
                         break;
                 }
             }
-            output.Write('\"');
+            builder.Append('\"');
         }
 
         private string GetQuotedJsonString(string str)
         {
             _jsonStringBuilder.Clear();
-            var estimatedCapacity = str.Length + 2;
-            if (_jsonStringBuilder.Capacity < estimatedCapacity)
-            {
-                _jsonStringBuilder.Capacity = estimatedCapacity;
-            }
-
-            using (var writer = new StringWriter(_jsonStringBuilder))
-            {
-                WriteQuotedJsonString(str, writer);
-            }
-
+            WriteQuotedJsonString(_jsonStringBuilder, str);
             return _jsonStringBuilder.ToString();
         }
     }
