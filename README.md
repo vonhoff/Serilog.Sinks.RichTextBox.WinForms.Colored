@@ -83,7 +83,7 @@ If you find value in this project, there are several ways you can contribute:
 
 - Give the [project](https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored) a star on GitHub ⭐
 - Support the project through [GitHub Sponsors](https://github.com/sponsors/vonhoff)
-- Improve documentation, report bugs, or submit pull requests
+- Improve docs, report bugs, or submit PRs (see [CONTRIBUTING.md](CONTRIBUTING.md))
 
 ## License
 
