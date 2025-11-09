@@ -46,16 +46,19 @@
             this.btnStructure = new System.Windows.Forms.ToolStripButton();
             this.btnComplex = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnClear = new System.Windows.Forms.ToolStripButton();
+            this.btnRestore = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.btnDispose = new System.Windows.Forms.ToolStripButton();
             this.btnReset = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.btnAutoScroll = new System.Windows.Forms.ToolStripButton();
             this.btnPrettyPrint = new System.Windows.Forms.ToolStripButton();
+            this.toolStripLabelIndent = new System.Windows.Forms.ToolStripLabel();
+            this.numericUpDownSpacesPerIndent = new System.Windows.Forms.NumericUpDown();
+            this.toolStripControlHostIndent = new System.Windows.Forms.ToolStripControlHost(this.numericUpDownSpacesPerIndent);
             this.panel1 = new System.Windows.Forms.Panel();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.btnRestore = new System.Windows.Forms.ToolStripButton();
-            this.btnClear = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStrip1.SuspendLayout();
             this.toolStrip2.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -176,7 +179,9 @@
             this.btnReset,
             this.toolStripSeparator6,
             this.btnAutoScroll,
-            this.btnPrettyPrint});
+            this.btnPrettyPrint,
+            this.toolStripLabelIndent,
+            this.toolStripControlHostIndent});
             this.toolStrip2.Location = new System.Drawing.Point(0, 25);
             this.toolStrip2.Name = "toolStrip2";
             this.toolStrip2.Padding = new System.Windows.Forms.Padding(3, 0, 3, 0);
@@ -280,6 +285,39 @@
             this.btnPrettyPrint.ToolTipText = "Toggle pretty-printed JSON formatting";
             this.btnPrettyPrint.Click += new System.EventHandler(this.btnPrettyPrint_Click);
             // 
+            // toolStripLabelIndent
+            // 
+            this.toolStripLabelIndent.Name = "toolStripLabelIndent";
+            this.toolStripLabelIndent.Size = new System.Drawing.Size(38, 22);
+            this.toolStripLabelIndent.Text = "Indent:";
+            // 
+            // numericUpDownSpacesPerIndent
+            // 
+            this.numericUpDownSpacesPerIndent.Minimum = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericUpDownSpacesPerIndent.Maximum = new decimal(new int[] {
+            16,
+            0,
+            0,
+            0});
+            this.numericUpDownSpacesPerIndent.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.numericUpDownSpacesPerIndent.Width = 50;
+            this.numericUpDownSpacesPerIndent.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.numericUpDownSpacesPerIndent.ValueChanged += new System.EventHandler(this.numericUpDownSpacesPerIndent_ValueChanged);
+            // 
+            // toolStripControlHostIndent
+            // 
+            this.toolStripControlHostIndent.Name = "toolStripControlHostIndent";
+            this.toolStripControlHostIndent.Size = new System.Drawing.Size(50, 22);
+            this.toolStripControlHostIndent.ToolTipText = "Number of spaces per indentation level (0-16)";
+            // 
             // panel1
             // 
             this.panel1.Controls.Add(this.richTextBox1);
@@ -375,6 +413,9 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripButton btnAutoScroll;
         private System.Windows.Forms.ToolStripButton btnPrettyPrint;
+        private System.Windows.Forms.ToolStripLabel toolStripLabelIndent;
+        private System.Windows.Forms.NumericUpDown numericUpDownSpacesPerIndent;
+        private System.Windows.Forms.ToolStripControlHost toolStripControlHostIndent;
         private System.Windows.Forms.ToolStripButton btnRestore;
         private System.Windows.Forms.ToolStripButton btnClear;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;

@@ -38,7 +38,7 @@ namespace Serilog.Sinks.RichTextBoxForms
         /// <param name="outputTemplate">Serilog output template that controls textual formatting of each log event.</param>
         /// <param name="formatProvider">Optional culture-specific or custom formatting provider used when rendering scalar values; <c>null</c> for the invariant culture.</param>
         /// <param name="prettyPrintJson">When <c>true</c>, formats JSON values with indentation and line breaks for better readability. Defaults to <c>false</c>.</param>
-        /// <param name="spacesPerIndent">Number of spaces per indentation level when pretty printing JSON. Defaults to 4. Must be between 1 and 16.</param>
+        /// <param name="spacesPerIndent">Number of spaces per indentation level when pretty printing JSON. Defaults to 2.</param>
         public RichTextBoxSinkOptions(
             Theme theme,
             bool autoScroll = true,
@@ -46,7 +46,7 @@ namespace Serilog.Sinks.RichTextBoxForms
             string outputTemplate = DefaultOutputTemplate,
             IFormatProvider? formatProvider = null,
             bool prettyPrintJson = false,
-            int spacesPerIndent = 4)
+            int spacesPerIndent = 2)
         {
             AutoScroll = autoScroll;
             Theme = theme;
@@ -83,7 +83,7 @@ namespace Serilog.Sinks.RichTextBoxForms
             get => _spacesPerIndent;
             private set => _spacesPerIndent = value switch
             {
-                < 1 => 1,
+                < 0 => 0,
                 > 16 => 16,
                 _ => value
             };
