@@ -15,14 +15,8 @@ A [Serilog](https://github.com/serilog/serilog) sink that writes log events to a
 - Multiple theme presets with customization options
 - High-performance asynchronous processing
 - Line limit to control memory usage
-- Pretty printing of JSON objects
+- Support for pretty-printing of JSON objects
 - WCAG compliant color schemes based on the [Serilog WPF RichTextBox](https://github.com/serilog-contrib/serilog-sinks-richtextbox) sink.
-
-> **Consider supporting the development of this project on Ko-fi!**
->
-> Your support keeps this project alive. Even a small gesture means a lot.
->
-> [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/vonhoff)
 
 ## Getting Started
 
@@ -74,23 +68,30 @@ The themes based on the original sinks are slightly adjusted to be [WCAG complia
 
 You can create your own custom themes by creating a new instance of the [Theme](Serilog.Sinks.RichTextBox.WinForms.Colored/Sinks/RichTextBoxForms/Themes/Theme.cs) class and passing it to the `RichTextBox` extension method. Look at the [existing themes](Serilog.Sinks.RichTextBox.WinForms.Colored/Sinks/RichTextBoxForms/Themes/ThemePresets.cs) for examples.
 
-## Frequently Asked Questions
+## FAQ
 
 ### Why is the package name so long?
 
-Shorter alternatives were already reserved in the NuGet registry, so a more descriptive name was needed for this implementation. The name is a bit long, but it makes it easier to find the package in the NuGet registry.
+Shorter alternatives were already reserved in NuGet. The descriptive name helps people find it more easily.
 
-### Why use a WinForms RichTextBox instead of a WPF RichTextBox?
+### Why a WinForms RichTextBox and not WPF?
 
-This sink is specifically designed for WinForms applications to avoid the WPF framework. Using a WPF-based logging component would require adding the entire WPF framework with all its dependencies, greatly increasing the size of the application.
+This sink is designed for WinForms apps to avoid pulling in the WPF framework and its dependencies.
 
-## Support and Contribute
+## Support the Project 💖
 
-If you find value in this project, there are several ways you can contribute:
+This project has been maintained since 2022 and is still under active development. If you find it useful, please consider supporting it. Your support will help keep the project alive and allow me to dedicate more time to making improvements. You can support it through:
 
-- Give the [project](https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored) a star on GitHub ⭐
-- Support the project through [GitHub Sponsors](https://github.com/sponsors/vonhoff)
-- Improve docs, report bugs, or submit PRs (see [CONTRIBUTING.md](CONTRIBUTING.md))
+* [GitHub Sponsors](https://github.com/sponsors/vonhoff)
+* [Ko-fi](https://ko-fi.com/vonhoff)
+
+Every contribution of any size helps sustain ongoing development.
+
+## Contributing
+
+Contributions are welcome! Report issues, improve documentation, or submit pull requests.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## License
 
