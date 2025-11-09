@@ -8,47 +8,40 @@ namespace Serilog.Tests.Collections
         [Fact]
         public void TakeSnapshot_WithItemsLessThanCapacity_ReturnsAllItemsInOrder()
         {
-            // Arrange
             var buffer = new ConcurrentCircularBuffer<int>(3);
             buffer.Add(1);
             buffer.Add(2);
 
-            // Act
             var snapshot = new List<int>();
             buffer.TakeSnapshot(snapshot);
 
-            // Assert
             Assert.Equal(new[] { 1, 2 }, snapshot);
         }
 
         [Fact]
         public void AddBeyondCapacity_OverwritesOldestItemsAndMaintainsOrder()
         {
-            // Arrange
             var buffer = new ConcurrentCircularBuffer<int>(3);
             buffer.Add(1);
             buffer.Add(2);
             buffer.Add(3);
             buffer.Add(4); // Should overwrite the oldest item (1)
 
-            // Act
             var snapshot = new List<int>();
             buffer.TakeSnapshot(snapshot);
 
-            // Assert
             Assert.Equal(new[] { 2, 3, 4 }, snapshot);
         }
 
         [Fact]
         public void Clear_FollowedByAdds_SnapshotContainsOnlyNewItems()
         {
-            // Arrange
             var buffer = new ConcurrentCircularBuffer<int>(3);
             buffer.Add(1);
             buffer.Add(2);
             buffer.Add(3);
 
-            // Act & Assert - After clear, snapshot should be empty
+            // After clear, snapshot should be empty
             buffer.Clear();
             var snapshotAfterClear = new List<int>();
             buffer.TakeSnapshot(snapshotAfterClear);
@@ -71,7 +64,6 @@ namespace Serilog.Tests.Collections
         [Fact]
         public void Restore_AfterClear_ReturnsAllItemsAgain()
         {
-            // Arrange
             var buffer = new ConcurrentCircularBuffer<int>(3);
             buffer.Add(1);
             buffer.Add(2);
@@ -82,12 +74,11 @@ namespace Serilog.Tests.Collections
             buffer.Add(4);
             buffer.Add(5);
 
-            // Act - Restore should make all items visible again
+            // Restore should make all items visible again
             buffer.Restore();
             var snapshot = new List<int>();
             buffer.TakeSnapshot(snapshot);
 
-            // Assert
             Assert.Equal(new[] { 3, 4, 5 }, snapshot);
         }
     }

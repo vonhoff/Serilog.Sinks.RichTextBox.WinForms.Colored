@@ -78,20 +78,10 @@ namespace Serilog.Sinks.RichTextBoxForms
 
         public IFormatProvider? FormatProvider { get; }
 
-        /// <summary>
-        /// When <c>true</c>, formats JSON values (when using the <c>:j</c> format specifier) with indentation and line breaks for better readability.
-        /// Defaults to <c>false</c> for compact JSON output.
-        /// </summary>
         public bool PrettyPrintJson { get; }
 
-        /// <summary>
-        /// Number of spaces per indentation level when pretty printing JSON. Defaults to 4.
-        /// </summary>
         public int IndentSize { get; }
 
-        /// <summary>
-        /// When <c>true</c> (default), uses spaces for indentation; otherwise uses tabs.
-        /// </summary>
         public bool UseSpacesForIndent { get; }
     }
 }
