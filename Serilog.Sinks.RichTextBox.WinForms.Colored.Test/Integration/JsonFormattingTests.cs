@@ -190,8 +190,9 @@ namespace Serilog.Tests.Integration
         public void PrettyPrintJson_EmptyCollectionsFormatCorrectly()
         {
             var emptyArray = new LogEventProperty("EmptyArray", new SequenceValue(Array.Empty<LogEventPropertyValue>()));
+            var emptyDict = new LogEventProperty("EmptyDict", new DictionaryValue(new Dictionary<ScalarValue, LogEventPropertyValue>()));
             var emptyObject = new LogEventProperty("EmptyObject", new StructureValue(Array.Empty<LogEventProperty>(), null));
-            var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("Array: {EmptyArray:j}, Object: {EmptyObject:j}"), new[] { emptyArray, emptyObject });
+            var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("Array: {EmptyArray:j}, Dict: {EmptyDict:j}, Object: {EmptyObject:j}"), new[] { emptyArray, emptyDict, emptyObject });
 
             var options = new RichTextBoxSinkOptions(
                 theme: _defaultTheme,
@@ -201,6 +202,7 @@ namespace Serilog.Tests.Integration
 
             var result = RenderAndGetText(logEvent, "{Message:l}", options);
             Assert.Contains("Array: []", result);
+            Assert.Contains("Dict: {}", result);
             Assert.Contains("Object: {}", result);
         }
 
@@ -249,9 +251,75 @@ namespace Serilog.Tests.Integration
         {
             var complexProp = new LogEventProperty("ComplexProp", new StructureValue(new[] { new LogEventProperty("Id", new ScalarValue(123)) }, "MyObj"));
             var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("Value: {ComplexProp}"), new[] { complexProp });
-            
-            // Default behavior (compact)
             Assert.Equal("Value: {\"Id\": 123, \"$type\": \"MyObj\"}", RenderAndGetText(logEvent, "{Message:j}"));
+        }
+
+        [Fact]
+        public void ScalarValue_IFormattableButNotNumericValueType()
+        {
+            var enumValue = System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance;
+            var prop = new LogEventProperty("EnumProp", new ScalarValue(enumValue));
+            var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{EnumProp:j}"), new[] { prop });
+            
+            var result = RenderAndGetText(logEvent, "{Message:j}");
+            Assert.NotNull(result);
+            Assert.NotEmpty(result);
+        }
+
+        [Fact]
+        public void ScalarValue_NonFormattableObject()
+        {
+            var plainObject = new object();
+            var prop = new LogEventProperty("ObjectProp", new ScalarValue(plainObject));
+            var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{ObjectProp:j}"), new[] { prop });
+            
+            var result = RenderAndGetText(logEvent, "{Message:j}");
+            Assert.NotNull(result);
+            Assert.NotEmpty(result);
+            Assert.StartsWith("\"", result);
+            Assert.EndsWith("\"", result);
+        }
+
+        [Fact]
+        public void PrettyPrintJson_DictionaryWithNullKey()
+        {
+            var dict = new Dictionary<ScalarValue, LogEventPropertyValue>
+            {
+                { new ScalarValue(null), new ScalarValue("value") }
+            };
+            var dictProp = new LogEventProperty("DictProp", new DictionaryValue(dict));
+            var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{DictProp:j}"), new[] { dictProp });
+
+            var options = new RichTextBoxSinkOptions(
+                theme: _defaultTheme,
+                prettyPrintJson: true,
+                indentSize: 4,
+                useSpacesForIndent: true);
+
+            var result = RenderAndGetText(logEvent, "{Message:l}", options);
+            Assert.Contains("\"null\"", result);
+            Assert.Contains("\"value\"", result);
+        }
+
+        [Fact]
+        public void PrettyPrintJson_DictionaryWithNonStringKey()
+        {
+            var dict = new Dictionary<ScalarValue, LogEventPropertyValue>
+            {
+                { new ScalarValue(123), new ScalarValue("value") }
+            };
+            var dictProp = new LogEventProperty("DictProp", new DictionaryValue(dict));
+            var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{DictProp:j}"), new[] { dictProp });
+
+            var options = new RichTextBoxSinkOptions(
+                theme: _defaultTheme,
+                prettyPrintJson: true,
+                indentSize: 4,
+                useSpacesForIndent: true);
+
+            var result = RenderAndGetText(logEvent, "{Message:l}", options);
+            Assert.Contains("\"123\"", result);
+            Assert.Contains("\"value\"", result);
         }
     }
 }
