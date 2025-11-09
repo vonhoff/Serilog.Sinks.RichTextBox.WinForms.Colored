@@ -31,23 +31,21 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
     {
         private readonly IFormatProvider? _formatProvider;
         private readonly bool _prettyPrint;
-        private readonly int _indentSize;
-        private readonly bool _useSpacesForIndent;
+        private readonly int _spacesPerIndent;
         private readonly StringBuilder _literalBuilder = new(64);
         private readonly StringBuilder _scalarBuilder = new();
         private readonly StringBuilder _jsonStringBuilder = new();
 
-        public JsonValueFormatter(Theme theme, IFormatProvider? formatProvider, bool prettyPrint = false, int indentSize = 4, bool useSpacesForIndent = true) : base(theme, formatProvider)
+        public JsonValueFormatter(Theme theme, IFormatProvider? formatProvider, bool prettyPrint = false, int spacesPerIndent = 4, bool useSpacesForIndent = true) : base(theme, formatProvider)
         {
             _formatProvider = formatProvider;
             _prettyPrint = prettyPrint;
-            _indentSize = indentSize;
-            _useSpacesForIndent = useSpacesForIndent;
+            _spacesPerIndent = spacesPerIndent;
         }
 
         protected override ValueFormatterState CreateInitialState(IRtfCanvas canvas, string format, bool isLiteral)
         {
-            return new ValueFormatterState(canvas, format, isLiteral, 0, _useSpacesForIndent, _indentSize, true);
+            return new ValueFormatterState(canvas, format, isLiteral, 0, _spacesPerIndent, true);
         }
 
         protected override bool VisitScalarValue(ValueFormatterState state, ScalarValue scalar)

@@ -107,7 +107,7 @@ namespace Serilog.Tests.Integration
             var options = new RichTextBoxSinkOptions(
                 theme: _defaultTheme,
                 prettyPrintJson: true,
-                spacesPerIndent: 4,
+                spacesPerIndent: 4);
 
             var result = RenderAndGetText(logEvent, "{Message:l}", options);
             var expected = "{\n    \"Id\": 123,\n    \"Name\": \"test\",\n    \"$type\": \"MyObj\"\n}";
@@ -128,7 +128,7 @@ namespace Serilog.Tests.Integration
             var options = new RichTextBoxSinkOptions(
                 theme: _defaultTheme,
                 prettyPrintJson: true,
-                spacesPerIndent: 4,
+                spacesPerIndent: 4);
 
             var result = RenderAndGetText(logEvent, "{Message:l}", options);
             var expected = "[\n    1,\n    2,\n    3\n]";
@@ -149,7 +149,7 @@ namespace Serilog.Tests.Integration
             var options = new RichTextBoxSinkOptions(
                 theme: _defaultTheme,
                 prettyPrintJson: true,
-                spacesPerIndent: 4,
+                spacesPerIndent: 4);
 
             var result = RenderAndGetText(logEvent, "{Message:l}", options);
             var expected = "{\n    \"a\": 1,\n    \"b\": \"hello\"\n}";
@@ -173,7 +173,7 @@ namespace Serilog.Tests.Integration
             var options = new RichTextBoxSinkOptions(
                 theme: _defaultTheme,
                 prettyPrintJson: true,
-                spacesPerIndent: 4,
+                spacesPerIndent: 4);
 
             var result = RenderAndGetText(logEvent, "{Message:l}", options);
             var expected = "{\n    \"Inner\": {\n        \"Value\": 42,\n        \"$type\": \"Inner\"\n    },\n    \"Name\": \"test\",\n    \"$type\": \"Outer\"\n}";
@@ -191,7 +191,7 @@ namespace Serilog.Tests.Integration
             var options = new RichTextBoxSinkOptions(
                 theme: _defaultTheme,
                 prettyPrintJson: true,
-                spacesPerIndent: 4,
+                spacesPerIndent: 4);
 
             var result = RenderAndGetText(logEvent, "{Message:l}", options);
             Assert.Contains("Array: []", result);
@@ -199,24 +199,6 @@ namespace Serilog.Tests.Integration
             Assert.Contains("Object: {}", result);
         }
 
-        [Fact]
-        public void PrettyPrintJson_UsesTabsWhenConfigured()
-        {
-            var prop = new LogEventProperty("Test", new StructureValue(new[]
-            {
-                new LogEventProperty("Id", new ScalarValue(123))
-            }, "MyObj"));
-            var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{Test:j}"), new[] { prop });
-
-            var options = new RichTextBoxSinkOptions(
-                theme: _defaultTheme,
-                prettyPrintJson: true,
-                spacesPerIndent: 4,
-
-            var result = RenderAndGetText(logEvent, "{Message:l}", options);
-            var expected = "{\n\t\t\t\t\"Id\": 123,\n\t\t\t\t\"$type\": \"MyObj\"\n}";
-            Assert.Equal(expected, result);
-        }
 
         [Fact]
         public void PrettyPrintJson_RespectsSpacesPerIndent()
@@ -285,7 +267,7 @@ namespace Serilog.Tests.Integration
             var options = new RichTextBoxSinkOptions(
                 theme: _defaultTheme,
                 prettyPrintJson: true,
-                spacesPerIndent: 4,
+                spacesPerIndent: 4);
 
             var result = RenderAndGetText(logEvent, "{Message:l}", options);
             Assert.Contains("\"null\"", result);
@@ -305,7 +287,7 @@ namespace Serilog.Tests.Integration
             var options = new RichTextBoxSinkOptions(
                 theme: _defaultTheme,
                 prettyPrintJson: true,
-                spacesPerIndent: 4,
+                spacesPerIndent: 4);
 
             var result = RenderAndGetText(logEvent, "{Message:l}", options);
             Assert.Contains("\"123\"", result);
