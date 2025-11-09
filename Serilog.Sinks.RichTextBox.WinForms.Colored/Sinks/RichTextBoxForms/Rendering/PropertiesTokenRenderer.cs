@@ -35,8 +35,8 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
         public PropertiesTokenRenderer(Theme theme, PropertyToken token, MessageTemplate outputTemplate, IFormatProvider? formatProvider, RichTextBoxSinkOptions? options = null)
         {
             _valueFormatter = token.Format?.Contains("j") == true
-                ? new JsonValueFormatter(theme, formatProvider, options?.PrettyPrintJson ?? false, options?.IndentSize ?? 4, options?.UseSpacesForIndent ?? true)
-                : new DisplayValueFormatter(theme, formatProvider, options?.PrettyPrintJson ?? false, options?.IndentSize ?? 4, options?.UseSpacesForIndent ?? true);
+                ? new JsonValueFormatter(theme, formatProvider, options?.PrettyPrintJson ?? false, options?.SpacesPerIndent ?? 4, true)
+                : new DisplayValueFormatter(theme, formatProvider, options?.PrettyPrintJson ?? false, options?.SpacesPerIndent ?? 4, true);
 
             _outputTemplateProperties = new HashSet<string>(
                 outputTemplate.Tokens.OfType<PropertyToken>().Select(p => p.PropertyName));

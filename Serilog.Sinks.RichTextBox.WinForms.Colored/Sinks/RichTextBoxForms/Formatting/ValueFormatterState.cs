@@ -22,14 +22,13 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 {
     public readonly struct ValueFormatterState
     {
-        public ValueFormatterState(IRtfCanvas canvas, string format, bool isLiteral, int indentLevel = 0, bool useSpacesForIndent = true, int indentSize = 4, bool isTopLevel = true)
+        public ValueFormatterState(IRtfCanvas canvas, string format, bool isLiteral, int indentLevel = 0, int spacesPerIndent = 4, bool isTopLevel = true)
         {
             Canvas = canvas;
             Format = format;
             IsLiteral = isLiteral;
             IndentLevel = indentLevel;
-            UseSpacesForIndent = useSpacesForIndent;
-            IndentSize = indentSize;
+            SpacesPerIndent = spacesPerIndent;
             IsTopLevel = isTopLevel;
         }
 
@@ -37,23 +36,22 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
         public bool IsLiteral { get; }
         public IRtfCanvas Canvas { get; }
         public int IndentLevel { get; }
-        public bool UseSpacesForIndent { get; }
-        public int IndentSize { get; }
+        public int SpacesPerIndent { get; }
         public bool IsTopLevel { get; }
 
         public ValueFormatterState Next(string? format = null)
         {
-            return new ValueFormatterState(Canvas, format ?? Format, IsLiteral, IndentLevel, UseSpacesForIndent, IndentSize, false);
+            return new ValueFormatterState(Canvas, format ?? Format, IsLiteral, IndentLevel, SpacesPerIndent, false);
         }
 
         public ValueFormatterState ToIndentUp()
         {
-            return new ValueFormatterState(Canvas, Format, IsLiteral, IndentLevel + 1, UseSpacesForIndent, IndentSize, false);
+            return new ValueFormatterState(Canvas, Format, IsLiteral, IndentLevel + 1, SpacesPerIndent, false);
         }
 
         public ValueFormatterState ToIndentDown()
         {
-            return new ValueFormatterState(Canvas, Format, IsLiteral, IndentLevel > 0 ? IndentLevel - 1 : 0, UseSpacesForIndent, IndentSize, false);
+            return new ValueFormatterState(Canvas, Format, IsLiteral, IndentLevel > 0 ? IndentLevel - 1 : 0, SpacesPerIndent, false);
         }
 
         public string GetIndentation()
@@ -63,10 +61,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                 return string.Empty;
             }
 
-            var totalIndentUnits = IndentLevel * IndentSize;
-            return UseSpacesForIndent
-                ? new string(' ', totalIndentUnits)
-                : new string('\t', totalIndentUnits);
+            return new string(' ', IndentLevel * SpacesPerIndent);
         }
     }
 }
