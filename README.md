@@ -15,9 +15,16 @@ A [Serilog](https://github.com/serilog/serilog) sink that writes log events to a
 - Multiple theme presets with customization options
 - High-performance asynchronous processing
 - Line limit to control memory usage
+- Pretty printing of JSON objects
 - WCAG compliant color schemes based on the [Serilog WPF RichTextBox](https://github.com/serilog-contrib/serilog-sinks-richtextbox) sink.
 
-## Get Started
+> **Consider supporting the development of this project on Ko-fi!**
+>
+> Your support keeps this project alive. Even a small gesture means a lot.
+>
+> [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/vonhoff)
+
+## Getting Started
 
 Install the package from NuGet:
 

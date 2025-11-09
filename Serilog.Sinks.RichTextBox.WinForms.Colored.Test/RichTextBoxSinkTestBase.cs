@@ -45,6 +45,14 @@ namespace Serilog.Tests
             return _richTextBox.Text.TrimEnd('\n', '\r');
         }
 
+        protected string RenderAndGetText(LogEvent logEvent, string outputTemplate, RichTextBoxSinkOptions options)
+        {
+            _richTextBox.Clear();
+            var renderer = new TemplateRenderer(options.Theme, outputTemplate, options.FormatProvider, options);
+            renderer.Render(logEvent, _canvas);
+            return _richTextBox.Text.TrimEnd('\n', '\r');
+        }
+
         public virtual void Dispose()
         {
             GC.SuppressFinalize(this);

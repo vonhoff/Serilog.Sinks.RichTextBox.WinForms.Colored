@@ -30,13 +30,23 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
     public class JsonValueFormatter : ValueFormatter
     {
         private readonly IFormatProvider? _formatProvider;
+        private readonly bool _prettyPrint;
+        private readonly int _indentSize;
+        private readonly bool _useSpacesForIndent;
         private readonly StringBuilder _literalBuilder = new(64);
         private readonly StringBuilder _scalarBuilder = new();
-        private readonly StringBuilder _jsonStringBuilder = new();
 
-        public JsonValueFormatter(Theme theme, IFormatProvider? formatProvider) : base(theme, formatProvider)
+        public JsonValueFormatter(Theme theme, IFormatProvider? formatProvider, bool prettyPrint = false, int indentSize = 4, bool useSpacesForIndent = true) : base(theme, formatProvider)
         {
             _formatProvider = formatProvider;
+            _prettyPrint = prettyPrint;
+            _indentSize = indentSize;
+            _useSpacesForIndent = useSpacesForIndent;
+        }
+
+        protected override ValueFormatterState CreateInitialState(IRtfCanvas canvas, string format, bool isLiteral)
+        {
+            return new ValueFormatterState(canvas, format, isLiteral, 0, _useSpacesForIndent, _indentSize, true);
         }
 
         protected override bool VisitScalarValue(ValueFormatterState state, ScalarValue scalar)
@@ -47,81 +57,212 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 
         protected override bool VisitSequenceValue(ValueFormatterState state, SequenceValue sequence)
         {
-            Theme.Render(state.Canvas, StyleToken.TertiaryText, "[");
-
-            var delimiter = string.Empty;
-            foreach (var propertyValue in sequence.Elements)
+            if (_prettyPrint)
             {
-                if (!string.IsNullOrEmpty(delimiter))
+                var indentState = state.ToIndentUp();
+                if (sequence.Elements.Count > 0)
                 {
-                    Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
+                    Theme.Render(state.Canvas, StyleToken.TertiaryText, "[\n" + indentState.GetIndentation());
+                }
+                else
+                {
+                    Theme.Render(state.Canvas, StyleToken.TertiaryText, "[");
                 }
 
-                delimiter = ", ";
-                Visit(state, propertyValue);
+                var delimiter = string.Empty;
+                foreach (var propertyValue in sequence.Elements)
+                {
+                    if (!string.IsNullOrEmpty(delimiter))
+                    {
+                        Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
+                    }
+
+                    delimiter = ",\n" + indentState.GetIndentation();
+                    Visit(indentState, propertyValue);
+                }
+
+                if (sequence.Elements.Count > 0)
+                {
+                    Theme.Render(state.Canvas, StyleToken.TertiaryText, "\n" + state.GetIndentation() + "]");
+                }
+                else
+                {
+                    Theme.Render(state.Canvas, StyleToken.TertiaryText, "]");
+                }
+            }
+            else
+            {
+                Theme.Render(state.Canvas, StyleToken.TertiaryText, "[");
+
+                var delimiter = string.Empty;
+                foreach (var propertyValue in sequence.Elements)
+                {
+                    if (!string.IsNullOrEmpty(delimiter))
+                    {
+                        Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
+                    }
+
+                    delimiter = ", ";
+                    Visit(state, propertyValue);
+                }
+
+                Theme.Render(state.Canvas, StyleToken.TertiaryText, "]");
             }
 
-            Theme.Render(state.Canvas, StyleToken.TertiaryText, "]");
             return true;
         }
 
         protected override bool VisitStructureValue(ValueFormatterState state, StructureValue structure)
         {
-            Theme.Render(state.Canvas, StyleToken.TertiaryText, "{");
-
-            var delimiter = string.Empty;
-            foreach (var eventProperty in structure.Properties)
+            if (_prettyPrint)
             {
-                if (!string.IsNullOrEmpty(delimiter))
+                var indentState = state.ToIndentUp();
+                if (structure.Properties.Count > 0 || structure.TypeTag != null)
                 {
-                    Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
+                    Theme.Render(state.Canvas, StyleToken.TertiaryText, "{\n" + indentState.GetIndentation());
+                }
+                else
+                {
+                    Theme.Render(state.Canvas, StyleToken.TertiaryText, "{");
                 }
 
-                delimiter = ", ";
-                Theme.Render(state.Canvas, StyleToken.Name, GetQuotedJsonString(eventProperty.Name));
-                Theme.Render(state.Canvas, StyleToken.TertiaryText, ": ");
-                Visit(state.Next(), eventProperty.Value);
-            }
+                var delimiter = string.Empty;
+                foreach (var eventProperty in structure.Properties)
+                {
+                    if (!string.IsNullOrEmpty(delimiter))
+                    {
+                        Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
+                    }
 
-            if (structure.TypeTag != null)
+                    delimiter = ",\n" + indentState.GetIndentation();
+                    Theme.Render(state.Canvas, StyleToken.Name, GetQuotedJsonString(eventProperty.Name));
+                    Theme.Render(state.Canvas, StyleToken.TertiaryText, ": ");
+                    Visit(indentState.Next(), eventProperty.Value);
+                }
+
+                if (structure.TypeTag != null)
+                {
+                    Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
+                    Theme.Render(state.Canvas, StyleToken.Name, GetQuotedJsonString("$type"));
+                    Theme.Render(state.Canvas, StyleToken.TertiaryText, ": ");
+                    Theme.Render(state.Canvas, StyleToken.String, GetQuotedJsonString(structure.TypeTag));
+                }
+
+                if (structure.Properties.Count > 0 || structure.TypeTag != null)
+                {
+                    Theme.Render(state.Canvas, StyleToken.TertiaryText, "\n" + state.GetIndentation() + "}");
+                }
+                else
+                {
+                    Theme.Render(state.Canvas, StyleToken.TertiaryText, "}");
+                }
+            }
+            else
             {
-                Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
-                Theme.Render(state.Canvas, StyleToken.Name, GetQuotedJsonString("$type"));
-                Theme.Render(state.Canvas, StyleToken.TertiaryText, ": ");
-                Theme.Render(state.Canvas, StyleToken.String, GetQuotedJsonString(structure.TypeTag));
+                Theme.Render(state.Canvas, StyleToken.TertiaryText, "{");
+
+                var delimiter = string.Empty;
+                foreach (var eventProperty in structure.Properties)
+                {
+                    if (!string.IsNullOrEmpty(delimiter))
+                    {
+                        Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
+                    }
+
+                    delimiter = ", ";
+                    Theme.Render(state.Canvas, StyleToken.Name, GetQuotedJsonString(eventProperty.Name));
+                    Theme.Render(state.Canvas, StyleToken.TertiaryText, ": ");
+                    Visit(state.Next(), eventProperty.Value);
+                }
+
+                if (structure.TypeTag != null)
+                {
+                    Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
+                    Theme.Render(state.Canvas, StyleToken.Name, GetQuotedJsonString("$type"));
+                    Theme.Render(state.Canvas, StyleToken.TertiaryText, ": ");
+                    Theme.Render(state.Canvas, StyleToken.String, GetQuotedJsonString(structure.TypeTag));
+                }
+
+                Theme.Render(state.Canvas, StyleToken.TertiaryText, "}");
             }
 
-            Theme.Render(state.Canvas, StyleToken.TertiaryText, "}");
             return true;
         }
 
         protected override bool VisitDictionaryValue(ValueFormatterState state, DictionaryValue dictionary)
         {
-            Theme.Render(state.Canvas, StyleToken.TertiaryText, "{");
-
-            var delimiter = string.Empty;
-            foreach (var (scalar, propertyValue) in dictionary.Elements)
+            if (_prettyPrint)
             {
-                if (!string.IsNullOrEmpty(delimiter))
+                var indentState = state.ToIndentUp();
+                if (dictionary.Elements.Count > 0)
                 {
-                    Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
+                    Theme.Render(state.Canvas, StyleToken.TertiaryText, "{\n" + indentState.GetIndentation());
+                }
+                else
+                {
+                    Theme.Render(state.Canvas, StyleToken.TertiaryText, "{");
                 }
 
-                delimiter = ", ";
-                var style = scalar.Value switch
+                var delimiter = string.Empty;
+                foreach (var (scalar, propertyValue) in dictionary.Elements)
                 {
-                    null => StyleToken.Null,
-                    string => StyleToken.String,
-                    _ => StyleToken.Scalar
-                };
+                    if (!string.IsNullOrEmpty(delimiter))
+                    {
+                        Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
+                    }
 
-                Theme.Render(state.Canvas, style, GetQuotedJsonString(scalar.Value?.ToString() ?? "null"));
-                Theme.Render(state.Canvas, StyleToken.TertiaryText, ": ");
+                    delimiter = ",\n" + indentState.GetIndentation();
+                    var style = scalar.Value switch
+                    {
+                        null => StyleToken.Null,
+                        string => StyleToken.String,
+                        _ => StyleToken.Scalar
+                    };
 
-                Visit(state.Next(), propertyValue);
+                    Theme.Render(state.Canvas, style, GetQuotedJsonString(scalar.Value?.ToString() ?? "null"));
+                    Theme.Render(state.Canvas, StyleToken.TertiaryText, ": ");
+
+                    Visit(indentState.Next(), propertyValue);
+                }
+
+                if (dictionary.Elements.Count > 0)
+                {
+                    Theme.Render(state.Canvas, StyleToken.TertiaryText, "\n" + state.GetIndentation() + "}");
+                }
+                else
+                {
+                    Theme.Render(state.Canvas, StyleToken.TertiaryText, "}");
+                }
+            }
+            else
+            {
+                Theme.Render(state.Canvas, StyleToken.TertiaryText, "{");
+
+                var delimiter = string.Empty;
+                foreach (var (scalar, propertyValue) in dictionary.Elements)
+                {
+                    if (!string.IsNullOrEmpty(delimiter))
+                    {
+                        Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
+                    }
+
+                    delimiter = ", ";
+                    var style = scalar.Value switch
+                    {
+                        null => StyleToken.Null,
+                        string => StyleToken.String,
+                        _ => StyleToken.Scalar
+                    };
+
+                    Theme.Render(state.Canvas, style, GetQuotedJsonString(scalar.Value?.ToString() ?? "null"));
+                    Theme.Render(state.Canvas, StyleToken.TertiaryText, ": ");
+
+                    Visit(state.Next(), propertyValue);
+                }
+
+                Theme.Render(state.Canvas, StyleToken.TertiaryText, "}");
             }
 
-            Theme.Render(state.Canvas, StyleToken.TertiaryText, "}");
             return true;
         }
 
@@ -200,6 +341,12 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                     return;
 
                 default:
+                    if (value is ValueType and (int or uint or long or ulong or decimal or byte or sbyte or short or ushort))
+                    {
+                        Theme.Render(canvas, StyleToken.Number, ((IFormattable)value).ToString(null, CultureInfo.InvariantCulture));
+                        return;
+                    }
+
                     if (value is IFormattable formattable)
                     {
                         RenderFormattable(canvas, formattable, null);
@@ -213,61 +360,87 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                         scalar.Render(writer, null, _formatProvider);
                     }
 
-                    Theme.Render(canvas, StyleToken.Scalar, _scalarBuilder.ToString());
+                    Theme.Render(canvas, StyleToken.Scalar, GetQuotedJsonString(_scalarBuilder.ToString()));
                     return;
             }
         }
 
-        private static void WriteQuotedJsonString(StringBuilder builder, string str)
+        /// <summary>
+        /// Write a valid JSON string literal, escaping as necessary.
+        /// Optimized version that avoids unnecessary string operations.
+        /// </summary>
+        /// <param name="str">The string value to write.</param>
+        public static string GetQuotedJsonString(string str)
         {
-            builder.Append('\"');
-
-            foreach (var c in str)
+            using (var output = new StringWriter())
             {
-                switch (c)
+                output.Write('\"');
+
+                var cleanSegmentStart = 0;
+                var anyEscaped = false;
+
+                for (var i = 0; i < str.Length; ++i)
                 {
-                    case '"':
-                        builder.Append("\\\"");
-                        break;
+                    var c = str[i];
+                    if (c < (char)32 || c == '\\' || c == '"')
+                    {
+                        anyEscaped = true;
 
-                    case '\\':
-                        builder.Append(@"\\");
-                        break;
+                        if (i > cleanSegmentStart)
+                        {
+                            output.Write(str.Substring(cleanSegmentStart, i - cleanSegmentStart));
+                        }
+                        cleanSegmentStart = i + 1;
 
-                    case '\n':
-                        builder.Append("\\n");
-                        break;
+                        switch (c)
+                        {
+                            case '"':
+                                output.Write("\\\"");
+                                break;
 
-                    case '\r':
-                        builder.Append("\\r");
-                        break;
+                            case '\\':
+                                output.Write("\\\\");
+                                break;
 
-                    case '\f':
-                        builder.Append("\\f");
-                        break;
+                            case '\n':
+                                output.Write("\\n");
+                                break;
 
-                    case '\t':
-                        builder.Append("\\t");
-                        break;
+                            case '\r':
+                                output.Write("\\r");
+                                break;
 
-                    case < (char)32:
-                        builder.Append("\\u");
-                        builder.Append(((int)c).ToString("X4"));
-                        break;
+                            case '\f':
+                                output.Write("\\f");
+                                break;
 
-                    default:
-                        builder.Append(c);
-                        break;
+                            case '\t':
+                                output.Write("\\t");
+                                break;
+
+                            default:
+                                output.Write("\\u");
+                                output.Write(((int)c).ToString("X4"));
+                                break;
+                        }
+                    }
                 }
-            }
-            builder.Append('\"');
-        }
 
-        private string GetQuotedJsonString(string str)
-        {
-            _jsonStringBuilder.Clear();
-            WriteQuotedJsonString(_jsonStringBuilder, str);
-            return _jsonStringBuilder.ToString();
+                if (anyEscaped)
+                {
+                    if (cleanSegmentStart < str.Length)
+                    {
+                        output.Write(str.Substring(cleanSegmentStart));
+                    }
+                }
+                else
+                {
+                    output.Write(str);
+                }
+
+                output.Write('\"');
+                return output.ToString();
+            }
         }
     }
 }

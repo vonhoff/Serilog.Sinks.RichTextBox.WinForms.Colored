@@ -1,4 +1,7 @@
+using System;
 using Serilog.Events;
+using Serilog.Sinks.RichTextBoxForms;
+using Serilog.Sinks.RichTextBoxForms.Themes;
 using Xunit;
 
 namespace Serilog.Tests.Integration
@@ -91,6 +94,164 @@ namespace Serilog.Tests.Integration
                 var expected = $"\"test\\u{((int)c).ToString("X4")}string\"";
                 Assert.Equal(expected, RenderAndGetText(strEvent, "{Message:j}"));
             }
+        }
+
+        [Fact]
+        public void PrettyPrintJson_FormatsNestedObjectsWithIndentation()
+        {
+            var nestedProp = new LogEventProperty("Nested", new StructureValue(new[]
+            {
+                new LogEventProperty("Id", new ScalarValue(123)),
+                new LogEventProperty("Name", new ScalarValue("test"))
+            }, "MyObj"));
+            var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{Nested:j}"), new[] { nestedProp });
+
+            var options = new RichTextBoxSinkOptions(
+                theme: _defaultTheme,
+                prettyPrintJson: true,
+                indentSize: 4,
+                useSpacesForIndent: true);
+
+            var result = RenderAndGetText(logEvent, "{Message:l}", options);
+            var expected = "{\n    \"Id\": 123,\n    \"Name\": \"test\",\n    \"$type\": \"MyObj\"\n}";
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void PrettyPrintJson_FormatsArraysWithIndentation()
+        {
+            var arrayProp = new LogEventProperty("Array", new SequenceValue(new[]
+            {
+                new ScalarValue(1),
+                new ScalarValue(2),
+                new ScalarValue(3)
+            }));
+            var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{Array:j}"), new[] { arrayProp });
+
+            var options = new RichTextBoxSinkOptions(
+                theme: _defaultTheme,
+                prettyPrintJson: true,
+                indentSize: 4,
+                useSpacesForIndent: true);
+
+            var result = RenderAndGetText(logEvent, "{Message:l}", options);
+            var expected = "[\n    1,\n    2,\n    3\n]";
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void PrettyPrintJson_FormatsDictionariesWithIndentation()
+        {
+            var dict = new Dictionary<ScalarValue, LogEventPropertyValue>
+            {
+                { new ScalarValue("a"), new ScalarValue(1) },
+                { new ScalarValue("b"), new ScalarValue("hello") }
+            };
+            var dictProp = new LogEventProperty("DictProp", new DictionaryValue(dict));
+            var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{DictProp:j}"), new[] { dictProp });
+
+            var options = new RichTextBoxSinkOptions(
+                theme: _defaultTheme,
+                prettyPrintJson: true,
+                indentSize: 4,
+                useSpacesForIndent: true);
+
+            var result = RenderAndGetText(logEvent, "{Message:l}", options);
+            var expected = "{\n    \"a\": 1,\n    \"b\": \"hello\"\n}";
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void PrettyPrintJson_FormatsNestedStructures()
+        {
+            var inner = new StructureValue(new[]
+            {
+                new LogEventProperty("Value", new ScalarValue(42))
+            }, "Inner");
+            var outer = new LogEventProperty("Outer", new StructureValue(new[]
+            {
+                new LogEventProperty("Inner", inner),
+                new LogEventProperty("Name", new ScalarValue("test"))
+            }, "Outer"));
+            var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{Outer:j}"), new[] { outer });
+
+            var options = new RichTextBoxSinkOptions(
+                theme: _defaultTheme,
+                prettyPrintJson: true,
+                indentSize: 4,
+                useSpacesForIndent: true);
+
+            var result = RenderAndGetText(logEvent, "{Message:l}", options);
+            var expected = "{\n    \"Inner\": {\n        \"Value\": 42,\n        \"$type\": \"Inner\"\n    },\n    \"Name\": \"test\",\n    \"$type\": \"Outer\"\n}";
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void PrettyPrintJson_EmptyCollectionsFormatCorrectly()
+        {
+            var emptyArray = new LogEventProperty("EmptyArray", new SequenceValue(Array.Empty<LogEventPropertyValue>()));
+            var emptyObject = new LogEventProperty("EmptyObject", new StructureValue(Array.Empty<LogEventProperty>(), null));
+            var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("Array: {EmptyArray:j}, Object: {EmptyObject:j}"), new[] { emptyArray, emptyObject });
+
+            var options = new RichTextBoxSinkOptions(
+                theme: _defaultTheme,
+                prettyPrintJson: true,
+                indentSize: 4,
+                useSpacesForIndent: true);
+
+            var result = RenderAndGetText(logEvent, "{Message:l}", options);
+            Assert.Contains("Array: []", result);
+            Assert.Contains("Object: {}", result);
+        }
+
+        [Fact]
+        public void PrettyPrintJson_UsesTabsWhenConfigured()
+        {
+            var prop = new LogEventProperty("Test", new StructureValue(new[]
+            {
+                new LogEventProperty("Id", new ScalarValue(123))
+            }, "MyObj"));
+            var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{Test:j}"), new[] { prop });
+
+            var options = new RichTextBoxSinkOptions(
+                theme: _defaultTheme,
+                prettyPrintJson: true,
+                indentSize: 4,
+                useSpacesForIndent: false);
+
+            var result = RenderAndGetText(logEvent, "{Message:l}", options);
+            var expected = "{\n\t\"Id\": 123,\n\t\"$type\": \"MyObj\"\n}";
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void PrettyPrintJson_RespectsIndentSize()
+        {
+            var prop = new LogEventProperty("Test", new StructureValue(new[]
+            {
+                new LogEventProperty("Id", new ScalarValue(123))
+            }, "MyObj"));
+            var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{Test:j}"), new[] { prop });
+
+            var options = new RichTextBoxSinkOptions(
+                theme: _defaultTheme,
+                prettyPrintJson: true,
+                indentSize: 2,
+                useSpacesForIndent: true);
+
+            var result = RenderAndGetText(logEvent, "{Message:l}", options);
+            var expected = "{\n  \"Id\": 123,\n  \"$type\": \"MyObj\"\n}";
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void CompactJson_StillWorksByDefault()
+        {
+            var complexProp = new LogEventProperty("ComplexProp", new StructureValue(new[] { new LogEventProperty("Id", new ScalarValue(123)) }, "MyObj"));
+            var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("Value: {ComplexProp}"), new[] { complexProp });
+            
+            // Default behavior (compact)
+            Assert.Equal("Value: {\"Id\": 123, \"$type\": \"MyObj\"}", RenderAndGetText(logEvent, "{Message:j}"));
         }
     }
 }

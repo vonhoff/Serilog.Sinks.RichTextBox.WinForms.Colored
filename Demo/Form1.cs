@@ -35,6 +35,7 @@ namespace Demo
         private RichTextBoxSinkOptions? _options;
         private RichTextBoxSink? _sink;
         private bool _toolbarsVisible = true;
+        private bool _prettyPrintJson = false;
 
         public Form1()
         {
@@ -47,7 +48,8 @@ namespace Demo
             _options = new RichTextBoxSinkOptions(
                 theme: ThemePresets.Literate,
                 outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:l}{NewLine}{Exception}",
-                formatProvider: new CultureInfo("en-US"));
+                formatProvider: new CultureInfo("en-US"),
+                prettyPrintJson: _prettyPrintJson);
 
             _sink = new RichTextBoxSink(richTextBox1, _options);
             Log.Logger = new LoggerConfiguration()
@@ -77,6 +79,7 @@ namespace Demo
 
             Log.Debug("Started logger.");
             btnDispose.Enabled = true;
+            btnPrettyPrint.Text = _prettyPrintJson ? "Disable Pretty Print" : "Enable Pretty Print";
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -348,6 +351,18 @@ namespace Demo
 
             _options.AutoScroll = !_options.AutoScroll;
             btnAutoScroll.Text = _options.AutoScroll ? "Disable Auto Scroll" : "Enable Auto Scroll";
+        }
+
+        private void btnPrettyPrint_Click(object sender, EventArgs e)
+        {
+            _prettyPrintJson = !_prettyPrintJson;
+            btnPrettyPrint.Text = _prettyPrintJson ? "Disable Pretty Print" : "Enable Pretty Print";
+            
+            // Recreate the sink and logger with new pretty print setting
+            CloseAndFlush();
+            Initialize();
+            
+            Log.Information("Pretty print JSON: {PrettyPrint}", _prettyPrintJson);
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)

@@ -18,6 +18,7 @@
 
 using Serilog.Events;
 using Serilog.Parsing;
+using Serilog.Sinks.RichTextBoxForms;
 using Serilog.Sinks.RichTextBoxForms.Formatting;
 using Serilog.Sinks.RichTextBoxForms.Rtf;
 using Serilog.Sinks.RichTextBoxForms.Themes;
@@ -32,11 +33,11 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
         private readonly ValueFormatter _valueFormatter;
         private readonly HashSet<string> _outputTemplateProperties;
 
-        public PropertiesTokenRenderer(Theme theme, PropertyToken token, MessageTemplate outputTemplate, IFormatProvider? formatProvider)
+        public PropertiesTokenRenderer(Theme theme, PropertyToken token, MessageTemplate outputTemplate, IFormatProvider? formatProvider, RichTextBoxSinkOptions? options = null)
         {
             _valueFormatter = token.Format?.Contains("j") == true
-                ? new JsonValueFormatter(theme, formatProvider)
-                : new DisplayValueFormatter(theme, formatProvider);
+                ? new JsonValueFormatter(theme, formatProvider, options?.PrettyPrintJson ?? false, options?.IndentSize ?? 4, options?.UseSpacesForIndent ?? true)
+                : new DisplayValueFormatter(theme, formatProvider, options?.PrettyPrintJson ?? false, options?.IndentSize ?? 4, options?.UseSpacesForIndent ?? true);
 
             _outputTemplateProperties = new HashSet<string>(
                 outputTemplate.Tokens.OfType<PropertyToken>().Select(p => p.PropertyName));

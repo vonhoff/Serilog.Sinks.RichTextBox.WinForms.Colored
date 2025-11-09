@@ -29,13 +29,19 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
     public class DisplayValueFormatter : ValueFormatter
     {
         private readonly IFormatProvider? _formatProvider;
+        private readonly bool _prettyPrintJson;
+        private readonly int _indentSize;
+        private readonly bool _useSpacesForIndent;
         private readonly StringBuilder _scalarBuilder = new();
         private readonly StringBuilder _literalBuilder = new(64);
         private JsonValueFormatter? _jsonValueFormatter;
 
-        public DisplayValueFormatter(Theme theme, IFormatProvider? formatProvider) : base(theme, formatProvider)
+        public DisplayValueFormatter(Theme theme, IFormatProvider? formatProvider, bool prettyPrintJson = false, int indentSize = 4, bool useSpacesForIndent = true) : base(theme, formatProvider)
         {
             _formatProvider = formatProvider;
+            _prettyPrintJson = prettyPrintJson;
+            _indentSize = indentSize;
+            _useSpacesForIndent = useSpacesForIndent;
         }
 
         private void FormatLiteralValue(ScalarValue scalar, IRtfCanvas canvas, string? format, bool isLiteral)
@@ -100,7 +106,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
         {
             if (state.Format.Contains("j"))
             {
-                _jsonValueFormatter ??= new JsonValueFormatter(Theme, _formatProvider);
+                _jsonValueFormatter ??= new JsonValueFormatter(Theme, _formatProvider, _prettyPrintJson, _indentSize, _useSpacesForIndent);
                 _jsonValueFormatter.Format(dictionary, state.Canvas, state.Format, state.IsLiteral);
                 return true;
             }
@@ -136,7 +142,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
         {
             if (state.Format.Contains("j"))
             {
-                _jsonValueFormatter ??= new JsonValueFormatter(Theme, _formatProvider);
+                _jsonValueFormatter ??= new JsonValueFormatter(Theme, _formatProvider, _prettyPrintJson, _indentSize, _useSpacesForIndent);
                 _jsonValueFormatter.Format(sequence, state.Canvas, state.Format, state.IsLiteral);
                 return true;
             }
@@ -163,7 +169,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
         {
             if (state.Format.Contains("j"))
             {
-                _jsonValueFormatter ??= new JsonValueFormatter(Theme, _formatProvider);
+                _jsonValueFormatter ??= new JsonValueFormatter(Theme, _formatProvider, _prettyPrintJson, _indentSize, _useSpacesForIndent);
                 _jsonValueFormatter.Format(structure, state.Canvas, state.Format, state.IsLiteral);
                 return true;
             }

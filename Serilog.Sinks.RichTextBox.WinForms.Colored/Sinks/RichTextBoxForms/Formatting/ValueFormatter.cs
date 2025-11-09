@@ -40,7 +40,12 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 
         public void Format(LogEventPropertyValue value, IRtfCanvas canvas, string format, bool isLiteral)
         {
-            Visit(new ValueFormatterState(canvas, format, isLiteral), value);
+            Visit(CreateInitialState(canvas, format, isLiteral), value);
+        }
+
+        protected virtual ValueFormatterState CreateInitialState(IRtfCanvas canvas, string format, bool isLiteral)
+        {
+            return new ValueFormatterState(canvas, format, isLiteral);
         }
 
         /// <summary>

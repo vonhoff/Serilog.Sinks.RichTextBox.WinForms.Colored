@@ -19,6 +19,7 @@
 using Serilog.Events;
 using Serilog.Formatting.Display;
 using Serilog.Parsing;
+using Serilog.Sinks.RichTextBoxForms;
 using Serilog.Sinks.RichTextBoxForms.Rtf;
 using Serilog.Sinks.RichTextBoxForms.Themes;
 using System;
@@ -31,7 +32,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
         private const string OutputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
         private readonly List<ITokenRenderer> _renderers;
 
-        public TemplateRenderer(Theme theme, string outputTemplate = OutputTemplate, IFormatProvider? formatProvider = null)
+        public TemplateRenderer(Theme theme, string outputTemplate = OutputTemplate, IFormatProvider? formatProvider = null, RichTextBoxSinkOptions? options = null)
         {
             if (string.IsNullOrEmpty(outputTemplate))
             {
@@ -72,7 +73,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
 
                     case OutputProperties.MessagePropertyName:
                         {
-                            _renderers.Add(new MessageTemplateTokenRenderer(theme, propertyToken, formatProvider));
+                            _renderers.Add(new MessageTemplateTokenRenderer(theme, propertyToken, formatProvider, options));
                             break;
                         }
 
@@ -84,7 +85,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
 
                     case OutputProperties.PropertiesPropertyName:
                         {
-                            _renderers.Add(new PropertiesTokenRenderer(theme, propertyToken, template, formatProvider));
+                            _renderers.Add(new PropertiesTokenRenderer(theme, propertyToken, template, formatProvider, options));
                             break;
                         }
 

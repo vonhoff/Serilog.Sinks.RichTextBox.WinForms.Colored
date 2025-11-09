@@ -50,6 +50,7 @@
             this.btnReset = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.btnAutoScroll = new System.Windows.Forms.ToolStripButton();
+            this.btnPrettyPrint = new System.Windows.Forms.ToolStripButton();
             this.panel1 = new System.Windows.Forms.Panel();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.btnRestore = new System.Windows.Forms.ToolStripButton();
@@ -174,7 +175,8 @@
             this.btnDispose,
             this.btnReset,
             this.toolStripSeparator6,
-            this.btnAutoScroll});
+            this.btnAutoScroll,
+            this.btnPrettyPrint});
             this.toolStrip2.Location = new System.Drawing.Point(0, 25);
             this.toolStrip2.Name = "toolStrip2";
             this.toolStrip2.Padding = new System.Windows.Forms.Padding(3, 0, 3, 0);
@@ -268,6 +270,15 @@
             this.btnAutoScroll.Text = "Disable Auto Scroll";
             this.btnAutoScroll.ToolTipText = "Toggle auto-scroll behavior";
             this.btnAutoScroll.Click += new System.EventHandler(this.btnAutoScroll_Click);
+            // 
+            // btnPrettyPrint
+            // 
+            this.btnPrettyPrint.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnPrettyPrint.Name = "btnPrettyPrint";
+            this.btnPrettyPrint.Size = new System.Drawing.Size(100, 22);
+            this.btnPrettyPrint.Text = "Enable Pretty Print";
+            this.btnPrettyPrint.ToolTipText = "Toggle pretty-printed JSON formatting";
+            this.btnPrettyPrint.Click += new System.EventHandler(this.btnPrettyPrint_Click);
             // 
             // panel1
             // 
@@ -363,6 +374,7 @@
         private System.Windows.Forms.ToolStripButton btnReset;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripButton btnAutoScroll;
+        private System.Windows.Forms.ToolStripButton btnPrettyPrint;
         private System.Windows.Forms.ToolStripButton btnRestore;
         private System.Windows.Forms.ToolStripButton btnClear;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;

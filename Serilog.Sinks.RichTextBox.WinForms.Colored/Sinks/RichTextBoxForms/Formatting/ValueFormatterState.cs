@@ -22,20 +22,51 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 {
     public readonly struct ValueFormatterState
     {
-        public ValueFormatterState(IRtfCanvas canvas, string format, bool isLiteral)
+        public ValueFormatterState(IRtfCanvas canvas, string format, bool isLiteral, int indentLevel = 0, bool useSpacesForIndent = true, int indentSize = 4, bool isTopLevel = true)
         {
             Canvas = canvas;
             Format = format;
             IsLiteral = isLiteral;
+            IndentLevel = indentLevel;
+            UseSpacesForIndent = useSpacesForIndent;
+            IndentSize = indentSize;
+            IsTopLevel = isTopLevel;
         }
 
         public string Format { get; }
         public bool IsLiteral { get; }
         public IRtfCanvas Canvas { get; }
+        public int IndentLevel { get; }
+        public bool UseSpacesForIndent { get; }
+        public int IndentSize { get; }
+        public bool IsTopLevel { get; }
 
         public ValueFormatterState Next(string? format = null)
         {
-            return new ValueFormatterState(Canvas, format ?? Format, IsLiteral);
+            return new ValueFormatterState(Canvas, format ?? Format, IsLiteral, IndentLevel, UseSpacesForIndent, IndentSize, false);
+        }
+
+        public ValueFormatterState ToIndentUp()
+        {
+            return new ValueFormatterState(Canvas, Format, IsLiteral, IndentLevel + 1, UseSpacesForIndent, IndentSize, false);
+        }
+
+        public ValueFormatterState ToIndentDown()
+        {
+            return new ValueFormatterState(Canvas, Format, IsLiteral, IndentLevel > 0 ? IndentLevel - 1 : 0, UseSpacesForIndent, IndentSize, false);
+        }
+
+        public string GetIndentation()
+        {
+            if (IndentLevel <= 0)
+            {
+                return string.Empty;
+            }
+
+            var totalSpaces = IndentLevel * IndentSize;
+            return UseSpacesForIndent
+                ? new string(' ', totalSpaces)
+                : new string('\t', IndentLevel);
         }
     }
 }
