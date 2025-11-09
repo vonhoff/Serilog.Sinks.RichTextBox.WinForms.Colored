@@ -1,7 +1,5 @@
-using System;
 using Serilog.Events;
 using Serilog.Sinks.RichTextBoxForms;
-using Serilog.Sinks.RichTextBoxForms.Themes;
 using Xunit;
 
 namespace Serilog.Tests.Integration
@@ -260,7 +258,7 @@ namespace Serilog.Tests.Integration
             var enumValue = System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance;
             var prop = new LogEventProperty("EnumProp", new ScalarValue(enumValue));
             var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{EnumProp:j}"), new[] { prop });
-            
+
             var result = RenderAndGetText(logEvent, "{Message:j}");
             Assert.NotNull(result);
             Assert.NotEmpty(result);
@@ -272,7 +270,7 @@ namespace Serilog.Tests.Integration
             var plainObject = new object();
             var prop = new LogEventProperty("ObjectProp", new ScalarValue(plainObject));
             var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{ObjectProp:j}"), new[] { prop });
-            
+
             var result = RenderAndGetText(logEvent, "{Message:j}");
             Assert.NotNull(result);
             Assert.NotEmpty(result);

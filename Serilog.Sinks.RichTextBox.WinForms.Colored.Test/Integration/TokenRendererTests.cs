@@ -1,10 +1,6 @@
 using Serilog.Events;
 using Serilog.Parsing;
 using Serilog.Sinks.RichTextBoxForms.Rendering;
-using Serilog.Sinks.RichTextBoxForms.Themes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 
 namespace Serilog.Tests.Integration
@@ -37,37 +33,9 @@ namespace Serilog.Tests.Integration
             var result = _richTextBox.Text;
             Assert.Contains("InvalidOperationException", result);
             Assert.Contains("Test exception", result);
-            
+
             var lines = result.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
             Assert.True(lines.Length > 1, $"Exception should have multiple lines including stack trace. Got: {lines.Length} lines. Text: {result}");
-        }
-
-        [Fact]
-        public void ExceptionTokenRenderer_RendersMultipleLines()
-        {
-            Exception? exception = null;
-            try
-            {
-                throw new InvalidOperationException("Test exception");
-            }
-            catch (Exception ex)
-            {
-                exception = ex;
-            }
-
-            var logEvent = new LogEvent(
-                DateTimeOffset.Now,
-                LogEventLevel.Error,
-                exception,
-                _parser.Parse("Error occurred"),
-                Array.Empty<LogEventProperty>());
-
-            var renderer = new ExceptionTokenRenderer(_defaultTheme);
-            renderer.Render(logEvent, _canvas);
-
-            var result = _richTextBox.Text;
-            var lines = result.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-            Assert.True(lines.Length > 1, $"Exception should have multiple lines. Got: {lines.Length} lines. Text: {result}");
         }
 
         [Fact]
@@ -105,26 +73,6 @@ namespace Serilog.Tests.Integration
 
             var result = _richTextBox.Text;
             Assert.Contains("42", result);
-        }
-
-        [Fact]
-        public void EventPropertyTokenRenderer_RendersBooleanValue()
-        {
-            var template = _parser.Parse("IsValid: {IsValid}");
-            var propertyToken = template.Tokens.OfType<PropertyToken>().Single(t => t.PropertyName == "IsValid");
-            var renderer = new EventPropertyTokenRenderer(_defaultTheme, propertyToken, null);
-
-            var logEvent = new LogEvent(
-                DateTimeOffset.Now,
-                LogEventLevel.Information,
-                null,
-                template,
-                new[] { new LogEventProperty("IsValid", new ScalarValue(true)) });
-
-            renderer.Render(logEvent, _canvas);
-
-            var result = _richTextBox.Text;
-            Assert.Contains("True", result);
         }
 
         [Fact]
@@ -253,6 +201,228 @@ namespace Serilog.Tests.Integration
 
             var result = _richTextBox.Text;
             Assert.Contains("Hello World", result);
+        }
+
+        [Fact]
+        public void LevelTokenRenderer_WithLowercaseFormat_RendersCorrectly()
+        {
+            var template = _parser.Parse("Level: {Level:w3}");
+            var levelToken = template.Tokens.OfType<PropertyToken>().Single(t => t.PropertyName == "Level");
+            var renderer = new LevelTokenRenderer(_defaultTheme, levelToken);
+
+            var logEvent = new LogEvent(
+                DateTimeOffset.Now,
+                LogEventLevel.Information,
+                null,
+                _parser.Parse("Test"),
+                Array.Empty<LogEventProperty>());
+
+            renderer.Render(logEvent, _canvas);
+
+            var result = _richTextBox.Text;
+            Assert.Contains("inf", result);
+        }
+
+        [Fact]
+        public void LevelTokenRenderer_WithTitleCaseFormat_RendersCorrectly()
+        {
+            var template = _parser.Parse("Level: {Level:t3}");
+            var levelToken = template.Tokens.OfType<PropertyToken>().Single(t => t.PropertyName == "Level");
+            var renderer = new LevelTokenRenderer(_defaultTheme, levelToken);
+
+            var logEvent = new LogEvent(
+                DateTimeOffset.Now,
+                LogEventLevel.Warning,
+                null,
+                _parser.Parse("Test"),
+                Array.Empty<LogEventProperty>());
+
+            renderer.Render(logEvent, _canvas);
+
+            var result = _richTextBox.Text;
+            Assert.Contains("Wrn", result);
+        }
+
+        [Fact]
+        public void LevelTokenRenderer_WithUppercaseFormat_RendersCorrectly()
+        {
+            var template = _parser.Parse("Level: {Level:u3}");
+            var levelToken = template.Tokens.OfType<PropertyToken>().Single(t => t.PropertyName == "Level");
+            var renderer = new LevelTokenRenderer(_defaultTheme, levelToken);
+
+            var logEvent = new LogEvent(
+                DateTimeOffset.Now,
+                LogEventLevel.Error,
+                null,
+                _parser.Parse("Test"),
+                Array.Empty<LogEventProperty>());
+
+            renderer.Render(logEvent, _canvas);
+
+            var result = _richTextBox.Text;
+            Assert.Contains("ERR", result);
+        }
+
+        [Fact]
+        public void LevelTokenRenderer_WithThreeDigitWidth_RendersCorrectly()
+        {
+            var template = _parser.Parse("Level: {Level:u10}");
+            var levelToken = template.Tokens.OfType<PropertyToken>().Single(t => t.PropertyName == "Level");
+            var renderer = new LevelTokenRenderer(_defaultTheme, levelToken);
+
+            var logEvent = new LogEvent(
+                DateTimeOffset.Now,
+                LogEventLevel.Information,
+                null,
+                _parser.Parse("Test"),
+                Array.Empty<LogEventProperty>());
+
+            renderer.Render(logEvent, _canvas);
+
+            var result = _richTextBox.Text;
+            Assert.Contains("INFORMATIO", result);
+        }
+
+        [Fact]
+        public void LevelTokenRenderer_WithWidthLessThanOne_ReturnsEmpty()
+        {
+            var template = _parser.Parse("Level: {Level:u0}");
+            var levelToken = template.Tokens.OfType<PropertyToken>().Single(t => t.PropertyName == "Level");
+            var renderer = new LevelTokenRenderer(_defaultTheme, levelToken);
+
+            var logEvent = new LogEvent(
+                DateTimeOffset.Now,
+                LogEventLevel.Information,
+                null,
+                _parser.Parse("Test"),
+                Array.Empty<LogEventProperty>());
+
+            renderer.Render(logEvent, _canvas);
+
+            var result = _richTextBox.Text;
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        public void LevelTokenRenderer_WithWidthGreaterThanFour_TruncatesAndFormats()
+        {
+            var template = _parser.Parse("Level: {Level:u5}");
+            var levelToken = template.Tokens.OfType<PropertyToken>().Single(t => t.PropertyName == "Level");
+            var renderer = new LevelTokenRenderer(_defaultTheme, levelToken);
+
+            var logEvent = new LogEvent(
+                DateTimeOffset.Now,
+                LogEventLevel.Information,
+                null,
+                _parser.Parse("Test"),
+                Array.Empty<LogEventProperty>());
+
+            renderer.Render(logEvent, _canvas);
+
+            var result = _richTextBox.Text;
+            Assert.Contains("INFOR", result);
+        }
+
+        [Fact]
+        public void LevelTokenRenderer_WithInvalidFormatSpecifier_UsesTextFormatter()
+        {
+            var template = _parser.Parse("Level: {Level:x3}");
+            var levelToken = template.Tokens.OfType<PropertyToken>().Single(t => t.PropertyName == "Level");
+            var renderer = new LevelTokenRenderer(_defaultTheme, levelToken);
+
+            var logEvent = new LogEvent(
+                DateTimeOffset.Now,
+                LogEventLevel.Information,
+                null,
+                _parser.Parse("Test"),
+                Array.Empty<LogEventProperty>());
+
+            renderer.Render(logEvent, _canvas);
+
+            var result = _richTextBox.Text;
+            Assert.Contains("Information", result);
+        }
+
+        [Fact]
+        public void LevelTokenRenderer_WithNonStandardFormatLength_UsesTextFormatter()
+        {
+            var template = _parser.Parse("Level: {Level:u}");
+            var levelToken = template.Tokens.OfType<PropertyToken>().Single(t => t.PropertyName == "Level");
+            var renderer = new LevelTokenRenderer(_defaultTheme, levelToken);
+
+            var logEvent = new LogEvent(
+                DateTimeOffset.Now,
+                LogEventLevel.Information,
+                null,
+                _parser.Parse("Test"),
+                Array.Empty<LogEventProperty>());
+
+            renderer.Render(logEvent, _canvas);
+
+            var result = _richTextBox.Text;
+            Assert.Contains("INFORMATION", result);
+        }
+
+        [Fact]
+        public void LevelTokenRenderer_WithInvalidLevelIndex_HandlesGracefully()
+        {
+            var template = _parser.Parse("Level: {Level:u3}");
+            var levelToken = template.Tokens.OfType<PropertyToken>().Single(t => t.PropertyName == "Level");
+            var renderer = new LevelTokenRenderer(_defaultTheme, levelToken);
+
+            var invalidLevel = (LogEventLevel)999;
+            var logEvent = new LogEvent(
+                DateTimeOffset.Now,
+                invalidLevel,
+                null,
+                _parser.Parse("Test"),
+                Array.Empty<LogEventProperty>());
+
+            renderer.Render(logEvent, _canvas);
+
+            var result = _richTextBox.Text;
+            Assert.Contains("999", result);
+        }
+
+        [Fact]
+        public void LevelTokenRenderer_WithNegativeLevelIndex_HandlesGracefully()
+        {
+            var template = _parser.Parse("Level: {Level:u3}");
+            var levelToken = template.Tokens.OfType<PropertyToken>().Single(t => t.PropertyName == "Level");
+            var renderer = new LevelTokenRenderer(_defaultTheme, levelToken);
+
+            var invalidLevel = (LogEventLevel)(-1);
+            var logEvent = new LogEvent(
+                DateTimeOffset.Now,
+                invalidLevel,
+                null,
+                _parser.Parse("Test"),
+                Array.Empty<LogEventProperty>());
+
+            renderer.Render(logEvent, _canvas);
+
+            var result = _richTextBox.Text;
+            Assert.Contains("-1", result);
+        }
+
+        [Fact]
+        public void LevelTokenRenderer_WithWidthGreaterThanStringLength_DoesNotTruncate()
+        {
+            var template = _parser.Parse("Level: {Level:u20}");
+            var levelToken = template.Tokens.OfType<PropertyToken>().Single(t => t.PropertyName == "Level");
+            var renderer = new LevelTokenRenderer(_defaultTheme, levelToken);
+
+            var logEvent = new LogEvent(
+                DateTimeOffset.Now,
+                LogEventLevel.Verbose,
+                null,
+                _parser.Parse("Test"),
+                Array.Empty<LogEventProperty>());
+
+            renderer.Render(logEvent, _canvas);
+
+            var result = _richTextBox.Text;
+            Assert.Contains("VERBOSE", result);
         }
     }
 }

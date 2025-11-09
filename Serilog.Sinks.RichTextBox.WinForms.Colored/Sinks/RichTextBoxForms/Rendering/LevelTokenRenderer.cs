@@ -82,6 +82,14 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
         public void Render(LogEvent logEvent, IRtfCanvas canvas)
         {
             var levelIndex = (int)logEvent.Level;
+            if (levelIndex < 0 || levelIndex >= _monikers.Length)
+            {
+                var format = string.Empty;
+                var fallbackMoniker = TextFormatter.Format(logEvent.Level.ToString(), format);
+                _theme.Render(canvas, StyleToken.Text, fallbackMoniker);
+                return;
+            }
+
             var moniker = _monikers[levelIndex];
             var levelStyle = LevelStyles[levelIndex];
             _theme.Render(canvas, levelStyle, moniker);
@@ -119,11 +127,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
             }
 
             var index = (int)value;
-            if (index is < 0 or > (int)LogEventLevel.Fatal)
-            {
-                return TextFormatter.Format(value.ToString(), format);
-            }
-
             return format[0] switch
             {
                 'w' => LowercaseLevelMap[index][width - 1],
