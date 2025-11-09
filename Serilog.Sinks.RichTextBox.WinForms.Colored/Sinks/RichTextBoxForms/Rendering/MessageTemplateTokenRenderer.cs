@@ -33,8 +33,8 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
             var isJson = token.Format?.Contains("j") == true;
 
             ValueFormatter valueFormatter = isJson
-                ? new JsonValueFormatter(options.Theme, options.FormatProvider, options.PrettyPrintJson, options.SpacesPerIndent)
-                : new DisplayValueFormatter(options.Theme, options.FormatProvider, options.PrettyPrintJson, options.SpacesPerIndent);
+                ? new JsonValueFormatter(options)
+                : new DisplayValueFormatter(options);
 
             _renderer = new MessageTemplateRenderer(options.Theme, valueFormatter, isLiteral);
         }

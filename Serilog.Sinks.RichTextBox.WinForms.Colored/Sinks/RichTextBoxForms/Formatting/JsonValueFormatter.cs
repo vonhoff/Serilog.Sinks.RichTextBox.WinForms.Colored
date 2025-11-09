@@ -29,23 +29,17 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 {
     public class JsonValueFormatter : ValueFormatter
     {
-        private readonly IFormatProvider? _formatProvider;
-        private readonly bool _prettyPrint;
-        private readonly int _spacesPerIndent;
         private readonly StringBuilder _literalBuilder = new(64);
         private readonly StringBuilder _scalarBuilder = new();
         private readonly StringBuilder _jsonStringBuilder = new();
 
-        public JsonValueFormatter(Theme theme, IFormatProvider? formatProvider, bool prettyPrint = false, int spacesPerIndent = 2) : base(theme, formatProvider)
+        public JsonValueFormatter(RichTextBoxSinkOptions options) : base(options)
         {
-            _formatProvider = formatProvider;
-            _prettyPrint = prettyPrint;
-            _spacesPerIndent = spacesPerIndent;
         }
 
         protected override ValueFormatterState CreateInitialState(IRtfCanvas canvas, string format, bool isLiteral)
         {
-            return new ValueFormatterState(canvas, format, isLiteral, 0, _spacesPerIndent, true);
+            return new ValueFormatterState(canvas, format, isLiteral, 0, Options.SpacesPerIndent, true);
         }
 
         protected override bool VisitScalarValue(ValueFormatterState state, ScalarValue scalar)
@@ -56,16 +50,16 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 
         protected override bool VisitSequenceValue(ValueFormatterState state, SequenceValue sequence)
         {
-            if (_prettyPrint)
+            if (Options.PrettyPrintJson)
             {
                 var indentState = state.ToIndentUp();
                 if (sequence.Elements.Count > 0)
                 {
-                    Theme.Render(state.Canvas, StyleToken.TertiaryText, "[\n" + indentState.GetIndentation());
+                    Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, "[\n" + indentState.GetIndentation());
                 }
                 else
                 {
-                    Theme.Render(state.Canvas, StyleToken.TertiaryText, "[");
+                    Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, "[");
                 }
 
                 var delimiter = string.Empty;
@@ -73,7 +67,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                 {
                     if (!string.IsNullOrEmpty(delimiter))
                     {
-                        Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
+                        Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
                     }
 
                     delimiter = ",\n" + indentState.GetIndentation();
@@ -82,30 +76,30 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 
                 if (sequence.Elements.Count > 0)
                 {
-                    Theme.Render(state.Canvas, StyleToken.TertiaryText, "\n" + state.GetIndentation() + "]");
+                    Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, "\n" + state.GetIndentation() + "]");
                 }
                 else
                 {
-                    Theme.Render(state.Canvas, StyleToken.TertiaryText, "]");
+                    Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, "]");
                 }
             }
             else
             {
-                Theme.Render(state.Canvas, StyleToken.TertiaryText, "[");
+                Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, "[");
 
                 var delimiter = string.Empty;
                 foreach (var propertyValue in sequence.Elements)
                 {
                     if (!string.IsNullOrEmpty(delimiter))
                     {
-                        Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
+                        Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
                     }
 
                     delimiter = ", ";
                     Visit(state, propertyValue);
                 }
 
-                Theme.Render(state.Canvas, StyleToken.TertiaryText, "]");
+                Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, "]");
             }
 
             return true;
@@ -113,16 +107,16 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 
         protected override bool VisitStructureValue(ValueFormatterState state, StructureValue structure)
         {
-            if (_prettyPrint)
+            if (Options.PrettyPrintJson)
             {
                 var indentState = state.ToIndentUp();
                 if (structure.Properties.Count > 0 || structure.TypeTag != null)
                 {
-                    Theme.Render(state.Canvas, StyleToken.TertiaryText, "{\n" + indentState.GetIndentation());
+                    Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, "{\n" + indentState.GetIndentation());
                 }
                 else
                 {
-                    Theme.Render(state.Canvas, StyleToken.TertiaryText, "{");
+                    Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, "{");
                 }
 
                 var delimiter = string.Empty;
@@ -130,59 +124,59 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                 {
                     if (!string.IsNullOrEmpty(delimiter))
                     {
-                        Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
+                        Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
                     }
 
                     delimiter = ",\n" + indentState.GetIndentation();
-                    Theme.Render(state.Canvas, StyleToken.Name, GetQuotedJsonString(eventProperty.Name));
-                    Theme.Render(state.Canvas, StyleToken.TertiaryText, ": ");
+                    Options.Theme.Render(state.Canvas, StyleToken.Name, GetQuotedJsonString(eventProperty.Name));
+                    Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, ": ");
                     Visit(indentState.Next(), eventProperty.Value);
                 }
 
                 if (structure.TypeTag != null)
                 {
-                    Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
-                    Theme.Render(state.Canvas, StyleToken.Name, GetQuotedJsonString("$type"));
-                    Theme.Render(state.Canvas, StyleToken.TertiaryText, ": ");
-                    Theme.Render(state.Canvas, StyleToken.String, GetQuotedJsonString(structure.TypeTag));
+                    Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
+                    Options.Theme.Render(state.Canvas, StyleToken.Name, GetQuotedJsonString("$type"));
+                    Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, ": ");
+                    Options.Theme.Render(state.Canvas, StyleToken.String, GetQuotedJsonString(structure.TypeTag));
                 }
 
                 if (structure.Properties.Count > 0 || structure.TypeTag != null)
                 {
-                    Theme.Render(state.Canvas, StyleToken.TertiaryText, "\n" + state.GetIndentation() + "}");
+                    Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, "\n" + state.GetIndentation() + "}");
                 }
                 else
                 {
-                    Theme.Render(state.Canvas, StyleToken.TertiaryText, "}");
+                    Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, "}");
                 }
             }
             else
             {
-                Theme.Render(state.Canvas, StyleToken.TertiaryText, "{");
+                Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, "{");
 
                 var delimiter = string.Empty;
                 foreach (var eventProperty in structure.Properties)
                 {
                     if (!string.IsNullOrEmpty(delimiter))
                     {
-                        Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
+                        Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
                     }
 
                     delimiter = ", ";
-                    Theme.Render(state.Canvas, StyleToken.Name, GetQuotedJsonString(eventProperty.Name));
-                    Theme.Render(state.Canvas, StyleToken.TertiaryText, ": ");
+                    Options.Theme.Render(state.Canvas, StyleToken.Name, GetQuotedJsonString(eventProperty.Name));
+                    Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, ": ");
                     Visit(state.Next(), eventProperty.Value);
                 }
 
                 if (structure.TypeTag != null)
                 {
-                    Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
-                    Theme.Render(state.Canvas, StyleToken.Name, GetQuotedJsonString("$type"));
-                    Theme.Render(state.Canvas, StyleToken.TertiaryText, ": ");
-                    Theme.Render(state.Canvas, StyleToken.String, GetQuotedJsonString(structure.TypeTag));
+                    Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
+                    Options.Theme.Render(state.Canvas, StyleToken.Name, GetQuotedJsonString("$type"));
+                    Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, ": ");
+                    Options.Theme.Render(state.Canvas, StyleToken.String, GetQuotedJsonString(structure.TypeTag));
                 }
 
-                Theme.Render(state.Canvas, StyleToken.TertiaryText, "}");
+                Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, "}");
             }
 
             return true;
@@ -190,16 +184,16 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 
         protected override bool VisitDictionaryValue(ValueFormatterState state, DictionaryValue dictionary)
         {
-            if (_prettyPrint)
+            if (Options.PrettyPrintJson)
             {
                 var indentState = state.ToIndentUp();
                 if (dictionary.Elements.Count > 0)
                 {
-                    Theme.Render(state.Canvas, StyleToken.TertiaryText, "{\n" + indentState.GetIndentation());
+                    Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, "{\n" + indentState.GetIndentation());
                 }
                 else
                 {
-                    Theme.Render(state.Canvas, StyleToken.TertiaryText, "{");
+                    Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, "{");
                 }
 
                 var delimiter = string.Empty;
@@ -207,7 +201,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                 {
                     if (!string.IsNullOrEmpty(delimiter))
                     {
-                        Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
+                        Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
                     }
 
                     delimiter = ",\n" + indentState.GetIndentation();
@@ -218,31 +212,31 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                         _ => StyleToken.Scalar
                     };
 
-                    Theme.Render(state.Canvas, style, GetQuotedJsonString(scalar.Value?.ToString() ?? "null"));
-                    Theme.Render(state.Canvas, StyleToken.TertiaryText, ": ");
+                    Options.Theme.Render(state.Canvas, style, GetQuotedJsonString(scalar.Value?.ToString() ?? "null"));
+                    Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, ": ");
 
                     Visit(indentState.Next(), propertyValue);
                 }
 
                 if (dictionary.Elements.Count > 0)
                 {
-                    Theme.Render(state.Canvas, StyleToken.TertiaryText, "\n" + state.GetIndentation() + "}");
+                    Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, "\n" + state.GetIndentation() + "}");
                 }
                 else
                 {
-                    Theme.Render(state.Canvas, StyleToken.TertiaryText, "}");
+                    Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, "}");
                 }
             }
             else
             {
-                Theme.Render(state.Canvas, StyleToken.TertiaryText, "{");
+                Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, "{");
 
                 var delimiter = string.Empty;
                 foreach (var (scalar, propertyValue) in dictionary.Elements)
                 {
                     if (!string.IsNullOrEmpty(delimiter))
                     {
-                        Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
+                        Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, delimiter);
                     }
 
                     delimiter = ", ";
@@ -253,13 +247,13 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                         _ => StyleToken.Scalar
                     };
 
-                    Theme.Render(state.Canvas, style, GetQuotedJsonString(scalar.Value?.ToString() ?? "null"));
-                    Theme.Render(state.Canvas, StyleToken.TertiaryText, ": ");
+                    Options.Theme.Render(state.Canvas, style, GetQuotedJsonString(scalar.Value?.ToString() ?? "null"));
+                    Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, ": ");
 
                     Visit(state.Next(), propertyValue);
                 }
 
-                Theme.Render(state.Canvas, StyleToken.TertiaryText, "}");
+                Options.Theme.Render(state.Canvas, StyleToken.TertiaryText, "}");
             }
 
             return true;
@@ -272,40 +266,40 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             switch (value)
             {
                 case null:
-                    Theme.Render(canvas, StyleToken.Null, "null");
+                    Options.Theme.Render(canvas, StyleToken.Null, "null");
                     return;
 
                 case string str:
-                    Theme.Render(canvas, StyleToken.String, GetQuotedJsonString(str));
+                    Options.Theme.Render(canvas, StyleToken.String, GetQuotedJsonString(str));
                     return;
 
                 case byte[] bytes:
-                    Theme.Render(canvas, StyleToken.String, GetQuotedJsonString(Convert.ToBase64String(bytes)));
+                    Options.Theme.Render(canvas, StyleToken.String, GetQuotedJsonString(Convert.ToBase64String(bytes)));
                     return;
 
                 case bool b:
-                    Theme.Render(canvas, StyleToken.Boolean, b ? "true" : "false");
+                    Options.Theme.Render(canvas, StyleToken.Boolean, b ? "true" : "false");
                     return;
 
                 case double d:
                     if (double.IsNaN(d) || double.IsInfinity(d))
                     {
-                        Theme.Render(canvas, StyleToken.Number, GetQuotedJsonString(d.ToString(CultureInfo.InvariantCulture)));
+                        Options.Theme.Render(canvas, StyleToken.Number, GetQuotedJsonString(d.ToString(CultureInfo.InvariantCulture)));
                     }
                     else
                     {
-                        Theme.Render(canvas, StyleToken.Number, d.ToString("R", CultureInfo.InvariantCulture));
+                        Options.Theme.Render(canvas, StyleToken.Number, d.ToString("R", CultureInfo.InvariantCulture));
                     }
                     return;
 
                 case float f:
                     if (float.IsNaN(f) || float.IsInfinity(f))
                     {
-                        Theme.Render(canvas, StyleToken.Number, GetQuotedJsonString(f.ToString(CultureInfo.InvariantCulture)));
+                        Options.Theme.Render(canvas, StyleToken.Number, GetQuotedJsonString(f.ToString(CultureInfo.InvariantCulture)));
                     }
                     else
                     {
-                        Theme.Render(canvas, StyleToken.Number, f.ToString("R", CultureInfo.InvariantCulture));
+                        Options.Theme.Render(canvas, StyleToken.Number, f.ToString("R", CultureInfo.InvariantCulture));
                     }
                     return;
 
@@ -331,18 +325,18 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                                 break;
 
                             default:
-                                scalar.Render(writer, null, _formatProvider);
+                                scalar.Render(writer, null, Options.FormatProvider);
                                 break;
                         }
                     }
 
-                    Theme.Render(canvas, StyleToken.Scalar, GetQuotedJsonString(_literalBuilder.ToString()));
+                    Options.Theme.Render(canvas, StyleToken.Scalar, GetQuotedJsonString(_literalBuilder.ToString()));
                     return;
 
                 default:
                     if (value is ValueType and (int or uint or long or ulong or decimal or byte or sbyte or short or ushort))
                     {
-                        Theme.Render(canvas, StyleToken.Number, ((IFormattable)value).ToString(null, CultureInfo.InvariantCulture));
+                        Options.Theme.Render(canvas, StyleToken.Number, ((IFormattable)value).ToString(null, CultureInfo.InvariantCulture));
                         return;
                     }
 
@@ -356,10 +350,10 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 
                     using (var writer = new StringWriter(_scalarBuilder))
                     {
-                        scalar.Render(writer, null, _formatProvider);
+                        scalar.Render(writer, null, Options.FormatProvider);
                     }
 
-                    Theme.Render(canvas, StyleToken.Scalar, GetQuotedJsonString(_scalarBuilder.ToString()));
+                    Options.Theme.Render(canvas, StyleToken.Scalar, GetQuotedJsonString(_scalarBuilder.ToString()));
                     return;
             }
         }

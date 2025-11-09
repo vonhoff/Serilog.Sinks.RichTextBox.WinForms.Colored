@@ -28,15 +28,13 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
     public abstract class ValueFormatter : LogEventPropertyValueVisitor<ValueFormatterState, bool>
     {
         private readonly StringBuilder _formatBuilder = new();
-        private readonly IFormatProvider? _formatProvider;
 
-        protected ValueFormatter(Theme theme, IFormatProvider? formatProvider = null)
+        protected ValueFormatter(RichTextBoxSinkOptions options)
         {
-            Theme = theme;
-            _formatProvider = formatProvider;
+            Options = options;
         }
 
-        protected Theme Theme { get; }
+        protected RichTextBoxSinkOptions Options { get; }
 
         public void Format(LogEventPropertyValue value, IRtfCanvas canvas, string format, bool isLiteral)
         {
@@ -48,11 +46,6 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             return new ValueFormatterState(canvas, format, isLiteral);
         }
 
-        /// <summary>
-        /// Determines the appropriate StyleToken for a given type.
-        /// </summary>
-        /// <param name="type">The type to analyze</param>
-        /// <returns>StyleToken.Number for numeric types, StyleToken.Scalar for others</returns>
         protected static StyleToken GetStyleTokenForType(Type type)
         {
             return type == typeof(float) || type == typeof(double) || type == typeof(decimal) ||
@@ -105,15 +98,15 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             string renderedValue;
             try
             {
-                renderedValue = formattable.ToString(effectiveFormat, _formatProvider);
+                renderedValue = formattable.ToString(effectiveFormat, Options.FormatProvider);
             }
             catch (FormatException)
             {
                 // Fall back to the default formatting if the specified format is not supported by the value.
-                renderedValue = formattable.ToString(null, _formatProvider);
+                renderedValue = formattable.ToString(null, Options.FormatProvider);
             }
 
-            Theme.Render(canvas, token, renderedValue);
+            Options.Theme.Render(canvas, token, renderedValue);
         }
     }
 }
