@@ -30,6 +30,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
     {
         private readonly RichTextBoxSinkOptions _options;
         private readonly PropertyToken _token;
+        private readonly StringBuilder _stringBuilder = new();
 
         public EventPropertyTokenRenderer(PropertyToken token, RichTextBoxSinkOptions options)
         {
@@ -51,14 +52,14 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
             }
             else
             {
-                var sb = new StringBuilder();
+                _stringBuilder.Clear();
 
-                using (var writer = new StringWriter(sb))
+                using (var writer = new StringWriter(_stringBuilder))
                 {
                     propertyValue.Render(writer, _token.Format, _options.FormatProvider);
                 }
 
-                _options.Theme.Render(canvas, StyleToken.SecondaryText, sb.ToString());
+                _options.Theme.Render(canvas, StyleToken.SecondaryText, _stringBuilder.ToString());
             }
         }
     }

@@ -29,7 +29,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 {
     public class JsonValueFormatter : ValueFormatter
     {
-        private readonly StringBuilder _literalBuilder = new(64);
+        private readonly StringBuilder _literalBuilder = new();
         private readonly StringBuilder _scalarBuilder = new();
         private readonly StringBuilder _jsonStringBuilder = new();
 
@@ -39,7 +39,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 
         protected override ValueFormatterState CreateInitialState(IRtfCanvas canvas, string format, bool isLiteral)
         {
-            return new ValueFormatterState(canvas, format, isLiteral, 0, Options.SpacesPerIndent, true);
+            return new ValueFormatterState(canvas, format, isLiteral, 0, Options.SpacesPerIndent);
         }
 
         protected override bool VisitScalarValue(ValueFormatterState state, ScalarValue scalar)

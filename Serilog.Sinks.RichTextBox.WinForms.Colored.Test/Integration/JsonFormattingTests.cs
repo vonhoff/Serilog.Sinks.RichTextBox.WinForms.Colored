@@ -185,7 +185,7 @@ namespace Serilog.Tests.Integration
         {
             var emptyArray = new LogEventProperty("EmptyArray", new SequenceValue(Array.Empty<LogEventPropertyValue>()));
             var emptyDict = new LogEventProperty("EmptyDict", new DictionaryValue(new Dictionary<ScalarValue, LogEventPropertyValue>()));
-            var emptyObject = new LogEventProperty("EmptyObject", new StructureValue(Array.Empty<LogEventProperty>(), null));
+            var emptyObject = new LogEventProperty("EmptyObject", new StructureValue(Array.Empty<LogEventProperty>()));
             var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("Array: {EmptyArray:j}, Dict: {EmptyDict:j}, Object: {EmptyObject:j}"), new[] { emptyArray, emptyDict, emptyObject });
 
             var options = new RichTextBoxSinkOptions(
