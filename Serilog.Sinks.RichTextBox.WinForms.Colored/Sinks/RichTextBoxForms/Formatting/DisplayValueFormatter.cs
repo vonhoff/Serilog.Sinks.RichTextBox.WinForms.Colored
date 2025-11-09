@@ -35,7 +35,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
         private readonly StringBuilder _literalBuilder = new(64);
         private JsonValueFormatter? _jsonValueFormatter;
 
-        public DisplayValueFormatter(Theme theme, IFormatProvider? formatProvider, bool prettyPrintJson = false, int spacesPerIndent = 4, bool useSpacesForIndent = true) : base(theme, formatProvider)
+        public DisplayValueFormatter(Theme theme, IFormatProvider? formatProvider, bool prettyPrintJson = false, int spacesPerIndent = 2) : base(theme, formatProvider)
         {
             _formatProvider = formatProvider;
             _prettyPrintJson = prettyPrintJson;
@@ -104,7 +104,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
         {
             if (state.Format.Contains("j"))
             {
-                _jsonValueFormatter ??= new JsonValueFormatter(Theme, _formatProvider, _prettyPrintJson, _spacesPerIndent, true);
+                _jsonValueFormatter ??= new JsonValueFormatter(Theme, _formatProvider, _prettyPrintJson, _spacesPerIndent);
                 _jsonValueFormatter.Format(dictionary, state.Canvas, state.Format, state.IsLiteral);
                 return true;
             }
@@ -140,7 +140,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
         {
             if (state.Format.Contains("j"))
             {
-                _jsonValueFormatter ??= new JsonValueFormatter(Theme, _formatProvider, _prettyPrintJson, _spacesPerIndent, true);
+                _jsonValueFormatter ??= new JsonValueFormatter(Theme, _formatProvider, _prettyPrintJson, _spacesPerIndent);
                 _jsonValueFormatter.Format(sequence, state.Canvas, state.Format, state.IsLiteral);
                 return true;
             }
@@ -167,7 +167,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
         {
             if (state.Format.Contains("j"))
             {
-                _jsonValueFormatter ??= new JsonValueFormatter(Theme, _formatProvider, _prettyPrintJson, _spacesPerIndent, true);
+                _jsonValueFormatter ??= new JsonValueFormatter(Theme, _formatProvider, _prettyPrintJson, _spacesPerIndent);
                 _jsonValueFormatter.Format(structure, state.Canvas, state.Format, state.IsLiteral);
                 return true;
             }

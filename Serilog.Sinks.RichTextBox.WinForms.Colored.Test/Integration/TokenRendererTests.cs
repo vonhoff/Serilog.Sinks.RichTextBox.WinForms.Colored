@@ -1,5 +1,6 @@
 using Serilog.Events;
 using Serilog.Parsing;
+using Serilog.Sinks.RichTextBoxForms;
 using Serilog.Sinks.RichTextBoxForms.Rendering;
 using Xunit;
 
@@ -60,7 +61,8 @@ namespace Serilog.Tests.Integration
         {
             var template = _parser.Parse("Number: {Number}");
             var propertyToken = template.Tokens.OfType<PropertyToken>().Single(t => t.PropertyName == "Number");
-            var renderer = new EventPropertyTokenRenderer(_defaultTheme, propertyToken, null);
+            var options = new RichTextBoxSinkOptions(_defaultTheme, formatProvider: null);
+            var renderer = new EventPropertyTokenRenderer(propertyToken, options);
 
             var logEvent = new LogEvent(
                 DateTimeOffset.Now,
@@ -80,7 +82,8 @@ namespace Serilog.Tests.Integration
         {
             var template = _parser.Parse("User: {User}");
             var propertyToken = template.Tokens.OfType<PropertyToken>().Single(t => t.PropertyName == "User");
-            var renderer = new EventPropertyTokenRenderer(_defaultTheme, propertyToken, null);
+            var options = new RichTextBoxSinkOptions(_defaultTheme, formatProvider: null);
+            var renderer = new EventPropertyTokenRenderer(propertyToken, options);
 
             var structureValue = new StructureValue(new[]
             {
@@ -109,7 +112,8 @@ namespace Serilog.Tests.Integration
         {
             var template = _parser.Parse("Items: {Items}");
             var propertyToken = template.Tokens.OfType<PropertyToken>().Single(t => t.PropertyName == "Items");
-            var renderer = new EventPropertyTokenRenderer(_defaultTheme, propertyToken, null);
+            var options = new RichTextBoxSinkOptions(_defaultTheme, formatProvider: null);
+            var renderer = new EventPropertyTokenRenderer(propertyToken, options);
 
             var sequenceValue = new SequenceValue(new[]
             {
@@ -138,7 +142,8 @@ namespace Serilog.Tests.Integration
         {
             var template = _parser.Parse("Config: {Config}");
             var propertyToken = template.Tokens.OfType<PropertyToken>().Single(t => t.PropertyName == "Config");
-            var renderer = new EventPropertyTokenRenderer(_defaultTheme, propertyToken, null);
+            var options = new RichTextBoxSinkOptions(_defaultTheme, formatProvider: null);
+            var renderer = new EventPropertyTokenRenderer(propertyToken, options);
 
             var dict = new Dictionary<ScalarValue, LogEventPropertyValue>
             {
@@ -168,7 +173,8 @@ namespace Serilog.Tests.Integration
         {
             var template = _parser.Parse("Missing: {Missing}");
             var propertyToken = template.Tokens.OfType<PropertyToken>().Single(t => t.PropertyName == "Missing");
-            var renderer = new EventPropertyTokenRenderer(_defaultTheme, propertyToken, null);
+            var options = new RichTextBoxSinkOptions(_defaultTheme, formatProvider: null);
+            var renderer = new EventPropertyTokenRenderer(propertyToken, options);
 
             var logEvent = new LogEvent(
                 DateTimeOffset.Now,
@@ -188,7 +194,8 @@ namespace Serilog.Tests.Integration
         {
             var template = _parser.Parse("Message: {Message}");
             var propertyToken = template.Tokens.OfType<PropertyToken>().Single(t => t.PropertyName == "Message");
-            var renderer = new EventPropertyTokenRenderer(_defaultTheme, propertyToken, null);
+            var options = new RichTextBoxSinkOptions(_defaultTheme, formatProvider: null);
+            var renderer = new EventPropertyTokenRenderer(propertyToken, options);
 
             var logEvent = new LogEvent(
                 DateTimeOffset.Now,

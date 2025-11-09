@@ -20,26 +20,23 @@ using Serilog.Events;
 using Serilog.Parsing;
 using Serilog.Sinks.RichTextBoxForms.Rtf;
 using Serilog.Sinks.RichTextBoxForms.Themes;
-using System;
 
 namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
     public class TimestampTokenRenderer : ITokenRenderer
     {
-        private readonly IFormatProvider? _formatProvider;
-        private readonly Theme _theme;
+        private readonly RichTextBoxSinkOptions _options;
         private readonly PropertyToken _token;
 
-        public TimestampTokenRenderer(Theme theme, PropertyToken token, IFormatProvider? formatProvider)
+        public TimestampTokenRenderer(PropertyToken token, RichTextBoxSinkOptions options)
         {
-            _theme = theme;
             _token = token;
-            _formatProvider = formatProvider;
+            _options = options;
         }
 
         public void Render(LogEvent logEvent, IRtfCanvas canvas)
         {
-            _theme.Render(canvas, StyleToken.SecondaryText, logEvent.Timestamp.ToString(_token.Format, _formatProvider));
+            _options.Theme.Render(canvas, StyleToken.SecondaryText, logEvent.Timestamp.ToString(_token.Format, _options.FormatProvider));
         }
     }
 }

@@ -1,5 +1,6 @@
 using Serilog.Events;
 using Serilog.Parsing;
+using Serilog.Sinks.RichTextBoxForms;
 using Serilog.Sinks.RichTextBoxForms.Rendering;
 using Xunit;
 
@@ -13,7 +14,8 @@ namespace Serilog.Tests.Integration
             var template = _parser.Parse("Message: {Message}");
             var outputTemplate = _parser.Parse("Message: {Message} {Properties}");
             var token = outputTemplate.Tokens.OfType<PropertyToken>().Single(t => t.PropertyName == "Properties");
-            var renderer = new PropertiesTokenRenderer(_defaultTheme, token, outputTemplate, null);
+            var options = new RichTextBoxSinkOptions(_defaultTheme, formatProvider: null);
+            var renderer = new PropertiesTokenRenderer(token, outputTemplate, options);
 
             var logEvent = new LogEvent(
                 DateTimeOffset.Now,
@@ -39,7 +41,8 @@ namespace Serilog.Tests.Integration
             var template = _parser.Parse("Message: {Message}");
             var outputTemplate = _parser.Parse("Message: {Message} {Properties:j}");
             var token = outputTemplate.Tokens.OfType<PropertyToken>().Single(t => t.PropertyName == "Properties");
-            var renderer = new PropertiesTokenRenderer(_defaultTheme, token, outputTemplate, null);
+            var options = new RichTextBoxSinkOptions(_defaultTheme, formatProvider: null);
+            var renderer = new PropertiesTokenRenderer(token, outputTemplate, options);
 
             var logEvent = new LogEvent(
                 DateTimeOffset.Now,
@@ -67,7 +70,8 @@ namespace Serilog.Tests.Integration
             var template = _parser.Parse("Message: {Message}");
             var outputTemplate = _parser.Parse("Message: {Message} {Properties}");
             var token = outputTemplate.Tokens.OfType<PropertyToken>().Single(t => t.PropertyName == "Properties");
-            var renderer = new PropertiesTokenRenderer(_defaultTheme, token, outputTemplate, null);
+            var options = new RichTextBoxSinkOptions(_defaultTheme, formatProvider: null);
+            var renderer = new PropertiesTokenRenderer(token, outputTemplate, options);
 
             var nestedStructure = new StructureValue(new[]
             {
@@ -98,7 +102,8 @@ namespace Serilog.Tests.Integration
             var template = _parser.Parse("Message: {Message}");
             var outputTemplate = _parser.Parse("Message: {Message} {Properties}");
             var token = outputTemplate.Tokens.OfType<PropertyToken>().Single(t => t.PropertyName == "Properties");
-            var renderer = new PropertiesTokenRenderer(_defaultTheme, token, outputTemplate, null);
+            var options = new RichTextBoxSinkOptions(_defaultTheme, formatProvider: null);
+            var renderer = new PropertiesTokenRenderer(token, outputTemplate, options);
 
             var logEvent = new LogEvent(
                 DateTimeOffset.Now,
@@ -122,7 +127,8 @@ namespace Serilog.Tests.Integration
             var template = _parser.Parse("Message: {Message}");
             var outputTemplate = _parser.Parse("Message: {Message} {Properties} {Custom}");
             var token = outputTemplate.Tokens.OfType<PropertyToken>().Single(t => t.PropertyName == "Properties");
-            var renderer = new PropertiesTokenRenderer(_defaultTheme, token, outputTemplate, null);
+            var options = new RichTextBoxSinkOptions(_defaultTheme, formatProvider: null);
+            var renderer = new PropertiesTokenRenderer(token, outputTemplate, options);
 
             var logEvent = new LogEvent(
                 DateTimeOffset.Now,

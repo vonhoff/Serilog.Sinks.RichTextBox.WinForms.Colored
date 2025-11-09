@@ -36,7 +36,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
         private readonly StringBuilder _scalarBuilder = new();
         private readonly StringBuilder _jsonStringBuilder = new();
 
-        public JsonValueFormatter(Theme theme, IFormatProvider? formatProvider, bool prettyPrint = false, int spacesPerIndent = 4, bool useSpacesForIndent = true) : base(theme, formatProvider)
+        public JsonValueFormatter(Theme theme, IFormatProvider? formatProvider, bool prettyPrint = false, int spacesPerIndent = 2) : base(theme, formatProvider)
         {
             _formatProvider = formatProvider;
             _prettyPrint = prettyPrint;

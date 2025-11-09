@@ -20,8 +20,6 @@ using Serilog.Events;
 using Serilog.Parsing;
 using Serilog.Sinks.RichTextBoxForms.Formatting;
 using Serilog.Sinks.RichTextBoxForms.Rtf;
-using Serilog.Sinks.RichTextBoxForms.Themes;
-using System;
 
 namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
@@ -29,16 +27,16 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
     {
         private readonly MessageTemplateRenderer _renderer;
 
-        public MessageTemplateTokenRenderer(Theme theme, PropertyToken token, IFormatProvider? formatProvider, RichTextBoxSinkOptions? options = null)
+        public MessageTemplateTokenRenderer(PropertyToken token, RichTextBoxSinkOptions options)
         {
             var isLiteral = token.Format?.Contains("l") == true;
             var isJson = token.Format?.Contains("j") == true;
 
             ValueFormatter valueFormatter = isJson
-                ? new JsonValueFormatter(theme, formatProvider, options?.PrettyPrintJson ?? false, options?.SpacesPerIndent ?? 4, true)
-                : new DisplayValueFormatter(theme, formatProvider, options?.PrettyPrintJson ?? false, options?.SpacesPerIndent ?? 4, true);
+                ? new JsonValueFormatter(options.Theme, options.FormatProvider, options.PrettyPrintJson, options.SpacesPerIndent)
+                : new DisplayValueFormatter(options.Theme, options.FormatProvider, options.PrettyPrintJson, options.SpacesPerIndent);
 
-            _renderer = new MessageTemplateRenderer(theme, valueFormatter, isLiteral);
+            _renderer = new MessageTemplateRenderer(options.Theme, valueFormatter, isLiteral);
         }
 
         public void Render(LogEvent logEvent, IRtfCanvas canvas)

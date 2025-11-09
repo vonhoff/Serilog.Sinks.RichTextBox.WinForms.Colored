@@ -20,15 +20,16 @@ namespace Serilog.Tests
         {
             _richTextBox = new RichTextBox();
             _defaultTheme = ThemePresets.Literate;
-            _renderer = new TemplateRenderer(_defaultTheme, "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:l}{NewLine}{Exception}", null);
             _parser = new MessageTemplateParser();
 
             var options = new RichTextBoxSinkOptions(
                 theme: _defaultTheme,
+                outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:l}{NewLine}{Exception}",
                 autoScroll: true,
                 maxLogLines: 1000
             );
 
+            _renderer = new TemplateRenderer(options);
             _sink = new RichTextBoxSink(_richTextBox, options);
 
             // Wrap the RichTextBox in an IRtfCanvas adapter so that unit tests
@@ -40,7 +41,8 @@ namespace Serilog.Tests
         protected string RenderAndGetText(LogEvent logEvent, string outputTemplate, IFormatProvider? formatProvider = null)
         {
             _richTextBox.Clear();
-            var renderer = new TemplateRenderer(_defaultTheme, outputTemplate, formatProvider);
+            var options = new RichTextBoxSinkOptions(_defaultTheme, outputTemplate: outputTemplate, formatProvider: formatProvider);
+            var renderer = new TemplateRenderer(options);
             renderer.Render(logEvent, _canvas);
             return _richTextBox.Text.TrimEnd('\n', '\r');
         }
@@ -48,7 +50,8 @@ namespace Serilog.Tests
         protected string RenderAndGetText(LogEvent logEvent, string outputTemplate, RichTextBoxSinkOptions options)
         {
             _richTextBox.Clear();
-            var renderer = new TemplateRenderer(options.Theme, outputTemplate, options.FormatProvider, options);
+            var rendererOptions = new RichTextBoxSinkOptions(options.Theme, options.AutoScroll, options.MaxLogLines, outputTemplate, options.FormatProvider, options.PrettyPrintJson, options.SpacesPerIndent);
+            var renderer = new TemplateRenderer(rendererOptions);
             renderer.Render(logEvent, _canvas);
             return _richTextBox.Text.TrimEnd('\n', '\r');
         }

@@ -22,7 +22,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 {
     public readonly struct ValueFormatterState
     {
-        public ValueFormatterState(IRtfCanvas canvas, string format, bool isLiteral, int indentLevel = 0, int spacesPerIndent = 4, bool isTopLevel = true)
+        public ValueFormatterState(IRtfCanvas canvas, string format, bool isLiteral, int indentLevel = 0, int spacesPerIndent = 2, bool isTopLevel = true)
         {
             Canvas = canvas;
             Format = format;
