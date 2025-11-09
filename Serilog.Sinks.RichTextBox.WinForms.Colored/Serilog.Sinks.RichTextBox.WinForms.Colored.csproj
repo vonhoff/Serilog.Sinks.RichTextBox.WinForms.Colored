@@ -28,7 +28,7 @@
 
 See repository for more information:
 https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored
-		</PackageReleaseNotes>
+        </PackageReleaseNotes>
         <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
         <SupportedOSPlatform>windows</SupportedOSPlatform>
         <NeutralLanguage>en-US</NeutralLanguage>
