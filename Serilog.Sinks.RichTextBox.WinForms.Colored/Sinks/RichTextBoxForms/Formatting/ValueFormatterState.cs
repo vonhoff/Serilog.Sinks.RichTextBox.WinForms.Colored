@@ -63,10 +63,10 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
                 return string.Empty;
             }
 
-            var totalSpaces = IndentLevel * IndentSize;
+            var totalIndentUnits = IndentLevel * IndentSize;
             return UseSpacesForIndent
-                ? new string(' ', totalSpaces)
-                : new string('\t', IndentLevel);
+                ? new string(' ', totalIndentUnits)
+                : new string('\t', totalIndentUnits);
         }
     }
 }

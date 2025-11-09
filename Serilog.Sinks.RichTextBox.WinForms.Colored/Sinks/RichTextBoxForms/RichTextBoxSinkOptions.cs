@@ -26,6 +26,7 @@ namespace Serilog.Sinks.RichTextBoxForms
     {
         private const string DefaultOutputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
         private int _maxLogLines;
+        private int _indentSize;
 
         /// <summary>
         /// Creates a new collection of options that control the behavior and appearance of a
@@ -37,7 +38,7 @@ namespace Serilog.Sinks.RichTextBoxForms
         /// <param name="outputTemplate">Serilog output template that controls textual formatting of each log event.</param>
         /// <param name="formatProvider">Optional culture-specific or custom formatting provider used when rendering scalar values; <c>null</c> for the invariant culture.</param>
         /// <param name="prettyPrintJson">When <c>true</c>, formats JSON values with indentation and line breaks for better readability. Defaults to <c>false</c>.</param>
-        /// <param name="indentSize">Number of spaces per indentation level when pretty printing JSON. Defaults to 4.</param>
+        /// <param name="indentSize">Number of indentation units per indentation level when pretty printing JSON. When using spaces, this is the number of spaces; when using tabs, this is the number of tabs. Defaults to 4. Must be between 1 and 16.</param>
         /// <param name="useSpacesForIndent">When <c>true</c> (default), uses spaces for indentation; otherwise uses tabs.</param>
         public RichTextBoxSinkOptions(
             Theme theme,
@@ -80,7 +81,16 @@ namespace Serilog.Sinks.RichTextBoxForms
 
         public bool PrettyPrintJson { get; }
 
-        public int IndentSize { get; }
+        public int IndentSize
+        {
+            get => _indentSize;
+            private set => _indentSize = value switch
+            {
+                < 1 => 1,
+                > 16 => 16,
+                _ => value
+            };
+        }
 
         public bool UseSpacesForIndent { get; }
     }

@@ -46,7 +46,7 @@ namespace Serilog
         /// <param name="minimumLogEventLevel">Minimum log level for events to be written.</param>
         /// <param name="levelSwitch">Optional switch to change the minimum log level at runtime.</param>
         /// <param name="prettyPrintJson">If <c>true</c>, formats JSON values with indentation and line breaks. Defaults to <c>false</c>.</param>
-        /// <param name="indentSize">Number of spaces per indentation level when pretty printing JSON. Defaults to 4.</param>
+        /// <param name="indentSize">Number of spaces per indentation level when pretty printing JSON. Defaults to 4. Must be between 1 and 16.</param>
         /// <param name="useSpacesForIndent">If <c>true</c> (default), uses spaces for indentation; otherwise uses tabs.</param>
         /// <returns>The logger configuration, for chaining.</returns>
         public static LoggerConfiguration RichTextBox(
@@ -85,7 +85,7 @@ namespace Serilog
         /// <param name="minimumLogEventLevel">Minimum log level for events to be written.</param>
         /// <param name="levelSwitch">Optional switch to change the minimum log level at runtime.</param>
         /// <param name="prettyPrintJson">If <c>true</c>, formats JSON values with indentation and line breaks. Defaults to <c>false</c>.</param>
-        /// <param name="indentSize">Number of spaces per indentation level when pretty printing JSON. Defaults to 4.</param>
+        /// <param name="indentSize">Number of spaces per indentation level when pretty printing JSON. Defaults to 4. Must be between 1 and 16.</param>
         /// <param name="useSpacesForIndent">If <c>true</c> (default), uses spaces for indentation; otherwise uses tabs.</param>
         /// <returns>The logger configuration, for chaining.</returns>
         public static LoggerConfiguration RichTextBox(

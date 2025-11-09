@@ -10,12 +10,12 @@ namespace Serilog.Tests.Integration
         [Fact]
         public void ExceptionTokenRenderer_RendersExceptionWithStackFrames()
         {
-            Exception? exception = null;
+            Exception? exception;
             try
             {
                 throw new InvalidOperationException("Test exception");
             }
-            catch (Exception ex)
+            catch (InvalidOperationException ex)
             {
                 exception = ex;
             }

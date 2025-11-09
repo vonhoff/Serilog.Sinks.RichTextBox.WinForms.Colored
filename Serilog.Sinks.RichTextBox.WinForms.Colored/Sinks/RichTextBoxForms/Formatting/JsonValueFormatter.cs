@@ -35,6 +35,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
         private readonly bool _useSpacesForIndent;
         private readonly StringBuilder _literalBuilder = new(64);
         private readonly StringBuilder _scalarBuilder = new();
+        private readonly StringBuilder _jsonStringBuilder = new();
 
         public JsonValueFormatter(Theme theme, IFormatProvider? formatProvider, bool prettyPrint = false, int indentSize = 4, bool useSpacesForIndent = true) : base(theme, formatProvider)
         {
@@ -365,82 +366,75 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
             }
         }
 
-        /// <summary>
-        /// Write a valid JSON string literal, escaping as necessary.
-        /// Optimized version that avoids unnecessary string operations.
-        /// </summary>
-        /// <param name="str">The string value to write.</param>
-        public static string GetQuotedJsonString(string str)
+        private string GetQuotedJsonString(string str)
         {
-            using (var output = new StringWriter())
+            _jsonStringBuilder.Clear();
+            _jsonStringBuilder.Append('\"');
+
+            var cleanSegmentStart = 0;
+            var anyEscaped = false;
+
+            for (var i = 0; i < str.Length; ++i)
             {
-                output.Write('\"');
-
-                var cleanSegmentStart = 0;
-                var anyEscaped = false;
-
-                for (var i = 0; i < str.Length; ++i)
+                var c = str[i];
+                if (c < (char)32 || c == '\\' || c == '"')
                 {
-                    var c = str[i];
-                    if (c < (char)32 || c == '\\' || c == '"')
+                    anyEscaped = true;
+
+                    if (i > cleanSegmentStart)
                     {
-                        anyEscaped = true;
+                        _jsonStringBuilder.Append(str, cleanSegmentStart, i - cleanSegmentStart);
+                    }
+                    cleanSegmentStart = i + 1;
 
-                        if (i > cleanSegmentStart)
-                        {
-                            output.Write(str.Substring(cleanSegmentStart, i - cleanSegmentStart));
-                        }
-                        cleanSegmentStart = i + 1;
+                    switch (c)
+                    {
+                        case '"':
+                            _jsonStringBuilder.Append("\\\"");
+                            break;
 
-                        switch (c)
-                        {
-                            case '"':
-                                output.Write("\\\"");
-                                break;
+                        case '\\':
+                            _jsonStringBuilder.Append("\\\\");
+                            break;
 
-                            case '\\':
-                                output.Write("\\\\");
-                                break;
+                        case '\n':
+                            _jsonStringBuilder.Append("\\n");
+                            break;
 
-                            case '\n':
-                                output.Write("\\n");
-                                break;
+                        case '\r':
+                            _jsonStringBuilder.Append("\\r");
+                            break;
 
-                            case '\r':
-                                output.Write("\\r");
-                                break;
+                        case '\f':
+                            _jsonStringBuilder.Append("\\f");
+                            break;
 
-                            case '\f':
-                                output.Write("\\f");
-                                break;
+                        case '\t':
+                            _jsonStringBuilder.Append("\\t");
+                            break;
 
-                            case '\t':
-                                output.Write("\\t");
-                                break;
-
-                            default:
-                                output.Write("\\u");
-                                output.Write(((int)c).ToString("X4"));
-                                break;
-                        }
+                        default:
+                            _jsonStringBuilder.Append("\\u");
+                            _jsonStringBuilder.Append(((int)c).ToString("X4"));
+                            break;
                     }
                 }
-
-                if (anyEscaped)
-                {
-                    if (cleanSegmentStart < str.Length)
-                    {
-                        output.Write(str.Substring(cleanSegmentStart));
-                    }
-                }
-                else
-                {
-                    output.Write(str);
-                }
-
-                output.Write('\"');
-                return output.ToString();
             }
+
+            if (anyEscaped)
+            {
+                if (cleanSegmentStart < str.Length)
+                {
+                    _jsonStringBuilder.Append(str, cleanSegmentStart, str.Length - cleanSegmentStart);
+                }
+            }
+            else
+            {
+                _jsonStringBuilder.Append(str);
+            }
+
+            _jsonStringBuilder.Append('\"');
+            return _jsonStringBuilder.ToString();
         }
     }
 }

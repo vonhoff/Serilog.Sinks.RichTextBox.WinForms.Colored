@@ -9,26 +9,27 @@ on:
 jobs:
   build-and-test:
     runs-on: windows-latest
-    
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Setup .NET 8.0
       uses: actions/setup-dotnet@v5
       with:
         dotnet-version: 8.0.x
-        
+
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
-      
+
     - name: Restore dependencies
       run: dotnet restore
-      
+
     - name: Build
       run: dotnet build --no-restore --configuration Release --framework net8.0-windows
-      
+
     - name: Test with Coverage
       run: dotnet test --no-build --configuration Release --framework net8.0-windows --collect:"XPlat Code Coverage" --results-directory ./coverage
+
     - name: Generate coverage report
       uses: danielpalme/ReportGenerator-GitHub-Action@v5
       with:
@@ -36,12 +37,14 @@ jobs:
         targetdir: './coverage/report'
         reporttypes: 'Html;HtmlSummary'
         title: 'Code Coverage Report'
+
     - name: Upload coverage report
       uses: actions/upload-artifact@v4
       with:
         name: coverage-report
         path: './coverage/report'
       continue-on-error: true
+
     - name: Check coverage threshold
       run: |
         $coverage = Select-Xml -Path "./coverage/**/coverage.cobertura.xml" -XPath "//coverage/@line-rate" | Select-Object -ExpandProperty Node | Select-Object -ExpandProperty Value

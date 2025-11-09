@@ -220,7 +220,7 @@ namespace Serilog.Tests.Integration
                 useSpacesForIndent: false);
 
             var result = RenderAndGetText(logEvent, "{Message:l}", options);
-            var expected = "{\n\t\"Id\": 123,\n\t\"$type\": \"MyObj\"\n}";
+            var expected = "{\n\t\t\t\t\"Id\": 123,\n\t\t\t\t\"$type\": \"MyObj\"\n}";
             Assert.Equal(expected, result);
         }
 
@@ -241,6 +241,26 @@ namespace Serilog.Tests.Integration
 
             var result = RenderAndGetText(logEvent, "{Message:l}", options);
             var expected = "{\n  \"Id\": 123,\n  \"$type\": \"MyObj\"\n}";
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void PrettyPrintJson_RespectsIndentSizeWithTabs()
+        {
+            var prop = new LogEventProperty("Test", new StructureValue(new[]
+            {
+                new LogEventProperty("Id", new ScalarValue(123))
+            }, "MyObj"));
+            var logEvent = new LogEvent(DateTimeOffset.Now, LogEventLevel.Information, null, _parser.Parse("{Test:j}"), new[] { prop });
+
+            var options = new RichTextBoxSinkOptions(
+                theme: _defaultTheme,
+                prettyPrintJson: true,
+                indentSize: 2,
+                useSpacesForIndent: false);
+
+            var result = RenderAndGetText(logEvent, "{Message:l}", options);
+            var expected = "{\n\t\t\"Id\": 123,\n\t\t\"$type\": \"MyObj\"\n}";
             Assert.Equal(expected, result);
         }
 

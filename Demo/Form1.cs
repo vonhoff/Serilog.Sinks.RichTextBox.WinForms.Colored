@@ -357,11 +357,11 @@ namespace Demo
         {
             _prettyPrintJson = !_prettyPrintJson;
             btnPrettyPrint.Text = _prettyPrintJson ? "Disable Pretty Print" : "Enable Pretty Print";
-            
+
             // Recreate the sink and logger with new pretty print setting
             CloseAndFlush();
             Initialize();
-            
+
             Log.Information("Pretty print JSON: {PrettyPrint}", _prettyPrintJson);
         }
 
