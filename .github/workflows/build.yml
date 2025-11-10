@@ -9,29 +9,29 @@ on:
 jobs:
   build-and-test:
     runs-on: windows-latest
-    
+
     steps:
-    - uses: actions/checkout@v3
-    
+    - uses: actions/checkout@v4
+
     - name: Setup .NET 8.0
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: 8.0.x
-        
+
     - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v1.1
-      
+      uses: microsoft/setup-msbuild@v2
+
     - name: Restore dependencies
       run: dotnet restore
-      
+
     - name: Build
       run: dotnet build --no-restore --configuration Release --framework net8.0-windows
-      
+
     - name: Test with Coverage
       run: dotnet test --no-build --configuration Release --framework net8.0-windows --collect:"XPlat Code Coverage" --results-directory ./coverage
 
     - name: Generate coverage report
-      uses: danielpalme/ReportGenerator-GitHub-Action@5.1.4
+      uses: danielpalme/ReportGenerator-GitHub-Action@v5
       with:
         reports: './coverage/**/coverage.cobertura.xml'
         targetdir: './coverage/report'
@@ -50,7 +50,7 @@ jobs:
         $coverage = Select-Xml -Path "./coverage/**/coverage.cobertura.xml" -XPath "//coverage/@line-rate" | Select-Object -ExpandProperty Node | Select-Object -ExpandProperty Value
         $coveragePercent = [math]::Round([double]$coverage * 100, 2)
         Write-Host "Current line coverage: $coveragePercent%"
-        if ($coveragePercent -lt 75) {
-          Write-Error "Code coverage ($coveragePercent%) is below the required threshold of 75%"
+        if ($coveragePercent -lt 80) {
+          Write-Error "Code coverage ($coveragePercent%) is below the required threshold of 80%"
           exit 1
         }

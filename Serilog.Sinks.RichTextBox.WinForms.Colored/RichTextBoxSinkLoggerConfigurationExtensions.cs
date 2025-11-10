@@ -45,6 +45,8 @@ namespace Serilog
         /// <param name="formatProvider">Format provider, or <c>null</c> for invariant culture.</param>
         /// <param name="minimumLogEventLevel">Minimum log level for events to be written.</param>
         /// <param name="levelSwitch">Optional switch to change the minimum log level at runtime.</param>
+        /// <param name="prettyPrintJson">If <c>true</c>, formats JSON values with indentation and line breaks. Defaults to <c>false</c>.</param>
+        /// <param name="spacesPerIndent">Number of spaces per indentation level when pretty printing JSON. Defaults to 2.</param>
         /// <returns>The logger configuration, for chaining.</returns>
         public static LoggerConfiguration RichTextBox(
             this LoggerSinkConfiguration sinkConfiguration,
@@ -56,12 +58,14 @@ namespace Serilog
             string outputTemplate = OutputTemplate,
             IFormatProvider? formatProvider = null,
             LogEventLevel minimumLogEventLevel = LogEventLevel.Verbose,
-            LoggingLevelSwitch? levelSwitch = null)
+            LoggingLevelSwitch? levelSwitch = null,
+            bool prettyPrintJson = false,
+            int spacesPerIndent = 2)
         {
             var appliedTheme = theme ?? ThemePresets.Literate;
             var appliedFormatProvider = formatProvider ?? CultureInfo.InvariantCulture;
-            var renderer = new TemplateRenderer(appliedTheme, outputTemplate, appliedFormatProvider);
-            var options = new RichTextBoxSinkOptions(appliedTheme, autoScroll, maxLogLines, outputTemplate, appliedFormatProvider);
+            var options = new RichTextBoxSinkOptions(appliedTheme, autoScroll, maxLogLines, outputTemplate, appliedFormatProvider, prettyPrintJson, spacesPerIndent);
+            var renderer = new TemplateRenderer(options);
             richTextBoxSink = new RichTextBoxSink(richTextBoxControl, options, renderer);
             return sinkConfiguration.Sink(richTextBoxSink, minimumLogEventLevel, levelSwitch);
         }
@@ -78,6 +82,8 @@ namespace Serilog
         /// <param name="formatProvider">Format provider, or <c>null</c> for invariant culture.</param>
         /// <param name="minimumLogEventLevel">Minimum log level for events to be written.</param>
         /// <param name="levelSwitch">Optional switch to change the minimum log level at runtime.</param>
+        /// <param name="prettyPrintJson">If <c>true</c>, formats JSON values with indentation and line breaks. Defaults to <c>false</c>.</param>
+        /// <param name="spacesPerIndent">Number of spaces per indentation level when pretty printing JSON. Defaults to 4.</param>
         /// <returns>The logger configuration, for chaining.</returns>
         public static LoggerConfiguration RichTextBox(
             this LoggerSinkConfiguration sinkConfiguration,
@@ -88,7 +94,9 @@ namespace Serilog
             string outputTemplate = OutputTemplate,
             IFormatProvider? formatProvider = null,
             LogEventLevel minimumLogEventLevel = LogEventLevel.Verbose,
-            LoggingLevelSwitch? levelSwitch = null)
+            LoggingLevelSwitch? levelSwitch = null,
+            bool prettyPrintJson = false,
+            int spacesPerIndent = 2)
         {
             return RichTextBox(
                 sinkConfiguration,
@@ -100,7 +108,9 @@ namespace Serilog
                 outputTemplate,
                 formatProvider,
                 minimumLogEventLevel,
-                levelSwitch);
+                levelSwitch,
+                prettyPrintJson,
+                spacesPerIndent);
         }
     }
 }

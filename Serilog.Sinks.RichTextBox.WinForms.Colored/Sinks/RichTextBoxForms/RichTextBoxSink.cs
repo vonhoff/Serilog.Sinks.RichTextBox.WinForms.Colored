@@ -45,7 +45,7 @@ namespace Serilog.Sinks.RichTextBoxForms
         {
             _options = options;
             _richTextBox = richTextBox;
-            _renderer = renderer ?? new TemplateRenderer(options.Theme, options.OutputTemplate, options.FormatProvider);
+            _renderer = renderer ?? new TemplateRenderer(options);
             _tokenSource = new CancellationTokenSource();
 
             _buffer = new ConcurrentCircularBuffer<LogEvent>(options.MaxLogLines);

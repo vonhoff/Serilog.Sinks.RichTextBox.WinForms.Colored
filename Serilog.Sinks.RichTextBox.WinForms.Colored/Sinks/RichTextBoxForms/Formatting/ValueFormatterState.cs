@@ -22,20 +22,46 @@ namespace Serilog.Sinks.RichTextBoxForms.Formatting
 {
     public readonly struct ValueFormatterState
     {
-        public ValueFormatterState(IRtfCanvas canvas, string format, bool isLiteral)
+        public ValueFormatterState(IRtfCanvas canvas, string format, bool isLiteral, int indentLevel = 0, int spacesPerIndent = 2, bool isTopLevel = true)
         {
             Canvas = canvas;
             Format = format;
             IsLiteral = isLiteral;
+            IndentLevel = indentLevel;
+            SpacesPerIndent = spacesPerIndent;
+            IsTopLevel = isTopLevel;
         }
 
         public string Format { get; }
         public bool IsLiteral { get; }
         public IRtfCanvas Canvas { get; }
+        public int IndentLevel { get; }
+        public int SpacesPerIndent { get; }
+        public bool IsTopLevel { get; }
 
         public ValueFormatterState Next(string? format = null)
         {
-            return new ValueFormatterState(Canvas, format ?? Format, IsLiteral);
+            return new ValueFormatterState(Canvas, format ?? Format, IsLiteral, IndentLevel, SpacesPerIndent, false);
+        }
+
+        public ValueFormatterState ToIndentUp()
+        {
+            return new ValueFormatterState(Canvas, Format, IsLiteral, IndentLevel + 1, SpacesPerIndent, false);
+        }
+
+        public ValueFormatterState ToIndentDown()
+        {
+            return new ValueFormatterState(Canvas, Format, IsLiteral, IndentLevel > 0 ? IndentLevel - 1 : 0, SpacesPerIndent, false);
+        }
+
+        public string GetIndentation()
+        {
+            if (IndentLevel <= 0)
+            {
+                return string.Empty;
+            }
+
+            return new string(' ', IndentLevel * SpacesPerIndent);
         }
     }
 }

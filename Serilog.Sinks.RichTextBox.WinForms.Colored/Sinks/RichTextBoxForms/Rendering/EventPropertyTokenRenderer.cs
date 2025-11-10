@@ -21,7 +21,6 @@ using Serilog.Parsing;
 using Serilog.Sinks.RichTextBoxForms.Formatting;
 using Serilog.Sinks.RichTextBoxForms.Rtf;
 using Serilog.Sinks.RichTextBoxForms.Themes;
-using System;
 using System.IO;
 using System.Text;
 
@@ -29,15 +28,14 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
     public class EventPropertyTokenRenderer : ITokenRenderer
     {
-        private readonly IFormatProvider? _formatProvider;
-        private readonly Theme _theme;
+        private readonly RichTextBoxSinkOptions _options;
         private readonly PropertyToken _token;
+        private readonly StringBuilder _stringBuilder = new();
 
-        public EventPropertyTokenRenderer(Theme theme, PropertyToken token, IFormatProvider? formatProvider)
+        public EventPropertyTokenRenderer(PropertyToken token, RichTextBoxSinkOptions options)
         {
-            _theme = theme;
             _token = token;
-            _formatProvider = formatProvider;
+            _options = options;
         }
 
         public void Render(LogEvent logEvent, IRtfCanvas canvas)
@@ -50,18 +48,18 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
             if (propertyValue is ScalarValue { Value: string literalString })
             {
                 var cased = TextFormatter.Format(literalString, _token.Format);
-                _theme.Render(canvas, StyleToken.SecondaryText, cased);
+                _options.Theme.Render(canvas, StyleToken.SecondaryText, cased);
             }
             else
             {
-                var sb = new StringBuilder();
+                _stringBuilder.Clear();
 
-                using (var writer = new StringWriter(sb))
+                using (var writer = new StringWriter(_stringBuilder))
                 {
-                    propertyValue.Render(writer, _token.Format, _formatProvider);
+                    propertyValue.Render(writer, _token.Format, _options.FormatProvider);
                 }
 
-                _theme.Render(canvas, StyleToken.SecondaryText, sb.ToString());
+                _options.Theme.Render(canvas, StyleToken.SecondaryText, _stringBuilder.ToString());
             }
         }
     }

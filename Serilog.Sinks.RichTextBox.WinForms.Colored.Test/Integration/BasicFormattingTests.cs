@@ -17,7 +17,6 @@ namespace Serilog.Tests.Integration
         [Fact]
         public void Emit_WithScalarValues_FormatsCorrectly()
         {
-            // Arrange
             var template = _parser.Parse("String value: {String}");
             var logEvent = new LogEvent(
                 DateTimeOffset.Now,
@@ -26,10 +25,8 @@ namespace Serilog.Tests.Integration
                 template,
                 new[] { new LogEventProperty("String", new ScalarValue("test")) });
 
-            // Act
             _renderer.Render(logEvent, _canvas);
 
-            // Assert
             var text = _richTextBox.Text;
             Assert.Contains("String value: test", text);
         }
@@ -37,7 +34,6 @@ namespace Serilog.Tests.Integration
         [Fact]
         public void Emit_WithDictionaryValue_FormatsCorrectly()
         {
-            // Arrange
             var dict = new Dictionary<string, object>
             {
                 ["key1"] = "value1",
@@ -59,10 +55,8 @@ namespace Serilog.Tests.Integration
                 template,
                 new[] { new LogEventProperty("Dict", dictValue) });
 
-            // Act
             _renderer.Render(logEvent, _canvas);
 
-            // Assert
             var text = _richTextBox.Text;
             Assert.Contains("Dictionary: {", text);
             Assert.Contains("[key1]=value1", text);
@@ -72,7 +66,6 @@ namespace Serilog.Tests.Integration
         [Fact]
         public void Emit_WithSequenceValue_FormatsCorrectly()
         {
-            // Arrange
             var array = new object[] { 1, 2, 3, "test" };
             var sequenceValue = new SequenceValue(array.Select(x => new ScalarValue(x)));
 
@@ -84,10 +77,8 @@ namespace Serilog.Tests.Integration
                 template,
                 new[] { new LogEventProperty("Array", sequenceValue) });
 
-            // Act
             _renderer.Render(logEvent, _canvas);
 
-            // Assert
             var text = _richTextBox.Text;
             Assert.Contains("Array: [", text);
             Assert.Contains("1, 2, 3, test", text);
@@ -96,7 +87,6 @@ namespace Serilog.Tests.Integration
         [Fact]
         public void Emit_WithStructureValue_FormatsCorrectly()
         {
-            // Arrange
             var structureValue = new StructureValue(new[]
             {
                 new LogEventProperty("Name", new ScalarValue("Test")),
@@ -112,10 +102,8 @@ namespace Serilog.Tests.Integration
                 template,
                 new[] { new LogEventProperty("Object", structureValue) });
 
-            // Act
             _renderer.Render(logEvent, _canvas);
 
-            // Assert
             var text = _richTextBox.Text;
             Assert.Contains("Object: {", text);
             Assert.Contains("Name=Test", text);
@@ -126,7 +114,6 @@ namespace Serilog.Tests.Integration
         [Fact]
         public void Emit_WithComplexNestedValue_FormatsCorrectly()
         {
-            // Arrange
             var complex = new StructureValue(new[]
             {
                 new LogEventProperty("Name", new ScalarValue("Test")),
@@ -146,10 +133,8 @@ namespace Serilog.Tests.Integration
                 template,
                 new[] { new LogEventProperty("Complex", complex) });
 
-            // Act
             _renderer.Render(logEvent, _canvas);
 
-            // Assert
             var text = _richTextBox.Text;
             Assert.Contains("Complex: {", text);
             Assert.Contains("Name=Test", text);
@@ -162,7 +147,6 @@ namespace Serilog.Tests.Integration
         [Fact]
         public void Emit_WithSequenceValue_JsonFormatting_FormatsCorrectly()
         {
-            // Arrange
             var array = new object[] { 1, 2, 3, "test" };
             var sequenceValue = new SequenceValue(array.Select(x => new ScalarValue(x)));
 
@@ -174,10 +158,8 @@ namespace Serilog.Tests.Integration
                 template,
                 new[] { new LogEventProperty("Array", sequenceValue) });
 
-            // Act
             _renderer.Render(logEvent, _canvas);
 
-            // Assert
             var text = _richTextBox.Text;
             Assert.Contains("Array: [", text);
             Assert.Contains("1, 2, 3, \"test\"", text);
@@ -186,7 +168,6 @@ namespace Serilog.Tests.Integration
         [Fact]
         public void Emit_WithNestedSequenceValue_JsonFormatting_FormatsCorrectly()
         {
-            // Arrange
             var nestedArray = new object[] { new object[] { 1, 2 }, new object[] { 3, 4 } };
             var sequenceValue = new SequenceValue(nestedArray.Select(x =>
                 new SequenceValue(((object[])x).Select(y => new ScalarValue(y)))));
@@ -199,10 +180,8 @@ namespace Serilog.Tests.Integration
                 template,
                 new[] { new LogEventProperty("NestedArray", sequenceValue) });
 
-            // Act
             _renderer.Render(logEvent, _canvas);
 
-            // Assert
             var text = _richTextBox.Text;
             Assert.Contains("NestedArray: [", text);
             Assert.Contains("[[1, 2], [3, 4]]", text);
@@ -211,7 +190,6 @@ namespace Serilog.Tests.Integration
         [Fact]
         public void Emit_WithEmptySequenceValue_JsonFormatting_FormatsCorrectly()
         {
-            // Arrange
             var emptyArray = new object[] { };
             var sequenceValue = new SequenceValue(emptyArray.Select(x => new ScalarValue(x)));
 
@@ -223,10 +201,8 @@ namespace Serilog.Tests.Integration
                 template,
                 new[] { new LogEventProperty("EmptyArray", sequenceValue) });
 
-            // Act
             _renderer.Render(logEvent, _canvas);
 
-            // Assert
             var text = _richTextBox.Text;
             Assert.Contains("EmptyArray: []", text);
         }
@@ -234,7 +210,6 @@ namespace Serilog.Tests.Integration
         [Fact]
         public void Emit_WithStructureValue_JsonFormatting_FormatsCorrectly()
         {
-            // Arrange
             var structureValue = new StructureValue(new[]
             {
                 new LogEventProperty("Name", new ScalarValue("Test")),
@@ -250,10 +225,8 @@ namespace Serilog.Tests.Integration
                 template,
                 new[] { new LogEventProperty("Object", structureValue) });
 
-            // Act
             _renderer.Render(logEvent, _canvas);
 
-            // Assert
             var text = _richTextBox.Text;
             Assert.Contains("Object: {", text);
             Assert.Contains("\"Name\": \"Test\"", text);
@@ -264,7 +237,6 @@ namespace Serilog.Tests.Integration
         [Fact]
         public void Emit_WithStructureValueWithTypeTag_JsonFormatting_FormatsCorrectly()
         {
-            // Arrange
             var structureValue = new StructureValue(
                 new[]
                 {
@@ -281,10 +253,8 @@ namespace Serilog.Tests.Integration
                 template,
                 new[] { new LogEventProperty("Object", structureValue) });
 
-            // Act
             _renderer.Render(logEvent, _canvas);
 
-            // Assert
             var text = _richTextBox.Text;
             Assert.Contains("Object: {", text);
             Assert.Contains("\"Name\": \"Test\"", text);
@@ -295,9 +265,7 @@ namespace Serilog.Tests.Integration
         [Fact]
         public void Emit_WithEmptyStructureValue_JsonFormatting_FormatsCorrectly()
         {
-            // Arrange
             var structureValue = new StructureValue(Array.Empty<LogEventProperty>());
-
             var template = _parser.Parse("Object: {@Object:j}");
             var logEvent = new LogEvent(
                 DateTimeOffset.Now,
@@ -306,10 +274,8 @@ namespace Serilog.Tests.Integration
                 template,
                 new[] { new LogEventProperty("Object", structureValue) });
 
-            // Act
             _renderer.Render(logEvent, _canvas);
 
-            // Assert
             var text = _richTextBox.Text;
             Assert.Contains("Object: {}", text);
         }

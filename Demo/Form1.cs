@@ -35,6 +35,9 @@ namespace Demo
         private RichTextBoxSinkOptions? _options;
         private RichTextBoxSink? _sink;
         private bool _toolbarsVisible = true;
+        private bool _prettyPrintJson = false;
+        private int _spacesPerIndent = 2;
+        private bool _updatingIndent = false;
 
         public Form1()
         {
@@ -47,7 +50,9 @@ namespace Demo
             _options = new RichTextBoxSinkOptions(
                 theme: ThemePresets.Literate,
                 outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:l}{NewLine}{Exception}",
-                formatProvider: new CultureInfo("en-US"));
+                formatProvider: new CultureInfo("en-US"),
+                prettyPrintJson: _prettyPrintJson,
+                spacesPerIndent: _spacesPerIndent);
 
             _sink = new RichTextBoxSink(richTextBox1, _options);
             Log.Logger = new LoggerConfiguration()
@@ -77,6 +82,15 @@ namespace Demo
 
             Log.Debug("Started logger.");
             btnDispose.Enabled = true;
+            btnPrettyPrint.Text = _prettyPrintJson ? "Disable Pretty Print" : "Enable Pretty Print";
+            
+            // Update the numeric up/down control without triggering events
+            _updatingIndent = true;
+            if (numericUpDownSpacesPerIndent.Value != _spacesPerIndent)
+            {
+                numericUpDownSpacesPerIndent.Value = _spacesPerIndent;
+            }
+            _updatingIndent = false;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -348,6 +362,41 @@ namespace Demo
 
             _options.AutoScroll = !_options.AutoScroll;
             btnAutoScroll.Text = _options.AutoScroll ? "Disable Auto Scroll" : "Enable Auto Scroll";
+        }
+
+        private void btnPrettyPrint_Click(object sender, EventArgs e)
+        {
+            _prettyPrintJson = !_prettyPrintJson;
+            btnPrettyPrint.Text = _prettyPrintJson ? "Disable Pretty Print" : "Enable Pretty Print";
+
+            // Recreate the sink and logger with new pretty print setting
+            CloseAndFlush();
+            Initialize();
+
+            Log.Information("Pretty print JSON: {PrettyPrint}", _prettyPrintJson);
+        }
+
+        private void numericUpDownSpacesPerIndent_ValueChanged(object sender, EventArgs e)
+        {
+            // Prevent recursive calls when we're updating the value programmatically
+            if (_updatingIndent)
+            {
+                return;
+            }
+
+            var newValue = (int)numericUpDownSpacesPerIndent.Value;
+            if (newValue == _spacesPerIndent)
+            {
+                return;
+            }
+
+            _spacesPerIndent = newValue;
+
+            // Recreate the sink and logger with new indent size
+            CloseAndFlush();
+            Initialize();
+
+            Log.Information("Spaces per indent changed to: {SpacesPerIndent}", _spacesPerIndent);
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)

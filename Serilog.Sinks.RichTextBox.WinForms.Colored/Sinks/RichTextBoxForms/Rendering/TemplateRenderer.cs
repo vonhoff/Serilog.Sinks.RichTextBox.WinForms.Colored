@@ -20,7 +20,6 @@ using Serilog.Events;
 using Serilog.Formatting.Display;
 using Serilog.Parsing;
 using Serilog.Sinks.RichTextBoxForms.Rtf;
-using Serilog.Sinks.RichTextBoxForms.Themes;
 using System;
 using System.Collections.Generic;
 
@@ -28,23 +27,22 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
 {
     public class TemplateRenderer : ITokenRenderer
     {
-        private const string OutputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
         private readonly List<ITokenRenderer> _renderers;
 
-        public TemplateRenderer(Theme theme, string outputTemplate = OutputTemplate, IFormatProvider? formatProvider = null)
+        public TemplateRenderer(RichTextBoxSinkOptions options)
         {
-            if (string.IsNullOrEmpty(outputTemplate))
+            if (string.IsNullOrEmpty(options.OutputTemplate))
             {
-                throw new ArgumentNullException(nameof(outputTemplate));
+                throw new ArgumentNullException(nameof(options.OutputTemplate));
             }
 
-            var template = new MessageTemplateParser().Parse(outputTemplate);
+            var template = new MessageTemplateParser().Parse(options.OutputTemplate);
             _renderers = new List<ITokenRenderer>();
             foreach (var token in template.Tokens)
             {
                 if (token is TextToken textToken)
                 {
-                    _renderers.Add(new TextTokenRenderer(theme, textToken.Text));
+                    _renderers.Add(new TextTokenRenderer(options.Theme, textToken.Text));
                     continue;
                 }
 
@@ -54,7 +52,7 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
                 {
                     case OutputProperties.LevelPropertyName:
                         {
-                            _renderers.Add(new LevelTokenRenderer(theme, propertyToken));
+                            _renderers.Add(new LevelTokenRenderer(options.Theme, propertyToken));
                             break;
                         }
 
@@ -66,31 +64,31 @@ namespace Serilog.Sinks.RichTextBoxForms.Rendering
 
                     case OutputProperties.ExceptionPropertyName:
                         {
-                            _renderers.Add(new ExceptionTokenRenderer(theme));
+                            _renderers.Add(new ExceptionTokenRenderer(options.Theme));
                             break;
                         }
 
                     case OutputProperties.MessagePropertyName:
                         {
-                            _renderers.Add(new MessageTemplateTokenRenderer(theme, propertyToken, formatProvider));
+                            _renderers.Add(new MessageTemplateTokenRenderer(propertyToken, options));
                             break;
                         }
 
                     case OutputProperties.TimestampPropertyName:
                         {
-                            _renderers.Add(new TimestampTokenRenderer(theme, propertyToken, formatProvider));
+                            _renderers.Add(new TimestampTokenRenderer(propertyToken, options));
                             break;
                         }
 
                     case OutputProperties.PropertiesPropertyName:
                         {
-                            _renderers.Add(new PropertiesTokenRenderer(theme, propertyToken, template, formatProvider));
+                            _renderers.Add(new PropertiesTokenRenderer(propertyToken, template, options));
                             break;
                         }
 
                     default:
                         {
-                            _renderers.Add(new EventPropertyTokenRenderer(theme, propertyToken, formatProvider));
+                            _renderers.Add(new EventPropertyTokenRenderer(propertyToken, options));
                             break;
                         }
                 }

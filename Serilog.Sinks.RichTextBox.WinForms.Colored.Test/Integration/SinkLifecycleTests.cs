@@ -22,8 +22,8 @@ namespace Serilog.Tests.Integration
 
             try
             {
-                // Act & Assert
                 testSink.Dispose();
+
                 // Give the background thread time to complete
                 Thread.Sleep(100);
                 Assert.Throws<ObjectDisposedException>(() => testSink.Emit(new LogEvent(

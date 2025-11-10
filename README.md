@@ -15,9 +15,10 @@ A [Serilog](https://github.com/serilog/serilog) sink that writes log events to a
 - Multiple theme presets with customization options
 - High-performance asynchronous processing
 - Line limit to control memory usage
+- Support for pretty-printing of JSON objects
 - WCAG compliant color schemes based on the [Serilog WPF RichTextBox](https://github.com/serilog-contrib/serilog-sinks-richtextbox) sink.
 
-## Get Started
+## Getting Started
 
 Install the package from NuGet:
 
@@ -52,38 +53,47 @@ Log.Information("Hello, world!");
 
 See the [Extension Method](Serilog.Sinks.RichTextBox.WinForms.Colored/RichTextBoxSinkLoggerConfigurationExtensions.cs) for more configuration options.
 
+## Configuration Options
+
+| Option            | Description                                                                                                                  | Default Value                                                        |
+|-------------------|------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------|
+| `theme`           | The color theme applied when rendering individual message tokens.                                                            | `ThemePresets.Literate`                                              |
+| `autoScroll`      | When `true` (default) the target control scrolls automatically to the most recent log line.                                  | `true`                                                               |
+| `maxLogLines`     | Maximum number of log events retained in the in-memory circular buffer and rendered in the control.                          | `256`                                                                |
+| `outputTemplate`  | Serilog output template that controls textual formatting of each log event.                                                  | `[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}` |
+| `formatProvider`  | Optional culture-specific or custom formatting provider used when rendering scalar values; `null` for the invariant culture. | `CultureInfo.InvariantCulture`                                       |
+| `prettyPrintJson` | When `true`, formats JSON values with indentation and line breaks for better readability.                                    | `false`                                                              |
+| `spacesPerIndent` | Number of spaces per indentation level when pretty printing JSON.                                                            | `2`                                                                  |
+
 ## Themes
 
 Available built-in themes:
 
-| Theme                       | Description                                                                  |
-|-----------------------------|------------------------------------------------------------------------------|
-| `ThemePresets.Literate`     | Styled to replicate the default theme of Serilog.Sinks.Console __(default)__ |
-| `ThemePresets.Grayscale`    | A theme using only shades of gray, white, and black                          |
-| `ThemePresets.Colored`      | A theme based on the original Serilog.Sinks.ColoredConsole sink              |
-| `ThemePresets.Luminous`     | A light theme with high contrast for accessibility                           |
+| Theme                    | Description                                                                  |
+|--------------------------|------------------------------------------------------------------------------|
+| `ThemePresets.Literate`  | Styled to replicate the default theme of Serilog.Sinks.Console __(default)__ |
+| `ThemePresets.Grayscale` | A theme using only shades of gray, white, and black                          |
+| `ThemePresets.Colored`   | A theme based on the original Serilog.Sinks.ColoredConsole sink              |
+| `ThemePresets.Luminous`  | A light theme with high contrast for accessibility                           |
 
 The themes based on the original sinks are slightly adjusted to be [WCAG compliant](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum), ensuring that the contrast ratio between text and background colors is at least 4.5:1.
 
 You can create your own custom themes by creating a new instance of the [Theme](Serilog.Sinks.RichTextBox.WinForms.Colored/Sinks/RichTextBoxForms/Themes/Theme.cs) class and passing it to the `RichTextBox` extension method. Look at the [existing themes](Serilog.Sinks.RichTextBox.WinForms.Colored/Sinks/RichTextBoxForms/Themes/ThemePresets.cs) for examples.
 
-## Frequently Asked Questions
+## Support the Project 💖
 
-### Why is the package name so long?
+This project has been maintained since 2022 and is still under active development. If you find it useful, please consider supporting it. Your support will help keep the project alive and allow me to dedicate more time to making improvements. You can support it through:
 
-Shorter alternatives were already reserved in the NuGet registry, so a more descriptive name was needed for this implementation. The name is a bit long, but it makes it easier to find the package in the NuGet registry.
+* [GitHub Sponsors](https://github.com/sponsors/vonhoff)
+* [Ko-fi](https://ko-fi.com/vonhoff)
 
-### Why use a WinForms RichTextBox instead of a WPF RichTextBox?
+Every contribution of any size helps sustain ongoing development.
 
-This sink is specifically designed for WinForms applications to avoid the WPF framework. Using a WPF-based logging component would require adding the entire WPF framework with all its dependencies, greatly increasing the size of the application.
+## Contributing
 
-## Support and Contribute
+Contributions are welcome! Report issues, improve documentation, or submit pull requests.
 
-If you find value in this project, there are several ways you can contribute:
-
-- Give the [project](https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored) a star on GitHub ⭐
-- Support the project through [GitHub Sponsors](https://github.com/sponsors/vonhoff)
-- Improve docs, report bugs, or submit PRs (see [CONTRIBUTING.md](CONTRIBUTING.md))
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## License
 

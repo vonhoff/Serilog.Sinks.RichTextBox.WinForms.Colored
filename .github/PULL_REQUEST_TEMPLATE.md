@@ -1,6 +1,6 @@
 <!-- Summarize your changes in the title -->
 
-**Motivation and Context**
+**Context**
 
 <!-- Why is this change needed? Link any relevant issues. -->
 
