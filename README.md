@@ -82,12 +82,13 @@ You can create your own custom themes by creating a new instance of the [Theme](
 
 ## Support the Project 💖
 
-This project has been maintained since 2022 and is still under active development. If you find it useful, please consider supporting it. Your support will help keep the project alive and allow me to dedicate more time to making improvements. You can support it through:
+This project has been actively maintained since **2022** and is still under development.
 
-* [GitHub Sponsors](https://github.com/sponsors/vonhoff)
-* [Ko-fi](https://ko-fi.com/vonhoff)
+If you find this project valuable, please consider supporting its continued improvement:
 
-Every contribution of any size helps sustain ongoing development.
+* **Sponsor via [GitHub Sponsors](https://github.com/sponsors/vonhoff)**
+* **Leave a Tip via [Ko-fi](https://ko-fi.com/vonhoff)**
+* **Give the project a [star on GitHub](https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored)**
 
 ## Contributing
 
