@@ -92,9 +92,9 @@ If you find this project valuable, please consider supporting it through:
 
 ## Contributing
 
-Contributions are welcome! Report issues, improve documentation, or submit pull requests.
+Contributions are welcome! You may report issues, improve documentation, or submit pull requests.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for more information.
 
 ## License
 
