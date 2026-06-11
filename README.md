@@ -95,6 +95,10 @@ Contributions are welcome! You may report issues, improve documentation, or subm
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for more information.
 
+## SAST Tools
+
+[PVS-Studio](https://pvs-studio.com/en/pvs-studio/?utm_source=website&utm_medium=github&utm_campaign=open_source) - static analyzer for C, C++, C#, and Java code.
+
 ## License
 
 Copyright © 2025 Simon Vonhoff & Contributors - Provided under the [Apache License, Version 2.0](LICENSE).
