@@ -108,22 +108,19 @@ namespace Serilog.Sinks.RichTextBoxForms
             var flushInterval = TimeSpan.FromMilliseconds(FlushIntervalMs);
             var lastFlush = DateTime.MinValue;
 
-            while (!token.IsCancellationRequested)
+            while (true)
             {
                 _signal.WaitOne();
-                if (token.IsCancellationRequested)
-                {
-                    break;
-                }
+                var stopping = token.IsCancellationRequested;
 
-                var now = DateTime.UtcNow;
-                var elapsedSinceLastFlush = now - lastFlush;
-                if (elapsedSinceLastFlush < flushInterval)
+                if (!stopping)
                 {
-                    var remainingTime = flushInterval - elapsedSinceLastFlush;
-                    if (token.WaitHandle.WaitOne(remainingTime))
+                    var now = DateTime.UtcNow;
+                    var elapsedSinceLastFlush = now - lastFlush;
+                    if (elapsedSinceLastFlush < flushInterval)
                     {
-                        break;
+                        var remainingTime = flushInterval - elapsedSinceLastFlush;
+                        stopping = token.WaitHandle.WaitOne(remainingTime);
                     }
                 }
 
@@ -137,11 +134,42 @@ namespace Serilog.Sinks.RichTextBoxForms
 
                 if (_richTextBox.IsDisposed || _richTextBox.Disposing)
                 {
+                    if (stopping)
+                    {
+                        break;
+                    }
+
                     continue;
                 }
 
-                _richTextBox.SetRtf(builder.Rtf, _options.AutoScroll, token);
+                // There is no UI callback to queue if disposal happens before the
+                // control creates its handle.
+                if (stopping && !_richTextBox.IsHandleCreated)
+                {
+                    break;
+                }
+
+                // Drain the final snapshot before leaving so disposal does not drop
+                // events that are still in the buffer.
+                try
+                {
+                    _richTextBox.SetRtf(builder.Rtf, _options.AutoScroll, token);
+                }
+                catch (OperationCanceledException) when (token.IsCancellationRequested)
+                {
+                    // Keep the final flush cancelable. The handle check above and
+                    // SetRtf's handle check are separate, so the handle can be
+                    // destroyed between them. A disposing control may never
+                    // recreate its handle, which would otherwise leave Dispose()
+                    // blocked in _processingTask.Wait().
+                    break;
+                }
                 lastFlush = DateTime.UtcNow;
+
+                if (stopping)
+                {
+                    break;
+                }
             }
         }
     }

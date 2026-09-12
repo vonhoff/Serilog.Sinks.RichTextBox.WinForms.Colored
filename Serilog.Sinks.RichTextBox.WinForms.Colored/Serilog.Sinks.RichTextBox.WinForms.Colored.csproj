@@ -22,8 +22,9 @@
         <TargetFrameworks>net462;net471;net6.0-windows;net8.0-windows;net9.0-windows;netcoreapp3.0-windows;netcoreapp3.1-windows</TargetFrameworks>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <UseWindowsForms>true</UseWindowsForms>
-        <Version>3.2.0</Version>
+        <Version>3.2.1</Version>
         <PackageReleaseNotes>
+- Fixed RichTextBox sink disposal dropping buffered log events.
 - Added support for JSON pretty-printing in log messages.
 
 See repository for more information:
@@ -48,12 +49,12 @@ https://github.com/vonhoff/Serilog.Sinks.RichTextBox.WinForms.Colored
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Serilog" Version="[2.12.0,)"/>
+<PackageReference Include="Serilog" Version="[2.12.0,)" />
     </ItemGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'net462' OR '$(TargetFramework)' == 'net471' ">
-        <Reference Include="System.Drawing"/>
-        <Reference Include="System.Windows.Forms"/>
+        <Reference Include="System.Drawing" />
+        <Reference Include="System.Windows.Forms" />
     </ItemGroup>
 
 </Project>
